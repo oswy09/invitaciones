@@ -1,15 +1,13 @@
 -- ============================================================
--- Migración 002: datos de prueba (SOLO proyecto de DESARROLLO "Invitaciones full")
--- NO ejecutar contra el proyecto de producción.
+-- Migración 003: actualiza el evento de prueba 'baby-shower-demo'
+-- a datos genéricos (nombre, dirección, fecha a ~20 días desde hoy).
+-- SOLO proyecto de DESARROLLO "Invitaciones full".
 -- ============================================================
 
-INSERT INTO eventos (id, template_id, nombre_evento, fecha_evento, datos, pagado, aprobado)
-VALUES (
-  'baby-shower-demo',
-  '01-dino',
-  'Baby Shower Demo',
-  '2026-07-12',
-  '{
+UPDATE eventos
+SET
+  fecha_evento = '2026-07-12',
+  datos = '{
     "eventoId": "baby-shower-demo",
     "templateId": "01-dino",
     "pagado": true,
@@ -32,8 +30,5 @@ VALUES (
       "mapa": true,
       "musica": false
     }
-  }'::jsonb,
-  true,
-  true
-)
-ON CONFLICT (id) DO NOTHING;
+  }'::jsonb
+WHERE id = 'baby-shower-demo';
