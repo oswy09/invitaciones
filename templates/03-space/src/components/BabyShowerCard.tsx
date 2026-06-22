@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -23,11 +23,12 @@ import {
   UserCheck,
   Baby
 } from 'lucide-react';
-import { InvitationDetails, RSVP } from '../types';
+import { InvitationDetails, RSVP, InvitationData, fromInvitationData } from '../types';
 import { LullabySynth } from '../utils/audioSynth';
 import { loadEvento, getEventoIdFromUrl } from '../lib/loadEvento';
 import { supabase } from '../lib/supabase';
 import { useRsvp } from '../hooks/useRsvp';
+import { usePreviewBridge } from '../hooks/usePreviewBridge';
 
 // @ts-ignore
 import watercolorBg from '../assets/images/watercolor_bg_1779837998884.png';
@@ -300,15 +301,23 @@ export default function BabyShowerCard({ initialAudioSynth }: BabyShowerCardProp
   const eventoId = getEventoIdFromUrl();
   const [pagado, setPagado] = useState(true);
 
+  const handlePreviewUpdate = useCallback((data: InvitationData, previewPagado: boolean) => {
+    setDetails(fromInvitationData(data));
+    setPagado(previewPagado);
+  }, []);
+
+  const isPreview = usePreviewBridge<InvitationData>(handlePreviewUpdate);
+
   // Carga el evento real desde Supabase (eventos.datos) si existe; si no, se
   // conservan los datos por defecto de arriba para que la plantilla siga
   // funcionando como demo/standalone.
   useEffect(() => {
+    if (isPreview) return; // en preview, los datos llegan por postMessage, no por Supabase
     loadEvento().then((result) => {
       if (result.details) setDetails(result.details);
       setPagado(result.pagado);
     });
-  }, []);
+  }, [isPreview]);
 
   // RSVPs reales en Supabase (confirmaciones_rsvp), visibles para todos los
   // invitados — antes vivían solo en localStorage del navegador de cada uno.

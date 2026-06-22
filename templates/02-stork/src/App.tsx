@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Gift, 
@@ -14,11 +14,12 @@ import { FloatingSnork } from './components/FloatingSnork';
 import { MapModal } from './components/MapModal';
 import { HourglassCountdown } from './components/HourglassCountdown';
 import { BottomClouds } from './components/BottomClouds';
-import { DEFAULT_STORK_DETAILS, StorkDetails } from './types';
+import { DEFAULT_STORK_DETAILS, StorkDetails, InvitationData, fromInvitationData } from './types';
 import { loadEvento, getEventoIdFromUrl } from './lib/loadEvento';
 import { supabase } from './lib/supabase';
 import { useMuroDeseos } from './hooks/useMuroDeseos';
 import { useRsvp } from './hooks/useRsvp';
+import { usePreviewBridge } from './hooks/usePreviewBridge';
 
 export default function App() {
   const [screen, setScreen] = useState<'intro' | 'invitation'>('intro');
@@ -30,16 +31,26 @@ export default function App() {
   const [pagado, setPagado] = useState(true);
   const [aprobado, setAprobado] = useState(true);
 
+  const handlePreviewUpdate = useCallback((data: InvitationData, previewPagado: boolean) => {
+    setDetails(fromInvitationData(data));
+    setPagado(previewPagado);
+    setAprobado(true);
+    setScreen('invitation'); // en preview se omite la animación de intro
+  }, []);
+
+  const isPreview = usePreviewBridge<InvitationData>(handlePreviewUpdate);
+
   // Carga el evento real desde Supabase (eventos.datos) si existe; si no, se
   // conservan los datos por defecto de Thomas para que la plantilla siga
   // funcionando como demo/standalone.
   useEffect(() => {
+    if (isPreview) return; // en preview, los datos llegan por postMessage, no por Supabase
     loadEvento().then((result) => {
       if (result.details) setDetails(result.details);
       setPagado(result.pagado);
       setAprobado(result.aprobado);
     });
-  }, []);
+  }, [isPreview]);
 
   // RSVP Form States
   const [rsvpName, setRsvpName] = useState('');
@@ -114,15 +125,10 @@ export default function App() {
     setTimeout(() => setShowConfetti(false), 4000);
   };
 
-  if (!aprobado) {
-    return (
-      <div className="w-full min-h-screen flex items-center justify-center px-6 text-center">
-        <p className="font-cormorant text-lg text-slate-600">
-          Esta invitación todavía no ha sido aprobada para publicarse.
-        </p>
-      </div>
-    );
-  }
+  // Nota: `aprobado` ya no oculta la invitación — el cliente debe ver su
+  // preview con marca de agua (controlada por `pagado`) apenas la crea,
+  // antes de que el operador la apruebe. `aprobado` se usa en el dashboard
+  // de admin para decidir si el pedido ya está listo para entregarse.
 
   return (
     <div className="min-h-screen relative overflow-x-hidden selection:bg-sky-200 selection:text-sky-900">

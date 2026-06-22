@@ -9,12 +9,15 @@ import BabyShowerCard from './components/BabyShowerCard';
 import { LullabySynth } from './utils/audioSynth';
 import { loadEvento } from './lib/loadEvento';
 
+const isPreviewMode = new URLSearchParams(window.location.search).get('preview') === '1';
+
 export default function App() {
-  const [showCard, setShowCard] = useState(false);
+  const [showCard, setShowCard] = useState(isPreviewMode); // en preview se omite la intro del cohete
   const [carriedSynth, setCarriedSynth] = useState<LullabySynth | null>(null);
   const [babyName, setBabyName] = useState<string | undefined>(undefined);
 
   useEffect(() => {
+    if (isPreviewMode) return; // en preview, los datos llegan por postMessage, no por Supabase
     loadEvento().then((result) => {
       if (result.details) setBabyName(result.details.babyName);
     });

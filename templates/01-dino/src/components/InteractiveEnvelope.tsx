@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sparkles } from "lucide-react";
-import { DEFAULT_SHOWER_DETAILS, BabyShowerDetails } from "../types";
+import { DEFAULT_SHOWER_DETAILS, BabyShowerDetails, InvitationData, fromInvitationData } from "../types";
 import { loadEvento } from "../lib/loadEvento";
+import { usePreviewBridge } from "../hooks/usePreviewBridge";
 import InvitationCard from "./InvitationCard";
 
 export default function InteractiveEnvelope() {
@@ -16,14 +17,25 @@ export default function InteractiveEnvelope() {
   const [aprobado, setAprobado] = useState(true);
   const [loadingEvento, setLoadingEvento] = useState(true);
 
+  const handlePreviewUpdate = useCallback((data: InvitationData, previewPagado: boolean) => {
+    setDetails(fromInvitationData(data));
+    setPagado(previewPagado);
+    setAprobado(true);
+    setLoadingEvento(false);
+    setEnvelopeState('opened'); // en preview se omite la animación del sobre
+  }, []);
+
+  const isPreview = usePreviewBridge<InvitationData>(handlePreviewUpdate);
+
   useEffect(() => {
+    if (isPreview) return; // en preview, los datos llegan por postMessage, no por Supabase
     loadEvento().then((result) => {
       setDetails(result.details);
       setPagado(result.pagado);
       setAprobado(result.aprobado);
       setLoadingEvento(false);
     });
-  }, []);
+  }, [isPreview]);
 
   const playInboxTone = () => {
     try {
@@ -117,15 +129,10 @@ export default function InteractiveEnvelope() {
     );
   }
 
-  if (!aprobado) {
-    return (
-      <div className="w-full min-h-screen flex items-center justify-center px-6 text-center">
-        <p className="font-serif-lux text-lg text-[#4A5D6B]">
-          Esta invitación todavía no ha sido aprobada para publicarse.
-        </p>
-      </div>
-    );
-  }
+  // Nota: `aprobado` ya no oculta la invitación — el cliente debe ver su
+  // preview con marca de agua (controlada por `pagado`) apenas la crea,
+  // antes de que el operador la apruebe. `aprobado` se usa en el dashboard
+  // de admin para decidir si el pedido ya está listo para entregarse.
 
   return (
     <div className={`relative w-full min-h-screen bg-transparent flex flex-col items-center ${
