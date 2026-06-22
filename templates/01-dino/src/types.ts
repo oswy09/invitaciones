@@ -47,3 +47,42 @@ export const DEFAULT_SHOWER_DETAILS: BabyShowerDetails = {
   rsvpDeadline: "26 de junio",
   dressCode: "Azul Serenity, Blanco y Tonos Tierra (Beige/Café claro)"
 };
+
+// InvitationData es el esquema estándar compartido (core/schema/invitation-schema.ts).
+// Se duplica aquí la forma mínima necesaria para no acoplar esta plantilla a una
+// ruta de import fuera de su propio proyecto Vite.
+export interface InvitationData {
+  eventoId: string;
+  templateId: string;
+  pagado: boolean;
+  tituloEvento: string;
+  nombresPrincipales: string[];
+  anfitriones?: string;
+  fecha: string;
+  hora: string;
+  fechaTexto?: string;
+  lugar: { nombre: string; direccion: string; mapUrl: string };
+  vestimenta?: string;
+  registroRegalos?: { tienda: string; url?: string; codigo?: string; notaAlternativa?: string }[];
+  extra?: Record<string, unknown>;
+}
+
+// Convierte el esquema estándar InvitationData (lo que vive en eventos.datos)
+// a la forma BabyShowerDetails que ya consume el resto de esta plantilla.
+export function fromInvitationData(data: InvitationData): BabyShowerDetails {
+  const registro = data.registroRegalos?.[0];
+  return {
+    eventoId: data.eventoId,
+    babyName: data.nombresPrincipales[0] ?? "",
+    parentsNames: data.anfitriones ?? "",
+    date: data.fecha,
+    time: data.hora,
+    locationName: data.lugar.nombre,
+    locationAddress: data.lugar.direccion,
+    locationMapUrl: data.lugar.mapUrl,
+    giftRegistryStore: registro?.tienda,
+    giftRegistryUrl: registro?.url,
+    rsvpDeadline: (data.extra?.rsvpDeadline as string) ?? "",
+    dressCode: data.vestimenta ?? "",
+  };
+}

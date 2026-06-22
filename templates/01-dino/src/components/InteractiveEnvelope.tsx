@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sparkles } from "lucide-react";
-import { DEFAULT_SHOWER_DETAILS } from "../types";
+import { DEFAULT_SHOWER_DETAILS, BabyShowerDetails } from "../types";
+import { loadEvento } from "../lib/loadEvento";
 import InvitationCard from "./InvitationCard";
 
 export default function InteractiveEnvelope() {
@@ -9,6 +10,20 @@ export default function InteractiveEnvelope() {
   const [envelopeState, setEnvelopeState] = useState<'closed' | 'opening-flap' | 'sliding-card' | 'opened'>('closed');
   const [hintBlink, setHintBlink] = useState(true);
   const [hasPlayedInboxTone, setHasPlayedInboxTone] = useState(false);
+
+  const [details, setDetails] = useState<BabyShowerDetails>(DEFAULT_SHOWER_DETAILS);
+  const [pagado, setPagado] = useState(true);
+  const [aprobado, setAprobado] = useState(true);
+  const [loadingEvento, setLoadingEvento] = useState(true);
+
+  useEffect(() => {
+    loadEvento().then((result) => {
+      setDetails(result.details);
+      setPagado(result.pagado);
+      setAprobado(result.aprobado);
+      setLoadingEvento(false);
+    });
+  }, []);
 
   const playInboxTone = () => {
     try {
@@ -93,6 +108,24 @@ export default function InteractiveEnvelope() {
       }, 550);
     }, 750);
   };
+
+  if (loadingEvento) {
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center">
+        <p className="font-serif-lux text-lg text-[#4A5D6B]">Cargando invitación...</p>
+      </div>
+    );
+  }
+
+  if (!aprobado) {
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center px-6 text-center">
+        <p className="font-serif-lux text-lg text-[#4A5D6B]">
+          Esta invitación todavía no ha sido aprobada para publicarse.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className={`relative w-full min-h-screen bg-transparent flex flex-col items-center ${
@@ -357,10 +390,11 @@ export default function InteractiveEnvelope() {
               transition={{ type: "spring", stiffness: 95, damping: 22 }}
               className="w-full max-w-2xl mx-auto z-50 text-stone-850"
             >
-              <InvitationCard 
-                details={DEFAULT_SHOWER_DETAILS} 
-                onClose={handleCloseEnvelope} 
+              <InvitationCard
+                details={details}
+                onClose={handleCloseEnvelope}
                 isOpened={envelopeState === 'opened'}
+                pagado={pagado}
               />
             </motion.div>
           )}

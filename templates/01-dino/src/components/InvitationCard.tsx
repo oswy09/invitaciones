@@ -19,8 +19,11 @@ import {
   CalendarPlus
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { BabyShowerDetails, Guest, Wish } from "../types";
-import { supabase, WishRow, RsvpRow } from "../lib/supabase";
+import { BabyShowerDetails, Guest } from "../types";
+import { supabase } from "../lib/supabase";
+import { useMuroDeseos } from "../hooks/useMuroDeseos";
+import { useRsvp } from "../hooks/useRsvp";
+import { useCountdown } from "../hooks/useCountdown";
 import confetti from "canvas-confetti";
 import BabyWordSoup from "./BabyWordSoup";
 import ScrollReveal from "./ScrollReveal";
@@ -226,9 +229,10 @@ interface InvitationCardProps {
   details: BabyShowerDetails;
   onClose: () => void;
   isOpened: boolean;
+  pagado?: boolean;
 }
 
-export default function InvitationCard({ details, onClose, isOpened }: InvitationCardProps) {
+export default function InvitationCard({ details, onClose, isOpened, pagado = true }: InvitationCardProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioObj] = useState(() => {
     const audio = new Audio(BACKGROUND_MUSIC_URL);
@@ -257,48 +261,8 @@ export default function InvitationCard({ details, onClose, isOpened }: Invitatio
   }, [isPlaying]);
 
   const [rsvpList, setRsvpList] = useState<Guest[]>([]);
-  const [wishesList, setWishesList] = useState<Wish[]>([]);
-  const [dbLoading, setDbLoading] = useState(true);
-
-  // Load wishes from Supabase on mount + subscribe to real-time updates
-  useEffect(() => {
-    const eventoId = details.eventoId;
-
-    // Initial load
-    supabase
-      .from("muro_deseos")
-      .select("*")
-      .eq("evento_id", eventoId)
-      .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        if (data) {
-          setWishesList(data.map((r: WishRow) => ({
-            id: r.id,
-            name: r.nombre_invitado,
-            message: r.mensaje,
-            avatar: r.avatar,
-            timestamp: r.created_at,
-          })));
-        }
-        setDbLoading(false);
-      });
-
-    // Real-time subscription — deduplica para no repetir el optimistic update
-    const channel = supabase
-      .channel(`muro-${eventoId}`)
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "muro_deseos", filter: `evento_id=eq.${eventoId}` },
-        (payload) => {
-          const r = payload.new as WishRow;
-          setWishesList(prev => {
-            if (prev.some(w => w.id === r.id)) return prev;
-            return [{ id: r.id, name: r.nombre_invitado, message: r.mensaje, avatar: r.avatar, timestamp: r.created_at }, ...prev];
-          });
-        }
-      )
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
-  }, [details.eventoId]);
+  const { wishes: wishesList, loading: dbLoading, addWish } = useMuroDeseos(supabase, details.eventoId);
+  const { submitRsvp } = useRsvp(supabase, details.eventoId);
 
   const [formName, setFormName] = useState("");
   const [formAttending, setFormAttending] = useState<boolean | null>(null);
@@ -370,41 +334,8 @@ export default function InvitationCard({ details, onClose, isOpened }: Invitatio
     setTimeout(() => setIsLooping(false), 1200);
   };
 
-  // Countdown timer state
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  });
-
-  // localStorage persistence removed — data lives in Supabase
-
-  // Handle countdown calculation
-  useEffect(() => {
-    const targetDate = new Date(`${details.date}T${details.time}:00`);
-    
-    const calculateTime = () => {
-      const now = new Date();
-      const difference = targetDate.getTime() - now.getTime();
-      
-      if (difference <= 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        return;
-      }
-      
-      const d = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const h = Math.floor((difference / (1000 * 60 * 60)) % 24);
-      const m = Math.floor((difference / 1000 / 60) % 60);
-      const s = Math.floor((difference / 1000) % 60);
-      
-      setTimeLeft({ days: d, hours: h, minutes: m, seconds: s });
-    };
-
-    calculateTime();
-    const interval = setInterval(calculateTime, 1000);
-    return () => clearInterval(interval);
-  }, [details.date, details.time]);
+  // Countdown timer (hook compartido de core/features/countdown)
+  const timeLeft = useCountdown(`${details.date}T${details.time}:00`);
 
   // Audio play/pause toggler
   const togglePlay = () => {
@@ -437,7 +368,7 @@ export default function InvitationCard({ details, onClose, isOpened }: Invitatio
     };
   }, []);
 
-  const handleRsvpSubmit = (e: React.FormEvent) => {
+  const handleRsvpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName.trim() || formAttending === null) return;
 
@@ -453,6 +384,15 @@ export default function InvitationCard({ details, onClose, isOpened }: Invitatio
     setRsvpList(prev => [newGuest, ...prev]);
     setMyRsvp(newGuest);
     setShowRsvpSuccess(true);
+
+    // Persistir en Supabase (confirmaciones_rsvp) — fuente de verdad real, no solo WhatsApp
+    submitRsvp({
+      name: formName.trim(),
+      attending: formAttending,
+      adults: formAttending ? formAdults : 0,
+      dietRestriction: formDiet,
+      dietDetail: formDietOther,
+    }).catch((err) => console.error("No se pudo guardar el RSVP en Supabase", err));
 
     // Format WhatsApp confirmation text with beautiful details
     const dietLine = formDiet
@@ -479,17 +419,10 @@ export default function InvitationCard({ details, onClose, isOpened }: Invitatio
     e.preventDefault();
     if (!wishName.trim() || !wishMessage.trim()) return;
 
-    const tempId = `temp-${Date.now()}`;
-    const newWish: Wish = {
-      id: tempId,
-      name: wishName.trim(),
-      message: wishMessage.trim(),
-      avatar: wishAvatar,
-      timestamp: new Date().toISOString(),
-    };
+    const name = wishName.trim();
+    const message = wishMessage.trim();
+    const avatar = wishAvatar;
 
-    // Optimistic update — aparece de inmediato
-    setWishesList(prev => [newWish, ...prev]);
     setShowWishSuccess(true);
     setWishName("");
     setWishMessage("");
@@ -506,18 +439,8 @@ export default function InvitationCard({ details, onClose, isOpened }: Invitatio
     setTimeout(() => confetti({ particleCount: 60, angle: 60, spread: 55, origin: { x: 0, y: 0.75 }, colors: ["#C3A66A", "#CBE0EE"] }), 200);
     setTimeout(() => confetti({ particleCount: 60, angle: 120, spread: 55, origin: { x: 1, y: 0.75 }, colors: ["#4A5D6B", "#f9c74f"] }), 400);
 
-    // Guardar en Supabase — el real-time reemplaza el tempId con el id real
-    const { data, error } = await supabase.from("muro_deseos").insert({
-      evento_id: details.eventoId,
-      nombre_invitado: newWish.name,
-      mensaje: newWish.message,
-      avatar: newWish.avatar,
-    }).select().single();
-
-    if (!error && data) {
-      // Reemplazar el tempId con el id real de Supabase
-      setWishesList(prev => prev.map(w => w.id === tempId ? { ...w, id: data.id } : w));
-    }
+    // useMuroDeseos ya hace el optimistic update + insert + reemplazo de id real
+    addWish({ name, message, avatar }).catch((err) => console.error("No se pudo guardar el mensaje en Supabase", err));
   };
 
   // Google Calendar URL Generator
@@ -537,6 +460,18 @@ export default function InvitationCard({ details, onClose, isOpened }: Invitatio
   return (
     <div id="invitation-card" className="w-full max-w-2xl mx-auto min-h-screen flex flex-col relative z-50 bg-transparent">
 
+      {/* Marca de agua de preview — desaparece cuando el operador marca el evento como pagado */}
+      {!pagado && (
+        <div className="fixed inset-0 z-[999] pointer-events-none flex items-center justify-center overflow-hidden">
+          <div className="rotate-[-30deg] flex flex-wrap gap-16 opacity-15 select-none">
+            {Array.from({ length: 20 }).map((_, i) => (
+              <span key={i} className="text-4xl font-black text-[#4A5D6B] whitespace-nowrap">
+                VISTA PREVIA
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
 
       {/* Ambient Descending Musical Notes (Drifts gently downward from the top across the full screen when playing) */}
