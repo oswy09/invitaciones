@@ -14,21 +14,33 @@ import { FloatingSnork } from './components/FloatingSnork';
 import { MapModal } from './components/MapModal';
 import { HourglassCountdown } from './components/HourglassCountdown';
 import { BottomClouds } from './components/BottomClouds';
-
-interface GuestRSVP {
-  id: string;
-  name: string;
-  attending: boolean;
-  companions: number;
-  message: string;
-  createdAt: string;
-}
+import { DEFAULT_STORK_DETAILS, StorkDetails } from './types';
+import { loadEvento, getEventoIdFromUrl } from './lib/loadEvento';
+import { supabase } from './lib/supabase';
+import { useMuroDeseos } from './hooks/useMuroDeseos';
+import { useRsvp } from './hooks/useRsvp';
 
 export default function App() {
   const [screen, setScreen] = useState<'intro' | 'invitation'>('intro');
   const [showConfetti, setShowConfetti] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
-  
+
+  const eventoId = getEventoIdFromUrl();
+  const [details, setDetails] = useState<StorkDetails>(DEFAULT_STORK_DETAILS);
+  const [pagado, setPagado] = useState(true);
+  const [aprobado, setAprobado] = useState(true);
+
+  // Carga el evento real desde Supabase (eventos.datos) si existe; si no, se
+  // conservan los datos por defecto de Thomas para que la plantilla siga
+  // funcionando como demo/standalone.
+  useEffect(() => {
+    loadEvento().then((result) => {
+      if (result.details) setDetails(result.details);
+      setPagado(result.pagado);
+      setAprobado(result.aprobado);
+    });
+  }, []);
+
   // RSVP Form States
   const [rsvpName, setRsvpName] = useState('');
   const [attending, setAttending] = useState(true);
@@ -37,56 +49,51 @@ export default function App() {
   // Signature Form States for Libro de Firmas y Recuerdos
   const [signatureName, setSignatureName] = useState('');
   const [signatureMessage, setSignatureMessage] = useState('');
-  
-  // Persisted state loading
-  const [rsvps, setRsvps] = useState<GuestRSVP[]>(() => {
-    const stored = localStorage.getItem('baby_shower_rsvps_thomas');
-    if (stored) {
-      try { return JSON.parse(stored); } catch (e) { return []; }
-    }
-    // Pre-populate with cute placeholders so it feels alive initially
-    const initial = [
-      { id: '1', name: 'Tía Sofía', attending: true, companions: 1, message: '¡No puedo esperar para abrazar al hermoso Thomas! ❤️', createdAt: new Date().toISOString() },
-      { id: '2', name: 'Andrés y Laura', attending: true, companions: 2, message: '¡Muchísimas felicidades por el brunch especial de Thomas!', createdAt: new Date().toISOString() }
-    ];
-    localStorage.setItem('baby_shower_rsvps_thomas', JSON.stringify(initial));
-    return initial;
-  });
 
-  // Save changes automatically
-  useEffect(() => {
-    localStorage.setItem('baby_shower_rsvps_thomas', JSON.stringify(rsvps));
-  }, [rsvps]);
+  // Libro de Firmas: antes vivía en localStorage ('baby_shower_rsvps_thomas'),
+  // visible solo en el navegador de quien firmaba. Ahora usa muro_deseos en
+  // Supabase, visible para todos los invitados en tiempo real.
+  const { wishes, addWish } = useMuroDeseos(supabase, eventoId);
+
+  // RSVP de asistencia: antes solo se formateaba en un mensaje de WhatsApp y
+  // nunca se guardaba en ningún lado. Ahora también persiste en
+  // confirmaciones_rsvp como fuente de verdad real.
+  const { submitRsvp } = useRsvp(supabase, eventoId);
 
   const handleAddToCalendar = () => {
+    const target = new Date(details.timestamp);
+    const dateStr = target.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    const endDate = new Date(target.getTime() + 3 * 60 * 60 * 1000);
+    const endStr = endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+
     // Detect iOS, iPadOS or macOS to choose native .ics download; otherwise default to Google Calendar link
-    const isAppleDevice = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent) || 
+    const isAppleDevice = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent) ||
                           (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
     if (isAppleDevice) {
       // Generate ICS file for smooth native Apple Calendar popup
-      const icsContent = 
+      const icsContent =
         "BEGIN:VCALENDAR\n" +
         "VERSION:2.0\n" +
         "BEGIN:VEVENT\n" +
-        "SUMMARY:Shower Thomas 👶✨\n" +
+        `SUMMARY:Shower ${details.babyName} 👶✨\n` +
         "DESCRIPTION:¡Acompáñanos a compartir una mañana especial al aire libre, llena de amor, buenos momentos y bendiciones!\n" +
-        "LOCATION:Carrera 14A #109-55 Edificio Jade - Piso 13, Bogotá\n" +
-        "DTSTART:20260705T153000Z\n" +
-        "DTEND:20260705T183000Z\n" +
+        `LOCATION:${details.locationAddress}\n` +
+        `DTSTART:${dateStr}\n` +
+        `DTEND:${endStr}\n` +
         "END:VEVENT\n" +
         "END:VCALENDAR";
-      
+
       const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
-      link.setAttribute('download', 'shower_thomas_2026.ics');
+      link.setAttribute('download', `shower_${details.babyName.toLowerCase()}.ics`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } else {
       // Redirect to Google Calendar template
-      const googleCalUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Shower+Thomas+👶✨&dates=20260705T153000Z/20260705T183000Z&details=¡Acompáñanos+a+compartir+una+mañana+especial+al+aire+libre,+llena+de+amor,+buenos+momentos+y+bendiciones!&location=Carrera+14A+%23109-55+Edificio+Jade+-+Piso+13,+Bogota";
+      const googleCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Shower+${encodeURIComponent(details.babyName)}+👶✨&dates=${dateStr}/${endStr}&details=¡Acompáñanos+a+compartir+una+mañana+especial+al+aire+libre,+llena+de+amor,+buenos+momentos+y+bendiciones!&location=${encodeURIComponent(details.locationAddress)}`;
       window.open(googleCalUrl, '_blank');
     }
   };
@@ -95,35 +102,44 @@ export default function App() {
     e.preventDefault();
     if (!signatureName.trim() || !signatureMessage.trim()) return;
 
-    const newRsvp: GuestRSVP = {
-      id: Date.now().toString(),
-      name: signatureName.trim(),
-      attending: true,
-      companions: 0,
-      message: signatureMessage.trim(),
-      createdAt: new Date().toISOString()
-    };
-
-    setRsvps(prev => [newRsvp, ...prev]);
+    const name = signatureName.trim();
+    const message = signatureMessage.trim();
     setSignatureName('');
     setSignatureMessage('');
+
+    addWish({ name, message, avatar: '🦢' }).catch((err) => console.error('No se pudo guardar el mensaje en Supabase', err));
 
     // Show temporary fun effect
     setShowConfetti(true);
     setTimeout(() => setShowConfetti(false), 4000);
   };
 
-  const deleteRSVP = (id: string) => {
-    setRsvps(prev => prev.filter(r => r.id !== id));
-  };
-
-  const totalGuests = rsvps
-    .filter(r => r.attending)
-    .reduce((acc, curr) => acc + 1 + curr.companions, 0);
+  if (!aprobado) {
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center px-6 text-center">
+        <p className="font-cormorant text-lg text-slate-600">
+          Esta invitación todavía no ha sido aprobada para publicarse.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen relative overflow-x-hidden selection:bg-sky-200 selection:text-sky-900">
-      
+
+      {/* Marca de agua de preview — desaparece cuando el operador marca el evento como pagado */}
+      {!pagado && (
+        <div className="fixed inset-0 z-[999] pointer-events-none flex items-center justify-center overflow-hidden">
+          <div className="rotate-[-30deg] flex flex-wrap gap-16 opacity-15 select-none">
+            {Array.from({ length: 20 }).map((_, i) => (
+              <span key={i} className="text-4xl font-black text-slate-700 whitespace-nowrap">
+                VISTA PREVIA
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Screen Toggle 1: Intro Stork Animation for 7 seconds */}
       <AnimatePresence mode="wait">
         {screen === 'intro' && (
@@ -212,7 +228,7 @@ export default function App() {
                 <div className="p-2.5 bg-sky-100/65 text-sky-600 rounded-full">
                   <Gift className="w-5.5 h-5.5 flex-shrink-0 animate-bounce" />
                 </div>
-                <h3 className="text-[24px] sm:text-[28px] font-black text-slate-800 font-fredoka tracking-wide leading-tight">¿Qué le puedes regalar a Thomas?</h3>
+                <h3 className="text-[24px] sm:text-[28px] font-black text-slate-800 font-fredoka tracking-wide leading-tight">¿Qué le puedes regalar a {details.babyName}?</h3>
               </div>
               
               <p className="text-[20px] sm:text-[22px] text-slate-800 font-cormorant italic font-semibold leading-relaxed mb-4 text-center max-w-[500px]">
@@ -223,7 +239,7 @@ export default function App() {
               <div className="flex flex-col items-center justify-center mt-2 mb-2">
                 <motion.img 
                   src="https://res.cloudinary.com/ddqbnr9vo/image/upload/v1780090232/ropa-cigue%C3%B1a_fq7mkh.png"
-                  alt="Ropa para bebé Thomas"
+                  alt={`Ropa para bebé ${details.babyName}`}
                   referrerPolicy="no-referrer"
                   className="w-full max-w-[260px] sm:max-w-[280px] object-contain drop-shadow-[0_12px_20px_rgba(14,165,233,0.12)]"
                   animate={{ 
@@ -344,8 +360,8 @@ export default function App() {
                 {/* WhatsApp Direct Action */}
                 <div className="pt-2">
                   <a
-                    href={rsvpName.trim() ? `https://wa.me/573154384042?text=${encodeURIComponent(
-                      `¡Hola! Confirmo mi asistencia al Baby Shower de Thomas.\n` +
+                    href={rsvpName.trim() ? `https://wa.me/${details.whatsappNumber}?text=${encodeURIComponent(
+                      `¡Hola! Confirmo mi asistencia al Baby Shower de ${details.babyName}.\n` +
                       `• Nombre/Familia: ${rsvpName.trim()}\n` +
                       `• ¿Asistirá?: ${attending ? 'Sí, ¡claro!' : 'No podré'}${attending && companions > 0 ? `\n• Acompañantes adicionales: +${companions}` : ''}`
                     )}` : undefined}
@@ -354,10 +370,17 @@ export default function App() {
                     onClick={(e) => {
                       if (!rsvpName.trim()) {
                         e.preventDefault();
-                      } else {
-                        setShowConfetti(true);
-                        setTimeout(() => setShowConfetti(false), 4000);
+                        return;
                       }
+                      // Supabase es la fuente de verdad para el conteo de invitados;
+                      // WhatsApp sigue siendo el aviso directo al organizador.
+                      submitRsvp({
+                        name: rsvpName.trim(),
+                        attending,
+                        adults: attending ? companions + 1 : 0,
+                      }).catch((err) => console.error('No se pudo guardar el RSVP en Supabase', err));
+                      setShowConfetti(true);
+                      setTimeout(() => setShowConfetti(false), 4000);
                     }}
                     className={`w-full py-3.5 text-white font-extrabold text-[15px] sm:text-[16px] font-cormorant rounded-2xl shadow-md tracking-wider uppercase transition-all duration-205 flex items-center justify-center gap-2 border-2 ${
                       rsvpName.trim() 
@@ -397,7 +420,7 @@ export default function App() {
               {/* Direct message interaction in the guest book */}
               <form onSubmit={handleSignatureSubmit} className="bg-white/45 border border-white/30 rounded-2xl p-4 mb-5 space-y-3">
                 <p className="text-[18px] sm:text-[20px] text-slate-600 font-cormorant italic font-medium leading-snug mb-1">
-                  ¡Déjale un mensaje, dedicatoria o bendición a Thomas y sus papás!
+                  ¡Déjale un mensaje, dedicatoria o bendición a {details.babyName} y sus papás!
                 </p>
                 <div>
                   <input
@@ -429,38 +452,28 @@ export default function App() {
                 </button>
               </form>
 
-              {rsvps.length === 0 ? (
+              {wishes.length === 0 ? (
                 <div className="text-center py-6">
                   <p className="text-[17px] sm:text-[18px] text-slate-500 font-bold font-cormorant italic">Nadie ha firmado el libro aún. ¡Sé el primero!</p>
                 </div>
               ) : (
                 <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1">
-                  {rsvps.map((rsvp) => (
-                    <div 
-                      key={rsvp.id} 
+                  {wishes.map((wish) => (
+                    <div
+                      key={wish.id}
                       className="p-3 rounded-2xl border bg-white/35 border-white/20 shadow-2xs"
                     >
                       <div className="flex items-center justify-between text-xs mb-1">
                         <p className="font-bold text-slate-800 font-cormorant text-[20px] sm:text-[22px] leading-tight">
-                          {rsvp.name}
+                          {wish.name}
                         </p>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[12px] sm:text-[13px] text-slate-450 font-cormorant italic">
-                            {rsvp.createdAt ? new Date(rsvp.createdAt).toLocaleDateString('es-ES', {month: 'short', day: 'numeric'}) : ''}
-                          </span>
-                          <button
-                            onClick={() => deleteRSVP(rsvp.id)}
-                            className="text-slate-400 hover:text-red-500 text-md p-0.5 cursor-pointer leading-none"
-                            id={`btn-delete-rsvp-${rsvp.id}`}
-                            title="Borrar confirmación"
-                          >
-                            ×
-                          </button>
-                        </div>
+                        <span className="text-[12px] sm:text-[13px] text-slate-450 font-cormorant italic">
+                          {wish.timestamp ? new Date(wish.timestamp).toLocaleDateString('es-ES', {month: 'short', day: 'numeric'}) : ''}
+                        </span>
                       </div>
-                      {rsvp.message && (
+                      {wish.message && (
                         <p className="text-[18px] sm:text-[20px] text-slate-650 font-cormorant bg-white/60 p-2.5 rounded-xl border border-white/20 font-medium italic mt-1.5 leading-relaxed">
-                          " {rsvp.message} "
+                          " {wish.message} "
                         </p>
                       )}
                     </div>
@@ -471,7 +484,7 @@ export default function App() {
 
             {/* Countdown moved below gift registry and guestbook section */}
             <div className="mb-2 px-1">
-              <HourglassCountdown targetDateStr="2026-07-05T10:30:00" />
+              <HourglassCountdown targetDateStr={details.timestamp} />
             </div>
 
           </div>
@@ -479,7 +492,7 @@ export default function App() {
           {/* Elegant Footer */}
           <footer className="mt-14 text-center py-6 select-all flex flex-col items-center justify-center relative z-25">
             <p className="font-bold text-[19px] text-slate-700 font-cormorant italic leading-relaxed text-center whitespace-pre-line">
-              Elaborado con amor para el Baby Shower de Thomas
+              Elaborado con amor para el Baby Shower de {details.babyName}
             </p>
           </footer>
 
