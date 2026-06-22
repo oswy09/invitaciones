@@ -25,6 +25,9 @@ import {
 } from 'lucide-react';
 import { InvitationDetails, RSVP } from '../types';
 import { LullabySynth } from '../utils/audioSynth';
+import { loadEvento, getEventoIdFromUrl } from '../lib/loadEvento';
+import { supabase } from '../lib/supabase';
+import { useRsvp } from '../hooks/useRsvp';
 
 // @ts-ignore
 import watercolorBg from '../assets/images/watercolor_bg_1779837998884.png';
@@ -294,24 +297,30 @@ export default function BabyShowerCard({ initialAudioSynth }: BabyShowerCardProp
     whatsappNumber: "3154384042"
   });
 
-  // Local RSVPs state for hosting panel
-  const [rsvps, setRsvps] = useState<RSVP[]>(() => {
-    const saved = localStorage.getItem('baby_shower_rsvps');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        return [];
-      }
-    }
-    // Pre-populate some cute default RSVPs so the panel looks alive!
-    const defaults: RSVP[] = [
-      { id: '1', name: 'Tía Sofía', companions: 2, message: '¡Qué emoción tan grande! Ahí estaremos sin falta para celebrar.', status: 'confirmed', createdAt: '2026-05-26T12:00:00Z' },
-      { id: '2', name: 'Abuelita Elena', companions: 1, message: 'Esperando con ansias locas el día para consentir a mi nieto.', status: 'confirmed', createdAt: '2026-05-26T14:30:00Z' }
-    ];
-    localStorage.setItem('baby_shower_rsvps', JSON.stringify(defaults));
-    return defaults;
-  });
+  const eventoId = getEventoIdFromUrl();
+  const [pagado, setPagado] = useState(true);
+
+  // Carga el evento real desde Supabase (eventos.datos) si existe; si no, se
+  // conservan los datos por defecto de arriba para que la plantilla siga
+  // funcionando como demo/standalone.
+  useEffect(() => {
+    loadEvento().then((result) => {
+      if (result.details) setDetails(result.details);
+      setPagado(result.pagado);
+    });
+  }, []);
+
+  // RSVPs reales en Supabase (confirmaciones_rsvp), visibles para todos los
+  // invitados — antes vivían solo en localStorage del navegador de cada uno.
+  const { confirmations, submitRsvp } = useRsvp(supabase, eventoId);
+  const rsvps: RSVP[] = confirmations.map((c) => ({
+    id: c.id,
+    name: c.name,
+    companions: c.adults,
+    message: c.dietDetail,
+    status: c.attending ? 'confirmed' : 'declined',
+    createdAt: c.timestamp,
+  }));
 
   // State management
   const [showSettings, setShowSettings] = useState(false);
@@ -476,21 +485,17 @@ export default function BabyShowerCard({ initialAudioSynth }: BabyShowerCardProp
     if (!formName.trim()) return;
 
     setIsSubmitting(true);
-    
+
+    // Persistir en Supabase (confirmaciones_rsvp) — visible para todos los
+    // invitados, no solo en el navegador de quien confirma.
+    submitRsvp({
+      name: formName,
+      attending: formStatus === 'confirmed',
+      adults: formCompanions,
+      dietDetail: formMessage,
+    }).catch((err) => console.error('No se pudo guardar el RSVP en Supabase', err));
+
     setTimeout(() => {
-      const newRsvp: RSVP = {
-        id: Math.random().toString(36).substring(2),
-        name: formName,
-        companions: formCompanions,
-        message: formMessage,
-        status: formStatus,
-        createdAt: new Date().toISOString()
-      };
-
-      const updatedRsvps = [newRsvp, ...rsvps];
-      setRsvps(updatedRsvps);
-      localStorage.setItem('baby_shower_rsvps', JSON.stringify(updatedRsvps));
-
       // Compose beautiful custom message for WhatsApp RSVP
       const babyTag = details.babyName ? `Baby Shower de ${details.babyName}` : "nuestro Baby Shower";
       const assistStatus = formStatus === 'confirmed' ? "¡Confirmo mi asistencia con gusto! 😍" : "Lamentablemente no podré asistir, les mando mis mejores deseos 💖";
@@ -539,6 +544,18 @@ export default function BabyShowerCard({ initialAudioSynth }: BabyShowerCardProp
       style={{ backgroundImage: `url('https://res.cloudinary.com/ddqbnr9vo/image/upload/v1780105211/gondo-space_ukhmo5.png')` }}
       className="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed relative overflow-x-hidden py-10 px-4 flex flex-col items-center justify-start select-none font-sans animate-fade-in text-white"
     >
+      {/* Marca de agua de preview — desaparece cuando el operador marca el evento como pagado */}
+      {!pagado && (
+        <div className="fixed inset-0 z-[999] pointer-events-none flex items-center justify-center overflow-hidden">
+          <div className="rotate-[-30deg] flex flex-wrap gap-16 opacity-15 select-none">
+            {Array.from({ length: 20 }).map((_, i) => (
+              <span key={i} className="text-4xl font-black text-white whitespace-nowrap">
+                VISTA PREVIA
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
       <style>{`
         @keyframes twinkle {
           0%, 100% { opacity: 0.15; transform: scale(0.85); }
@@ -795,13 +812,9 @@ export default function BabyShowerCard({ initialAudioSynth }: BabyShowerCardProp
             </div>
 
             <button
-              onClick={() => {
-                if (confirm('¿Deseas vaciar la lista de invitados para tu demo?')) {
-                  setRsvps([]);
-                  localStorage.removeItem('baby_shower_rsvps');
-                }
-              }}
-              className="mt-6 w-full py-2.5 bg-rose-950/40 border border-rose-500/30 hover:bg-rose-900/50 text-rose-300 text-xs font-bold rounded-lg transition-all cursor-pointer"
+              disabled
+              title="Las confirmaciones ahora viven en Supabase; se moderan desde el dashboard de administración"
+              className="mt-6 w-full py-2.5 bg-rose-950/40 border border-rose-500/30 text-rose-300/40 text-xs font-bold rounded-lg cursor-not-allowed"
             >
               Reiniciar Lista de Invitados
             </button>
