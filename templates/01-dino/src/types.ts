@@ -31,6 +31,7 @@ export interface BabyShowerDetails {
   giftRegistryStore?: string; // Amazon / Liverpool etc
   rsvpDeadline: string; // "2026-06-30"
   dressCode: string; // "Azul pastel, beige y blanco"
+  whatsappNumber?: string; // dígitos, ej: "573154384042"
 }
 
 export const DEFAULT_SHOWER_DETAILS: BabyShowerDetails = {
@@ -64,6 +65,7 @@ export interface InvitationData {
   lugar: { nombre: string; direccion: string; mapUrl: string };
   vestimenta?: string;
   registroRegalos?: { tienda: string; url?: string; codigo?: string; notaAlternativa?: string }[];
+  whatsappNumero?: string;
   extra?: Record<string, unknown>;
 }
 
@@ -84,5 +86,6 @@ export function fromInvitationData(data: InvitationData): BabyShowerDetails {
     giftRegistryUrl: registro?.url,
     rsvpDeadline: (data.extra?.rsvpDeadline as string) ?? "",
     dressCode: data.vestimenta ?? "",
+    whatsappNumber: data.whatsappNumero?.replace(/[^+\d]/g, ""),
   };
 }

@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dino",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "templates/01-dino", "--", "--port", "3101"],
+      "port": 3101
+    },
+    {
+      "name": "stork",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "templates/02-stork", "--", "--port", "3102"],
+      "port": 3102
+    },
+    {
+      "name": "space",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "templates/03-space", "--", "--port", "3103"],
+      "port": 3103
+    }
+  ]
+}

@@ -6,15 +6,22 @@ import mapboxgl from 'mapbox-gl';
 interface MapModalProps {
   isOpen: boolean;
   onClose: () => void;
+  babyName?: string;
+  venueName?: string;
+  venueAddress?: string;
 }
 
 const ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 const LATITUDE = 4.69248;
 const LONGITUDE = -74.03260;
-const VENUE_NAME = 'Edificio Jade – Piso 13';
-const VENUE_ADDRESS = 'Carrera 14A #109-55, Bogotá';
 
-export const MapModal: React.FC<MapModalProps> = ({ isOpen, onClose }) => {
+export const MapModal: React.FC<MapModalProps> = ({
+  isOpen,
+  onClose,
+  babyName = 'Thomas',
+  venueName = 'Edificio Jade – Piso 13',
+  venueAddress = 'Carrera 14A #109-55, Bogotá',
+}) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [copied, setCopied] = useState(false);
@@ -59,9 +66,9 @@ export const MapModal: React.FC<MapModalProps> = ({ isOpen, onClose }) => {
     // Add popup with address and event details
     const popupHtml = `
       <div class="p-3 text-center font-fredoka">
-        <h4 class="font-black text-sky-950 text-[16px]">🎈 Shower Thomas 🎈</h4>
-        <p class="text-[14px] text-sky-600 font-extrabold mt-1">Edificio Jade - Piso 13</p>
-        <p class="text-[13px] text-slate-500 font-semibold mt-0.5">${VENUE_ADDRESS}</p>
+        <h4 class="font-black text-sky-950 text-[16px]">🎈 Shower ${babyName} 🎈</h4>
+        <p class="text-[14px] text-sky-600 font-extrabold mt-1">${venueName}</p>
+        <p class="text-[13px] text-slate-500 font-semibold mt-0.5">${venueAddress}</p>
         <div class="mt-2 text-[12px] bg-sky-50 text-sky-700 px-2 py-0.5 rounded-full font-bold uppercase inline-block">
           🌅 Terraza Especial
         </div>
@@ -92,7 +99,7 @@ export const MapModal: React.FC<MapModalProps> = ({ isOpen, onClose }) => {
   }, [isOpen]);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(`${VENUE_NAME}, ${VENUE_ADDRESS}`);
+    navigator.clipboard.writeText(`${venueName}, ${venueAddress}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2400);
   };
@@ -161,8 +168,8 @@ export const MapModal: React.FC<MapModalProps> = ({ isOpen, onClose }) => {
               
               {/* Detailed directions text */}
               <div className="text-left bg-sky-50/50 rounded-2xl p-3 border border-sky-100/40">
-                <p className="font-black text-[18px] sm:text-[20px] text-sky-950">{VENUE_NAME}</p>
-                <p className="text-[16px] sm:text-[17px] font-bold text-slate-500 mt-0.5">{VENUE_ADDRESS}</p>
+                <p className="font-black text-[18px] sm:text-[20px] text-sky-950">{venueName}</p>
+                <p className="text-[16px] sm:text-[17px] font-bold text-slate-500 mt-0.5">{venueAddress}</p>
                 <p className="text-[15px] sm:text-[16px] font-semibold text-slate-400 mt-1 leading-relaxed">
                   🏢 Piso 13 • 🌳 Terraza con área cubierta.
                   <br />

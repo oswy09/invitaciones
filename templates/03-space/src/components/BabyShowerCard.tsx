@@ -1346,7 +1346,7 @@ export default function BabyShowerCard({ initialAudioSynth }: BabyShowerCardProp
         <div className="absolute top-1/2 left-3 text-sm opacity-25 select-none pointer-events-none">✨</div>
 
         <div className="bg-gradient-to-r from-cyan-500/20 to-indigo-500/20 border border-cyan-400/30 px-4 py-1.5 rounded-full z-10 text-[9.5px] font-mono tracking-[0.2em] text-cyan-300 uppercase font-black">
-          ESTACIÓN DE PROPULSIÓN MARTÍN 🛡️
+          ESTACIÓN DE PROPULSIÓN {details.babyName.toUpperCase()} 🛡️
         </div>
 
         {/* Floating Jupiter Planet triggered in middle scenes */}
@@ -1372,7 +1372,7 @@ export default function BabyShowerCard({ initialAudioSynth }: BabyShowerCardProp
           <div className="rocket-text-3 absolute opacity-0 translate-y-4 flex flex-col items-center gap-1.5">
             <span className="text-cyan-400 text-[10px] font-mono font-black uppercase tracking-widest bg-cyan-500/10 px-2 py-0.5 rounded-sm border border-cyan-400/25">PASO 03</span>
             <h4 className="text-lg md:text-xl font-black text-cyan-200 px-2">Esquivando Cometas de Felpa ☄️</h4>
-            <p className="text-[10px] text-slate-300 max-w-[260px] font-medium leading-relaxed">Navegando el cinturón celeste de Martín a máxima velocidad hiperespacial.</p>
+            <p className="text-[10px] text-slate-300 max-w-[260px] font-medium leading-relaxed">Navegando el cinturón celeste de {details.babyName} a máxima velocidad hiperespacial.</p>
           </div>
 
           <div className="rocket-text-4 absolute opacity-0 translate-y-4 flex flex-col items-center gap-1.5">
@@ -1385,7 +1385,7 @@ export default function BabyShowerCard({ initialAudioSynth }: BabyShowerCardProp
         {/* Dynamic Flying Rocket interactive target */}
         <div className="relative w-full h-[280px] flex items-end justify-center pointer-events-none mt-4 z-10">
           <div className="absolute -bottom-8 w-64 h-32 rounded-t-full bg-indigo-900/40 border-t-2 border-indigo-400/20 backdrop-blur-md flex flex-col items-center pt-3">
-            <span className="text-[9px] font-black text-indigo-300 font-mono tracking-[0.2em] leading-none uppercase">Martín Launchpad 🌍</span>
+            <span className="text-[9px] font-black text-indigo-300 font-mono tracking-[0.2em] leading-none uppercase">{details.babyName} Launchpad 🌍</span>
             {/* Tiny stars radiating on earth */}
             <span className="text-[10px] text-indigo-300 animate-pulse mt-1">✨✨</span>
           </div>

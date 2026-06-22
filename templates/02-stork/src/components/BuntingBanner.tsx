@@ -1,7 +1,11 @@
 import React from 'react';
 import { motion } from 'motion/react';
 
-export const BuntingBanner: React.FC = () => {
+interface BuntingBannerProps {
+  babyName?: string;
+}
+
+export const BuntingBanner: React.FC<BuntingBannerProps> = ({ babyName = 'THOMAS' }) => {
   // 4 flags with different shades of blue and delay offsets for waving animation
   const flags = [
     { letter: 'B', color: '#1e40af', delay: 0.0, rotation: -2, hoverColor: '#2563eb' }, // deep blue
@@ -163,7 +167,7 @@ export const BuntingBanner: React.FC = () => {
           SHOWER
         </span>
         <span className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-[0.05em] text-sky-600 font-fredoka mt-1 select-none block drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.8)]">
-          THOMAS
+          {babyName.toUpperCase()}
         </span>
       </motion.div>
     </div>

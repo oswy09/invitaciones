@@ -159,7 +159,13 @@ export default function App() {
           <FloatingSnork />
 
           {/* Mapbox Live Interactive Map Modal */}
-          <MapModal isOpen={isMapOpen} onClose={() => setIsMapOpen(false)} />
+          <MapModal
+            isOpen={isMapOpen}
+            onClose={() => setIsMapOpen(false)}
+            babyName={details.babyName}
+            venueName={details.locationName}
+            venueAddress={details.locationAddress}
+          />
 
           {/* Ambient Music Box Synthesizer Button */}
           <MusicSynth />
@@ -188,7 +194,7 @@ export default function App() {
             className="w-full max-w-[720px] relative mb-10 transition-all px-3"
           >
             {/* Interactive Bunting Banner with letters spelling B-A-B-Y */}
-            <BuntingBanner />
+            <BuntingBanner babyName={details.babyName} />
 
             {/* Central Piece: GORGEOUS INTERACTIVE ANIMATED BABY LOGO */}
             <div className="mt-4 mb-0">

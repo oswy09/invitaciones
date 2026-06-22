@@ -309,13 +309,13 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
     const ics = [
       "BEGIN:VCALENDAR",
       "VERSION:2.0",
-      "PRODID:-//Baby Shower Thomas//ES",
+      `PRODID:-//Baby Shower ${details.babyName}//ES`,
       "BEGIN:VEVENT",
       `DTSTART:${dateStr}T${startTime}`,
       `DTEND:${dateStr}T${endTime}`,
-      "SUMMARY:Baby Shower Brunch de Thomas 👶",
+      `SUMMARY:Baby Shower Brunch de ${details.babyName} 👶`,
       `LOCATION:${details.locationName}\\, ${details.locationAddress}`,
-      "DESCRIPTION:¡Acompáñanos a celebrar la futura llegada de Thomas!",
+      `DESCRIPTION:¡Acompáñanos a celebrar la futura llegada de ${details.babyName}!`,
       "END:VEVENT",
       "END:VCALENDAR"
     ].join("\r\n");
@@ -399,10 +399,10 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
       ? `\n*Restricción alimentaria:* ${formDiet}${formDiet === "Alergias" && formDietOther ? ` - ${formDietOther}` : ""}`
       : "";
     const msg = formAttending
-      ? `¡Hola! Confirmo mi asistencia al Baby Shower Brunch de Thomas 👶🍼.\n\n*Nombre:* ${formName.trim()}\n*Respuesta:* Sí, asistiré 🦖\n*Personas que asistirán:* ${formAdults}${dietLine}`
-      : `¡Hola! Con mucha pena confirmo que no podré asistir al Baby Shower Brunch de Thomas 👶.\n\n*Nombre:* ${formName.trim()}\n*Respuesta:* No podré asistir 🤍${dietLine}`;
+      ? `¡Hola! Confirmo mi asistencia al Baby Shower Brunch de ${details.babyName} 👶🍼.\n\n*Nombre:* ${formName.trim()}\n*Respuesta:* Sí, asistiré 🦖\n*Personas que asistirán:* ${formAdults}${dietLine}`
+      : `¡Hola! Con mucha pena confirmo que no podré asistir al Baby Shower Brunch de ${details.babyName} 👶.\n\n*Nombre:* ${formName.trim()}\n*Respuesta:* No podré asistir 🤍${dietLine}`;
 
-    const whatsappPhone = "573154384042";
+    const whatsappPhone = details.whatsappNumber || "573154384042";
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappPhone}&text=${encodeURIComponent(msg)}`;
     window.open(whatsappUrl, "_blank");
 
@@ -445,14 +445,14 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
 
   // Google Calendar URL Generator
   const getGoogleCalendarUrl = () => {
-    const title = encodeURIComponent(`Baby Shower Brunch de Thomas 👶☁️`);
+    const title = encodeURIComponent(`Baby Shower Brunch de ${details.babyName} 👶☁️`);
     const dateStr = details.date.replace(/-/g, "");
     const startTime = details.time.replace(":", "") + "00";
     // assuming 4 hours duration
     const endTime = (parseInt(startTime.substring(0, 2)) + 4).toString() + startTime.substring(2);
     const dates = `${dateStr}T${startTime}/${dateStr}T${endTime}`;
     const location = encodeURIComponent(`${details.locationName}, ${details.locationAddress}`);
-    const detailsText = encodeURIComponent(`¡Acompáñanos a celebrar la futura llegada de Thomas! Favor de confirmar antes de: ${details.rsvpDeadline}. Código de Vestimenta: ${details.dressCode}`);
+    const detailsText = encodeURIComponent(`¡Acompáñanos a celebrar la futura llegada de ${details.babyName}! Favor de confirmar antes de: ${details.rsvpDeadline}. Código de Vestimenta: ${details.dressCode}`);
     
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${detailsText}&location=${location}&sf=true&output=xml`;
   };
@@ -760,7 +760,7 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
             <div className="flex items-center justify-center space-x-4 w-full max-w-xs md:max-w-sm">
               <span className="h-[1px] bg-[#C3A66A]/40 flex-1"></span>
               <h1 className="font-script text-6xl md:text-7xl text-[#9B7A46] font-medium leading-none -mt-2 mb-2 drop-shadow-[0_2px_4px_rgba(74,93,107,0.18)]">
-                Thomas
+                {details.babyName}
               </h1>
               <span className="h-[1px] bg-[#C3A66A]/40 flex-1"></span>
             </div>
@@ -1178,7 +1178,7 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
                     </div>
                     <h4 className="font-serif-lux text-xl text-stone-800 font-semibold">¡Confirmación Enviada Exitosamente!</h4>
                     <p className="text-stone-500 text-base md:text-lg mt-2 max-w-sm leading-relaxed font-serif-lux">
-                      Muchas gracias, <strong className="text-stone-700">{myRsvp?.name}</strong>. Hemos registrado tu respuesta a la expedición y Thomas estará feliz de contar con tu presencia.
+                      Muchas gracias, <strong className="text-stone-700">{myRsvp?.name}</strong>. Hemos registrado tu respuesta a la expedición y {details.babyName} estará feliz de contar con tu presencia.
                     </p>
                     {myRsvp?.attending && (
                       <div className="bg-sky-50/50 p-3.5 rounded-xl border border-sky-100/50 text-sm md:text-base font-serif-lux text-sky-800 font-semibold mt-4">
@@ -1206,7 +1206,7 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
           
           <div className="text-center relative space-y-1">
             <h3 className="font-serif-lux text-3xl md:text-4xl text-stone-900 font-bold tracking-wide flex items-center justify-center gap-1.5">
-              🧸 El muro de deseos de Thomas
+              🧸 El muro de deseos de {details.babyName}
             </h3>
             <p className="text-[#2F4554] text-xl md:text-2xl max-w-sm mx-auto font-serif-lux leading-relaxed font-semibold">
               Escribe unas tiernas palabras en el muro. ¡Elige tu estampa de animalito para sellar tu mensaje!
