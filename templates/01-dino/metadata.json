@@ -1,0 +1,6 @@
+{
+  "name": "Invitación Thomas",
+  "description": "Una elegante invitación interactiva 3D de Baby Shower para niño, con temática de El Principito y zorro aviador.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

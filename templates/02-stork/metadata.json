@@ -1,0 +1,8 @@
+{
+  "name": "Invitación Baby Shower Thomas",
+  "description": "Una hermosa invitación interactiva para el Baby Shower Brunch de Thomas con animación de cigüeña, música y detalles del evento.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
