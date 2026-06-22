@@ -1,0 +1,12 @@
+{
+  "name": "invitaciones-dev",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Script raiz solo para levantar todos los dev servers juntos en desarrollo local. No es un workspace ni se publica.",
+  "scripts": {
+    "dev:all": "concurrently -n dino,stork,space,form -c blue,cyan,magenta,green \"npm run dev --prefix templates/01-dino -- --port 3101\" \"npm run dev --prefix templates/02-stork -- --port 3102\" \"npm run dev --prefix templates/03-space -- --port 3103\" \"npm run dev --prefix client-form\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
