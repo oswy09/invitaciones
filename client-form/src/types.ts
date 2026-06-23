@@ -44,6 +44,8 @@ export interface TemplateInfo {
   devPort: number;
 }
 
+export const WHATSAPP_CONTACTO = "573057502790";
+
 export const CATALOGO: TemplateInfo[] = [
   { id: "01-dino", nombre: "Dino", descripcion: "Baby shower de dinosaurios, con sobre interactivo", emoji: "🦖", devPort: 3101 },
   { id: "02-stork", nombre: "Cigüeña", descripcion: "Baby shower de cigüeña y nubes, intro animada", emoji: "🦢", devPort: 3102 },

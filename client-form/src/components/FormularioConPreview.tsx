@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { InvitationData, TemplateInfo, datosEjemplo } from "../types";
+import { InvitationData, TemplateInfo, datosEjemplo, WHATSAPP_CONTACTO } from "../types";
 import { supabase } from "../lib/supabase";
 import BuscadorCancion, { CancionSeleccionada } from "./BuscadorCancion";
 
@@ -98,21 +98,43 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
   }
 
   if (resultUrl) {
+    const mensajeWhatsapp =
+      `¡Hola! Ya llené el formulario de mi invitación "${draft.tituloEvento}" (plantilla ${template.nombre}).\n` +
+      `Quiero confirmar el pago / tengo una duda al respecto.\n` +
+      `Link de mi invitación: ${resultUrl}`;
+    const whatsappUrl = `https://wa.me/${WHATSAPP_CONTACTO}?text=${encodeURIComponent(mensajeWhatsapp)}`;
+
     return (
       <div className="max-w-xl mx-auto py-16 px-4 text-center">
         <h2 className="text-2xl font-bold text-slate-800 mb-3">¡Listo! 🎉</h2>
-        <p className="text-slate-500 mb-6">
+        <p className="text-slate-500 mb-8">
           Tu invitación fue creada como vista previa con marca de agua. Cuando se confirme el pago, el
           operador la aprobará y la marca de agua desaparecerá en este mismo link.
         </p>
-        <a
-          href={resultUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-xl"
-        >
-          Ver mi invitación
-        </a>
+        <div className="flex flex-col gap-3 max-w-xs mx-auto">
+          <a
+            href={resultUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-xl"
+          >
+            Ver mi invitación
+          </a>
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3 rounded-xl"
+          >
+            💬 Pago y dudas por WhatsApp
+          </a>
+          <button
+            onClick={onBack}
+            className="text-slate-500 hover:text-slate-700 font-semibold px-6 py-3 cursor-pointer"
+          >
+            ← Volver al inicio
+          </button>
+        </div>
       </div>
     );
   }
@@ -252,6 +274,16 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
               ))}
             </div>
           </div>
+
+          <Campo label="Observaciones (opcional)">
+            <textarea
+              className="input"
+              rows={3}
+              placeholder="Cuéntanos cualquier detalle adicional: alguna idea especial, restricciones, fecha límite, etc."
+              value={draft.mensajePersonalizado ?? ""}
+              onChange={(e) => update("mensajePersonalizado", e.target.value)}
+            />
+          </Campo>
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 

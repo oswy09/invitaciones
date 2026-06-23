@@ -1,6 +1,5 @@
-import { CATALOGO, TemplateInfo } from "../types";
+import { CATALOGO, TemplateInfo, WHATSAPP_CONTACTO } from "../types";
 
-const WHATSAPP_CONTACTO = "573057502790";
 const WHATSAPP_MENSAJE = "¡Hola! Tengo una duda sobre las invitaciones digitales antes de hacer mi pedido.";
 
 interface CatalogoProps {
