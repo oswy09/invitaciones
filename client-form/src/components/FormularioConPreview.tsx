@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { InvitationData, TemplateInfo, datosEjemplo } from "../types";
 import { supabase } from "../lib/supabase";
+import BuscadorCancion, { CancionSeleccionada } from "./BuscadorCancion";
 
 interface FormularioConPreviewProps {
   template: TemplateInfo;
@@ -57,6 +58,12 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
 
   function updateFeature(key: keyof InvitationData["features"], value: boolean) {
     setDraft((prev) => ({ ...prev, features: { ...prev.features, [key]: value } }));
+  }
+
+  const cancionSeleccionada = (draft.extra?.cancionSeleccionada as CancionSeleccionada | undefined) ?? null;
+
+  function updateCancion(cancion: CancionSeleccionada | null) {
+    setDraft((prev) => ({ ...prev, extra: { ...prev.extra, cancionSeleccionada: cancion } }));
   }
 
   async function handleSubmit() {
@@ -220,6 +227,14 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
               value={draft.whatsappNumero ?? ""}
               onChange={(e) => update("whatsappNumero", e.target.value)}
             />
+          </Campo>
+
+          <Campo label="Canción de fondo (opcional)">
+            <BuscadorCancion value={cancionSeleccionada} onChange={updateCancion} />
+            <p className="text-xs text-slate-400 mt-1">
+              Esta canción no sonará en esta vista previa — solo nos sirve como referencia. La
+              vincularemos manualmente a tu invitación final tras confirmar tu pedido.
+            </p>
           </Campo>
 
           <div>
