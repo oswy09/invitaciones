@@ -3,25 +3,36 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import IntroRocket from './components/IntroRocket';
 import BabyShowerCard from './components/BabyShowerCard';
 import { LullabySynth } from './utils/audioSynth';
 import { loadEvento } from './lib/loadEvento';
-
-const isPreviewMode = new URLSearchParams(window.location.search).get('preview') === '1';
+import { usePreviewBridge } from './hooks/usePreviewBridge';
+import { InvitationData, InvitationDetails, fromInvitationData } from './types';
 
 export default function App() {
-  const [showCard, setShowCard] = useState(isPreviewMode); // en preview se omite la intro del cohete
+  const [showCard, setShowCard] = useState(false);
   const [carriedSynth, setCarriedSynth] = useState<LullabySynth | null>(null);
   const [babyName, setBabyName] = useState<string | undefined>(undefined);
+  const [previewDetails, setPreviewDetails] = useState<InvitationDetails | null>(null);
+  const [previewPagado, setPreviewPagado] = useState(false);
+
+  const handlePreviewUpdate = useCallback((data: InvitationData, pagado: boolean) => {
+    const details = fromInvitationData(data);
+    setPreviewDetails(details);
+    setPreviewPagado(pagado);
+    setBabyName(details.babyName);
+  }, []);
+
+  const isPreview = usePreviewBridge<InvitationData>(handlePreviewUpdate);
 
   useEffect(() => {
-    if (isPreviewMode) return; // en preview, los datos llegan por postMessage, no por Supabase
+    if (isPreview) return; // en preview, los datos llegan por postMessage, no por Supabase
     loadEvento().then((result) => {
       if (result.details) setBabyName(result.details.babyName);
     });
-  }, []);
+  }, [isPreview]);
 
   const handleIntroComplete = (audioSynthInstance: LullabySynth | null) => {
     setCarriedSynth(audioSynthInstance);
@@ -33,9 +44,12 @@ export default function App() {
       {!showCard ? (
         <IntroRocket onIntroComplete={handleIntroComplete} babyName={babyName} />
       ) : (
-        <BabyShowerCard initialAudioSynth={carriedSynth} />
+        <BabyShowerCard
+          initialAudioSynth={carriedSynth}
+          previewDetails={previewDetails}
+          previewPagado={isPreview ? previewPagado : undefined}
+        />
       )}
     </div>
   );
 }
-

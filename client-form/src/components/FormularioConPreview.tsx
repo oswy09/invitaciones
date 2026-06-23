@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { InvitationData, TemplateInfo, detallesVacios } from "../types";
+import { InvitationData, TemplateInfo, datosEjemplo } from "../types";
 import { supabase } from "../lib/supabase";
 
 interface FormularioConPreviewProps {
@@ -17,7 +17,8 @@ function slugify(text: string): string {
 }
 
 export default function FormularioConPreview({ template, onBack }: FormularioConPreviewProps) {
-  const [draft, setDraft] = useState<InvitationData>(detallesVacios(template.id));
+  const [draft, setDraft] = useState<InvitationData>(() => datosEjemplo(template.id));
+  const [panelAbierto, setPanelAbierto] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +33,7 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
     );
   }
 
-  // Reenvía el borrador cada vez que cambia
+  // Reenvía el borrador cada vez que cambia, para que se vea en tiempo real
   useEffect(() => {
     sendDraftToPreview();
   }, [draft]);
@@ -110,15 +111,34 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
   }
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4">
-      <button onClick={onBack} className="text-sm text-slate-500 hover:text-slate-700 mb-4 cursor-pointer">
-        ← Cambiar plantilla
-      </button>
+    <div className="w-full h-screen relative overflow-hidden bg-slate-900">
+      {/* Barra superior flotante */}
+      <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3 bg-white/90 backdrop-blur-sm border-b border-slate-200">
+        <button onClick={onBack} className="text-sm text-slate-500 hover:text-slate-700 cursor-pointer">
+          ← Cambiar plantilla
+        </button>
+        <button
+          onClick={() => setPanelAbierto((v) => !v)}
+          className={`text-sm font-bold px-4 py-2 rounded-full cursor-pointer transition-colors ${
+            panelAbierto ? "bg-slate-800 text-white" : "bg-sky-500 text-white hover:bg-sky-600"
+          }`}
+        >
+          {panelAbierto ? "✕ Cerrar" : "✏️ Personalizar"}
+        </button>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Formulario */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-bold text-slate-800">Personaliza tu invitación</h2>
+      {/* La invitación real, a pantalla completa, con su flujo normal (intro incluida) */}
+      <iframe ref={iframeRef} src={previewUrl} className="w-full h-full pt-[52px]" title="Invitación" />
+
+      {/* Panel de personalización, se desliza encima sin recargar el preview */}
+      <div
+        className={`absolute top-[52px] right-0 bottom-0 w-full sm:w-[420px] bg-white border-l border-slate-200 shadow-2xl z-20 overflow-y-auto transition-transform duration-300 ${
+          panelAbierto ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="p-5 space-y-4">
+          <h2 className="text-lg font-bold text-slate-800">Personaliza tu invitación</h2>
+          <p className="text-xs text-slate-400">Los cambios se reflejan al instante en la invitación de fondo.</p>
 
           <Campo label="Título del evento">
             <input
@@ -227,11 +247,6 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
           >
             {submitting ? "Enviando..." : "Enviar y generar mi invitación"}
           </button>
-        </div>
-
-        {/* Preview en vivo */}
-        <div className="rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 h-[640px] sticky top-8">
-          <iframe ref={iframeRef} src={previewUrl} className="w-full h-full" title="Preview" />
         </div>
       </div>
 

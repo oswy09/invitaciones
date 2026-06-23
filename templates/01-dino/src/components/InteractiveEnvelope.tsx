@@ -22,7 +22,7 @@ export default function InteractiveEnvelope() {
     setPagado(previewPagado);
     setAprobado(true);
     setLoadingEvento(false);
-    setEnvelopeState('opened'); // en preview se omite la animación del sobre
+    // El sobre se abre normal con la interacción del usuario, igual que en producción.
   }, []);
 
   const isPreview = usePreviewBridge<InvitationData>(handlePreviewUpdate);

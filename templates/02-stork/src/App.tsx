@@ -35,7 +35,7 @@ export default function App() {
     setDetails(fromInvitationData(data));
     setPagado(previewPagado);
     setAprobado(true);
-    setScreen('invitation'); // en preview se omite la animación de intro
+    // La intro animada corre normal, igual que en producción.
   }, []);
 
   const isPreview = usePreviewBridge<InvitationData>(handlePreviewUpdate);

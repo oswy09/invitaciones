@@ -50,19 +50,39 @@ export const CATALOGO: TemplateInfo[] = [
   { id: "03-space", nombre: "Espacio", descripcion: "Baby shower espacial, cohete y estrellas", emoji: "🚀", devPort: 3103 },
 ];
 
-export function detallesVacios(templateId: string): InvitationData {
+const DIAS_SEMANA = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+const MESES = [
+  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+];
+
+function fechaTextoDe(fecha: Date): string {
+  return `${DIAS_SEMANA[fecha.getDay()]}, ${fecha.getDate()} de ${MESES[fecha.getMonth()]} de ${fecha.getFullYear()}`;
+}
+
+/** Datos de ejemplo realistas, para que la plantilla se vea como una invitación real desde el primer momento. */
+export function datosEjemplo(templateId: string): InvitationData {
+  const fecha = new Date();
+  fecha.setDate(fecha.getDate() + 30);
+  const fechaISO = fecha.toISOString().slice(0, 10);
+
   return {
-    eventoId: "",
+    eventoId: "preview",
     templateId,
     pagado: false,
-    tituloEvento: "",
-    nombresPrincipales: [""],
-    anfitriones: "",
-    fecha: "",
-    hora: "10:30",
-    lugar: { nombre: "", direccion: "", mapUrl: "" },
-    vestimenta: "",
-    whatsappNumero: "",
+    tituloEvento: "Baby Shower de Sofía",
+    nombresPrincipales: ["Sofía"],
+    anfitriones: "Familia Pérez",
+    fecha: fechaISO,
+    hora: "15:00",
+    fechaTexto: fechaTextoDe(fecha),
+    lugar: {
+      nombre: "Salón Jardín Encantado",
+      direccion: "Calle 123 #45-67, Bogotá",
+      mapUrl: "",
+    },
+    vestimenta: "Casual elegante, tonos pastel",
+    whatsappNumero: "573000000000",
     features: { muroDeseos: true, rsvp: true, countdown: true, mapa: true, musica: false },
   };
 }
