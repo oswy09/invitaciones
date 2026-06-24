@@ -302,7 +302,12 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
 
   const eventoId = getEventoIdFromUrl();
   const [pagado, setPagado] = useState(true);
+  const [demoTooltip, setDemoTooltip] = useState(false);
   const isPreview = previewDetails !== undefined;
+
+  const getEditableProps = (field: string, baseClass: string = "") => {
+    return { className: baseClass };
+  };
 
   // Carga el evento real desde Supabase (eventos.datos) si existe; si no, se
   // conservan los datos por defecto de arriba para que la plantilla siga
@@ -493,6 +498,11 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
   // Submit RSVP Form
   const handleRsvpSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!pagado) {
+      setDemoTooltip(true);
+      setTimeout(() => setDemoTooltip(false), 4000);
+      return;
+    }
     if (!formName.trim()) return;
 
     setIsSubmitting(true);
@@ -555,6 +565,12 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
       style={{ backgroundImage: `url('https://res.cloudinary.com/ddqbnr9vo/image/upload/v1780105211/gondo-space_ukhmo5.png')` }}
       className="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed relative overflow-x-hidden py-10 px-4 flex flex-col items-center justify-start select-none font-sans animate-fade-in text-white"
     >
+      {demoTooltip && (
+        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[1000] bg-rose-600 text-white font-sans font-bold px-4 py-2.5 rounded-2xl shadow-xl text-xs md:text-sm text-center flex items-center gap-2 border border-rose-500 whitespace-nowrap">
+          <span>⚠️</span>
+          <span>Invitación en modo demo, falta realizar el pago</span>
+        </div>
+      )}
       {/* Marca de agua de preview — desaparece cuando el operador marca el evento como pagado */}
       {!pagado && (
         <div className="fixed inset-0 z-[999] pointer-events-none flex items-center justify-center overflow-hidden">
@@ -895,12 +911,12 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
                     {addressCopied ? (
                       <>
                         <Check className="w-3.5 h-3.5 text-emerald-600 font-black" />
-                        <span className="text-emerald-700">¡Copiado con Éxito! 🪐</span>
+                        <span className="text-emerald-700">{details.extra?.txtCopiadoExito || "¡Copiado con Éxito! 🪐"}</span>
                       </>
                     ) : (
                       <>
                         <Copy className="w-3.5 h-3.5 text-indigo-650" />
-                        <span>Copiar Dirección</span>
+                        <span>{details.extra?.txtCopiarDireccion || "Copiar Dirección"}</span>
                       </>
                     )}
                   </button>
@@ -910,29 +926,29 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
               {/* Interactive Waze vs Google Maps navigation */}
               <div className="mb-6 relative z-10">
                 <h5 className="text-[10px] uppercase font-black tracking-widest text-indigo-900/60 mb-3 text-center">
-                  Iniciar Navegación Estelar 🧭
+                  {details.extra?.txtNavegacionEstelar || "Iniciar Navegación Estelar 🧭"}
                 </h5>
                 <div className="grid grid-cols-2 gap-3">
                   {/* Google Maps Launch */}
                   <a
-                    href={details.locationMapUrl}
+                    href={details.locationMapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(details.locationName + ", " + details.locationAddress)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="py-3.5 px-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:translate-y-[2px] active:shadow-[0_1px_0px_#1e1b4b] transition-all text-white font-black text-[11px] uppercase tracking-wider flex flex-col items-center justify-center gap-1.5 text-center cursor-pointer border-2 border-indigo-800 shadow-[0_3px_0px_#1e1b4b,0_4px_8px_rgba(0,0,0,0.12)] translate-y-[-1px]"
                   >
                     <span className="text-lg">🗺️</span>
-                    <span>Google Maps</span>
+                    <span>{details.extra?.txtGoogleMaps || "Google Maps"}</span>
                   </a>
 
                   {/* Waze Launch */}
                   <a
-                    href={`https://waze.com/ul?q=${encodeURI("Carrera 14A #109-55 Edificio Jade Bogota")}`}
+                    href={`https://waze.com/ul?q=${encodeURIComponent(details.locationName + ", " + details.locationAddress)}&navigate=yes`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="py-3.5 px-3 rounded-2xl bg-[#00d2f3] hover:bg-[#00b9d6] active:translate-y-[2px] active:shadow-[0_1px_0px_#008099] transition-all text-white font-black text-[11px] uppercase tracking-wider flex flex-col items-center justify-center gap-1.5 text-center cursor-pointer border-2 border-[#009bbf] shadow-[0_3px_0px_#008099,0_4px_8px_rgba(0,0,0,0.12)] translate-y-[-1px]"
                   >
                     <span className="text-g">🚗</span>
-                    <span>Abrir Waze</span>
+                    <span>{details.extra?.txtWaze || "Abrir Waze"}</span>
                   </a>
                 </div>
               </div>
@@ -943,7 +959,7 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
                 onClick={() => setShowLocationModal(false)}
                 className="w-full py-3 bg-[#ec4899] hover:bg-[#db2777] active:translate-y-[2px] active:shadow-[0_1px_0px_#9d174d] text-white shadow-[0_3px_0px_#9d174d,_0_4px_10px_rgba(0,0,0,0.15)] rounded-full uppercase tracking-widest font-black text-xs cursor-pointer border-2 border-[#5c0632] transition-all"
               >
-                Volver al Despegue 🚀
+                {details.extra?.txtVolverDespegue || "Volver al Despegue 🚀"}
               </button>
             </motion.div>
           </motion.div>
@@ -1042,9 +1058,9 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 0.95, y: 0 }}
-            className="text-sky-800 font-sans tracking-[0.25em] uppercase text-[10px] font-black mb-3 mt-4 z-20 text-center drop-shadow-sm"
+            {...getEditableProps("tituloEvento", "text-sky-800 font-sans tracking-[0.25em] uppercase text-[10px] font-black mb-3 mt-4 z-20 text-center drop-shadow-sm")}
           >
-            Un dulce milagro está en camino
+            {details.tituloEvento || "Un dulce milagro está en camino"}
           </motion.div>
 
           {/* Main calligraphic script baby banner with custom spacing to prevent any text clipping */}
@@ -1052,7 +1068,7 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="font-cursive text-7xl md:text-8xl text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-pink-500 to-indigo-700 drop-shadow-[0_2px_4px_rgba(30,58,138,0.22)] font-black py-4 md:py-6 px-4 my-2 md:my-4 select-none z-20 text-center leading-[1.2]"
+            {...getEditableProps("nombresPrincipales", "font-cursive text-7xl md:text-8xl text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-pink-500 to-indigo-700 drop-shadow-[0_2px_4px_rgba(30,58,138,0.22)] font-black py-4 md:py-6 px-4 my-2 md:my-4 select-none z-20 text-center leading-[1.2]")}
           >
             {details.babyName}
           </motion.h1>
@@ -1061,7 +1077,7 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
-            className="font-sans text-pink-650 font-black text-lg md:text-xl tracking-widest mb-6 z-20 text-center uppercase drop-shadow-xs"
+            {...getEditableProps("vestimenta", "font-sans text-pink-650 font-black text-lg md:text-xl tracking-widest mb-6 z-20 text-center uppercase drop-shadow-xs")}
           >
             {details.dressCode}
           </motion.div>
@@ -1076,8 +1092,10 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
           </div>
 
           {/* Short introduction paragraph (parents removed) */}
-          <p className="text-slate-700 font-sans text-sm tracking-wide text-center leading-relaxed max-w-[360px] mb-8 select-none z-20 font-bold px-2 drop-shadow-xs">
-            Acompáñanos a compartir una mañana especial al aire libre, llena de amor, buenos momentos y muchas bendiciones.
+          <p 
+            {...getEditableProps("mensajePersonalizado", "text-slate-700 font-sans text-sm tracking-wide text-center leading-relaxed max-w-[360px] mb-8 select-none z-20 font-bold px-2 drop-shadow-xs")}
+          >
+            {details.welcomeMessage}
           </p>
 
           {/* Divider floral motif spacing */}
@@ -1093,11 +1111,15 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
                 🪐
               </div>
               <div className="flex-1 text-left">
-                <span className="text-[10px] uppercase font-black tracking-widest text-indigo-700 block">Cuándo</span>
-                <span className="text-sm font-black text-slate-900 tracking-tight leading-tight block mt-0.5">
+                <span className="text-[10px] uppercase font-black tracking-widest text-indigo-700 block">{details.extra?.txtFechaLabel || "Cuándo"}</span>
+                <span 
+                  {...getEditableProps("fecha", "text-sm font-black text-slate-900 tracking-tight leading-tight block mt-0.5")}
+                >
                   {details.date}
                 </span>
-                <span className="text-xs text-pink-650 font-black mt-0.5 block">
+                <span 
+                  {...getEditableProps("hora", "text-xs text-pink-650 font-black mt-0.5 block")}
+                >
                   {details.time}
                 </span>
               </div>
@@ -1109,11 +1131,15 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
                 🚀
               </div>
               <div className="flex-1 text-left min-w-0">
-                <span className="text-[10px] uppercase font-black tracking-widest text-indigo-700 block">Dónde</span>
-                <span className="text-sm font-black text-slate-900 leading-tight block mt-0.5 whitespace-normal break-words">
+                <span className="text-[10px] uppercase font-black tracking-widest text-indigo-700 block">{details.extra?.txtLugarLabel || "Dónde"}</span>
+                <span 
+                  {...getEditableProps("lugar.nombre", "text-sm font-black text-slate-900 leading-tight block mt-0.5 whitespace-normal break-words")}
+                >
                   {details.locationName}
                 </span>
-                <span className="text-xs text-slate-655 font-bold leading-relaxed block mt-0.5 whitespace-normal break-words">
+                <span 
+                  {...getEditableProps("lugar.direccion", "text-xs text-slate-655 font-bold leading-relaxed block mt-0.5 whitespace-normal break-words")}
+                >
                   {details.locationAddress}
                 </span>
               </div>
@@ -1130,10 +1156,10 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
             {/* Panel Title */}
             <div className="text-center mb-4 relative z-10 border-b border-indigo-100/60 pb-3">
               <span className="text-[10px] font-black uppercase text-pink-600 tracking-widest bg-pink-100/60 px-3 py-1 rounded-full border border-pink-200">
-                💫 Preparando el Gran Encuentro
+                {details.extra?.txtPrepEncuentro || "💫 Preparando el Gran Encuentro"}
               </span>
               <h4 className="font-sans font-black text-indigo-950 text-base mt-2 tracking-tight">
-                El Dulce Viaje de {details.babyName}
+                {details.extra?.txtDulceViaje || `El Dulce Viaje de ${details.babyName}`}
               </h4>
             </div>
 
@@ -1144,7 +1170,7 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
               </div>
               
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mt-1.5 mb-1">
-                Besos y buenos deseos enviados al espacio
+                {details.extra?.txtBesosEspacio || "Besos y buenos deseos enviados al espacio"}
               </span>
               
               <div className="flex items-center justify-center gap-1.5">
@@ -1198,10 +1224,25 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
             {/* Bottom Cabin Sweet Status Message */}
             <div className="bg-[#FFFDF4] border border-amber-100 rounded-xl p-4 text-left relative z-10">
               <span className="text-[8.5px] font-black uppercase text-amber-700 tracking-widest block mb-1">
-                🧁 CUENTA REGRESIVA DE SUEÑOS:
+                {details.extra?.txtCountdownLabel || "🧁 CUENTA REGRESIVA DE SUEÑOS:"}
               </span>
               <p className="text-[11px] font-sans font-bold leading-normal text-slate-700">
-                ¡Faltan exactamente <span className="text-pink-600 font-mono font-black text-xs">{todayInfo.daysLeft} siestas y noches de dulces sueños</span> para encontrarnos en nuestro Brunch de Bienvenida! El viaje está lleno de amor. 🧸🎀
+                {details.extra?.txtCountdownTemplate ? (
+                  details.extra.txtCountdownTemplate.split("{daysLeft}").map((part: string, index: number, arr: any[]) => (
+                    <React.Fragment key={index}>
+                      {part}
+                      {index < arr.length - 1 && (
+                        <span className="text-pink-600 font-mono font-black text-xs">
+                          {todayInfo.daysLeft} siestas y noches de dulces sueños
+                        </span>
+                      )}
+                    </React.Fragment>
+                  ))
+                ) : (
+                  <>
+                    ¡Faltan exactamente <span className="text-pink-600 font-mono font-black text-xs">{todayInfo.daysLeft} siestas y noches de dulces sueños</span> para encontrarnos en nuestro Brunch de Bienvenida! El viaje está lleno de amor. 🧸🎀
+                  </>
+                )}
               </p>
             </div>
           </div>
@@ -1216,15 +1257,15 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
             <div className="w-7 h-7 rounded-full bg-pink-600/30 border border-white/20 flex items-center justify-center shrink-0">
               <MapPin className="w-3.5 h-3.5 text-white animate-pulse" />
             </div>
-            <strong className="tracking-widest font-black text-white">VER UBICACIÓN</strong>
+            <strong className="tracking-widest font-black text-white">{details.extra?.txtComoLlegar || "VER UBICACIÓN"}</strong>
           </button>
 
           {/* GIFT SUGGESTION (RECONFIGURED AS DYNAMIC LISTA DE REGALOS WITH 4 CHIPS) */}
           <div className="w-full py-4 flex flex-col items-center mb-6 z-20">
             <Gift className="w-5.5 h-5.5 text-pink-650 mb-1.5 animate-bounce" style={{ animationDuration: '3s' }} />
-            <h4 className="font-sans font-black text-indigo-950 text-sm uppercase tracking-wider mb-1 text-center">Lista de Regalos</h4>
+            <h4 className="font-sans font-black text-indigo-950 text-sm uppercase tracking-wider mb-1 text-center">{details.extra?.txtSugerenciaRegalo || "Lista de Regalos"}</h4>
             <p className="text-[11px] text-slate-700 text-center mb-4 max-w-[340px] font-bold leading-normal">
-              Su presencia en este brunch es nuestro mayor regalo. Si desean tener un lindo detalle con {details.babyName}, les compartimos nuestra lista sugerida:
+              {details.extra?.txtNotaRegalo || `Su presencia en este brunch es nuestro mayor regalo. Si desean tener un lindo detalle con ${details.babyName}, les compartimos nuestra lista sugerida:`}
             </p>
             
             <div className="w-full flex flex-col gap-2.5 mt-1">
@@ -1452,9 +1493,9 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
 
           {/* CONFIRMATION RSVP COMPLEMENT */}
           <div id="rsvp-section" className="w-full z-20">
-            <h4 className="font-sans text-xl md:text-2xl font-black text-center text-indigo-950 uppercase tracking-widest mb-2">Confirmar Asistencia</h4>
+            <h4 className="font-sans text-xl md:text-2xl font-black text-center text-indigo-950 uppercase tracking-widest mb-2">{details.extra?.txtRsvpTitulo || "Confirmar Asistencia"}</h4>
             <p className="text-xs md:text-sm text-slate-750 text-center mb-8 px-4 font-bold leading-relaxed">
-              Por favor confirmen su asistencia antes del 1 de Julio para esperarlos con mucho amor.
+              {details.extra?.txtRsvpSub || "Por favor confirmen su asistencia antes del 1 de Julio para esperarlos con mucho amor."}
             </p>
 
             <AnimatePresence mode="wait">
@@ -1475,7 +1516,7 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
                           : 'bg-white/60 text-slate-800 border-2 border-slate-300 hover:bg-white/80 font-bold shadow-xs'
                       }`}
                     >
-                      Sí Asistiré
+                      {details.extra?.txtRsvpSi || "Sí Asistiré"}
                     </button>
                     <button
                       type="button"
@@ -1486,7 +1527,7 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
                           : 'bg-white/60 text-slate-800 border-2 border-slate-300 hover:bg-white/80 font-bold shadow-xs'
                       }`}
                     >
-                      No Podré
+                      {details.extra?.txtRsvpNo || "No Podré"}
                     </button>
                   </div>
 
@@ -1495,7 +1536,7 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
                     <input
                       type="text"
                       required
-                      placeholder="Escribe tu nombre completo"
+                      placeholder={details.extra?.txtRsvpNombrePlaceholder || "Escribe tu nombre completo"}
                       value={formName}
                       onChange={e => setFormName(e.target.value)}
                       className="w-full p-4 text-sm md:text-base bg-white border-2 border-slate-250 rounded-xl focus:outline-none focus:border-cyan-500 text-slate-800 font-semibold placeholder-slate-450 shadow-xs"
@@ -1505,7 +1546,7 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
                   {/* Companions (only if confirmed) */}
                   {formStatus === 'confirmed' && (
                     <div className="flex items-center justify-between p-4 bg-white/70 border-2 border-slate-250 rounded-xl shadow-xs">
-                      <span className="text-sm font-bold text-slate-800">Invitados adicionales (Pax)</span>
+                      <span className="text-sm font-bold text-slate-800">{details.extra?.txtRsvpAcompanantes || "Invitados adicionales (Pax)"}</span>
                       
                       <div className="flex items-center gap-3">
                         <button
@@ -1530,7 +1571,7 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
                   {/* Message field */}
                   <div>
                     <textarea
-                      placeholder="Dedícale un lindo mensaje al bebé... (Opcional)"
+                      placeholder={details.extra?.txtRsvpMensajePlaceholder || "Dedícale un lindo mensaje al bebé... (Opcional)"}
                       value={formMessage}
                       onChange={e => setFormMessage(e.target.value)}
                       className="w-full p-4 text-sm md:text-base bg-white border-2 border-slate-250 rounded-xl h-24 focus:outline-none focus:border-cyan-500 text-slate-800 font-bold placeholder-slate-455 shadow-xs"
@@ -1547,7 +1588,7 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
                       <Send className="w-4 h-4 text-white" />
                     </div>
                     <span className="font-black text-white">
-                      {isSubmitting ? 'Procesando...' : 'Confirmar por WhatsApp'}
+                      {isSubmitting ? 'Procesando...' : (details.extra?.txtRsvpBoton || 'Confirmar por WhatsApp')}
                     </span>
                   </button>
                 </motion.form>
@@ -1561,16 +1602,16 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
                   <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mb-2 border border-emerald-200">
                     <Check className="w-5 h-5 font-bold" />
                   </div>
-                  <h5 className="font-serif font-bold text-emerald-900 text-sm mb-1">¡Confirmación Registrada!</h5>
+                  <h5 className="font-serif font-bold text-emerald-900 text-sm mb-1">{details.extra?.txtRsvpExitoTitulo || "¡Confirmación Registrada!"}</h5>
                   <p className="text-[10px] text-emerald-850 mb-4 max-w-[280px] font-bold leading-relaxed">
-                    Tu confirmación ha sido guardada localmente y se enviará la plantilla formateada a WhatsApp...
+                    {details.extra?.txtRsvpExitoSub || "Tu confirmación ha sido guardada localmente y se enviará la plantilla formateada a WhatsApp..."}
                   </p>
                   <button
                     type="button"
                     onClick={resetRsvpForm}
                     className="px-4 py-1.5 bg-white border border-emerald-300 text-emerald-700 font-bold text-[10px] rounded-lg transition-colors cursor-pointer hover:bg-emerald-50"
                   >
-                    Responder otra vez
+                    {details.extra?.txtRsvpResponderOtraVez || "Responder otra vez"}
                   </button>
                 </motion.div>
               )}
@@ -1592,7 +1633,7 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
       </div>
 
       {/* FOOTER SYSTEM LABEL */}
-      <span className="text-sm md:text-base font-mono text-sky-400 z-10 font-bold mb-6 text-center"> {details.babyName} Baby Shower • Hecho con Amor 🪐 </span>
+      <span className="text-sm md:text-base font-mono text-sky-400 z-10 font-bold mb-6 text-center"> {details.extra?.txtFooter || `${details.babyName} Baby Shower • Hecho con Amor 🪐`} </span>
     </div>
   );
 }

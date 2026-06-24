@@ -3,9 +3,17 @@ import { motion } from 'motion/react';
 
 interface BuntingBannerProps {
   babyName?: string;
+  isPreview?: boolean;
+  getEditableProps?: (field: string, baseClass?: string) => any;
+  extra?: Record<string, any>;
 }
 
-export const BuntingBanner: React.FC<BuntingBannerProps> = ({ babyName = 'THOMAS' }) => {
+export const BuntingBanner: React.FC<BuntingBannerProps> = ({ 
+  babyName = 'THOMAS',
+  isPreview = false,
+  getEditableProps,
+  extra
+}) => {
   // 4 flags with different shades of blue and delay offsets for waving animation
   const flags = [
     { letter: 'B', color: '#1e40af', delay: 0.0, rotation: -2, hoverColor: '#2563eb' }, // deep blue
@@ -164,9 +172,11 @@ export const BuntingBanner: React.FC<BuntingBannerProps> = ({ babyName = 'THOMAS
         className="text-center mt-3 relative z-10 w-full"
       >
         <span className="text-3xl sm:text-4xl md:text-5xl font-extrabold uppercase tracking-[0.25em] text-sky-800 font-fredoka drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.8)] select-none block">
-          SHOWER
+          {String(extra?.txtBuntingShower || "SHOWER")}
         </span>
-        <span className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-[0.05em] text-sky-600 font-fredoka mt-1 select-none block drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.8)]">
+        <span 
+          {...(getEditableProps ? getEditableProps("nombresPrincipales", "text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-[0.05em] text-sky-600 font-fredoka mt-1 select-none block drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.8)]") : {})}
+        >
           {babyName.toUpperCase()}
         </span>
       </motion.div>

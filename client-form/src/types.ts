@@ -32,6 +32,7 @@ export interface InvitationData {
     mapa: boolean;
     musica: boolean;
   };
+  asistido?: boolean;
   extra?: Record<string, unknown>;
 }
 

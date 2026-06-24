@@ -5,6 +5,12 @@ import { Calendar, Clock, MapPin, Navigation } from 'lucide-react';
 interface InvitationDateBackgroundProps {
   onEnterClick?: () => void;
   onHowToGetThereClick?: () => void;
+  timestamp?: string;
+  locationName?: string;
+  locationAddress?: string;
+  isPreview?: boolean;
+  getEditableProps?: (field: string, baseClass?: string) => any;
+  extra?: Record<string, any>;
 }
 
 // Sparkle/star data to place dynamic floating stars
@@ -21,8 +27,46 @@ const FLOAT_STARS = [
 
 export const InvitationDateBackground: React.FC<InvitationDateBackgroundProps> = ({
   onEnterClick,
-  onHowToGetThereClick
+  onHowToGetThereClick,
+  timestamp = "2026-07-05T10:30:00",
+  locationName = "Edificio Jade",
+  locationAddress = "Carrera 14A #109-55 Edificio Jade - Piso 13, Bogotá",
+  isPreview = false,
+  getEditableProps = () => ({}),
+  extra,
 }) => {
+  const dateObj = new Date(timestamp);
+  const year = isNaN(dateObj.getTime()) ? "2026" : dateObj.getFullYear().toString();
+  const dayNum = isNaN(dateObj.getTime()) ? "05" : dateObj.getDate().toString();
+  
+  const dias = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+  
+  const dayName = isNaN(dateObj.getTime()) ? "Dom" : dias[dateObj.getDay()];
+  const monthName = isNaN(dateObj.getTime()) ? "Julio" : meses[dateObj.getMonth()];
+  
+  const getFormattedTime = () => {
+    if (isNaN(dateObj.getTime())) return "10:30 AM";
+    const hours = dateObj.getHours();
+    const minutes = dateObj.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours % 12 || 12;
+    const displayMinutes = minutes.toString().padStart(2, '0');
+    return `${displayHours}:${displayMinutes} ${ampm}`;
+  };
+  const timeStr = getFormattedTime();
+
+  const getFormattedEndTime = () => {
+    if (isNaN(dateObj.getTime())) return "1:30 PM";
+    const endObj = new Date(dateObj.getTime() + 3 * 60 * 60 * 1000);
+    const hours = endObj.getHours();
+    const minutes = endObj.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours % 12 || 12;
+    const displayMinutes = minutes.toString().padStart(2, '0');
+    return `${displayHours}:${displayMinutes} ${ampm}`;
+  };
+  const endTimeStr = getFormattedEndTime();
   return (
     <div
       className="w-screen relative left-1/2 -translate-x-1/2 select-none py-20 sm:py-24 my-8 relative overflow-hidden"
@@ -142,7 +186,7 @@ export const InvitationDateBackground: React.FC<InvitationDateBackgroundProps> =
                 hidden: { opacity: 0, scale: 0.9, y: 10 },
                 visible: { opacity: 1, scale: 1, y: 0 }
               }}
-              className="flex flex-col items-center justify-between p-3.5 sm:p-5 rounded-3xl bg-white/90 backdrop-blur-md shadow-md border border-sky-100/60 text-center"
+              {...getEditableProps("fecha", "flex flex-col items-center justify-between p-3.5 sm:p-5 rounded-3xl bg-white/90 backdrop-blur-md shadow-md border border-sky-100/60 text-center")}
             >
               <div className="flex flex-col items-center">
                 {/* Soft Baby Blue Bubble Icon wrapper */}
@@ -150,14 +194,14 @@ export const InvitationDateBackground: React.FC<InvitationDateBackgroundProps> =
                   <Calendar className="w-5 h-5 sm:w-5.5 sm:h-5.5 stroke-[2.5]" />
                 </div>
                 <span className="text-[10px] sm:text-[12px] font-black tracking-wider text-sky-600 font-fredoka uppercase mt-2 sm:mt-2.5 leading-none">
-                  FECHA
+                  {String(extra?.txtFechaLabel || "FECHA")}
                 </span>
                 <span className="text-[16px] sm:text-[19px] font-black text-sky-950 font-fredoka mt-1.5 leading-none">
-                  5 de Julio
+                  {dayNum} de {monthName}
                 </span>
               </div>
               <span className="text-[11px] sm:text-[12px] font-black text-sky-700 font-fredoka mt-3 leading-none uppercase bg-sky-50 px-3 py-1.5 rounded-full">
-                Dom, 2026
+                {dayName}, {year}
               </span>
             </motion.div>
 
@@ -168,7 +212,7 @@ export const InvitationDateBackground: React.FC<InvitationDateBackgroundProps> =
                 hidden: { opacity: 0, scale: 0.9, y: 10 },
                 visible: { opacity: 1, scale: 1, y: 0 }
               }}
-              className="flex flex-col items-center justify-between p-3.5 sm:p-5 rounded-3xl bg-white/90 backdrop-blur-md shadow-md border border-sky-100/60 text-center"
+              {...getEditableProps("hora", "flex flex-col items-center justify-between p-3.5 sm:p-5 rounded-3xl bg-white/90 backdrop-blur-md shadow-md border border-sky-100/60 text-center")}
             >
               <div className="flex flex-col items-center">
                 {/* Soft Baby Blue Bubble Icon wrapper */}
@@ -176,14 +220,14 @@ export const InvitationDateBackground: React.FC<InvitationDateBackgroundProps> =
                   <Clock className="w-5 h-5 sm:w-5.5 sm:h-5.5 stroke-[2.5]" />
                 </div>
                 <span className="text-[10px] sm:text-[12px] font-black tracking-wider text-sky-600 font-fredoka uppercase mt-2 sm:mt-2.5 leading-none">
-                  HORA
+                  {String(extra?.txtHoraLabel || "HORA")}
                 </span>
                 <span className="text-[16px] sm:text-[19px] font-black text-sky-950 font-fredoka mt-1.5 leading-none">
-                  10:30 AM
+                  {timeStr}
                 </span>
               </div>
               <span className="text-[11px] sm:text-[12px] font-black text-sky-700 font-fredoka mt-3 leading-none uppercase bg-sky-50 px-3 py-1.5 rounded-full whitespace-nowrap">
-                1:30 PM
+                Fin: {endTimeStr}
               </span>
             </motion.div>
 
@@ -208,22 +252,23 @@ export const InvitationDateBackground: React.FC<InvitationDateBackgroundProps> =
 
             <div className="flex flex-col items-center sm:items-start w-full relative z-10">
               <span className="text-[11px] sm:text-[12px] font-black tracking-wider text-sky-600 font-fredoka uppercase leading-none mb-1.5">
-                UBICACIÓN / LUGAR
+                {String(extra?.txtLugarLabel || "UBICACIÓN / LUGAR")}
               </span>
-              <span className="text-[17px] sm:text-[20px] font-black text-sky-950 font-fredoka leading-snug">
-                Carrera 14A #109-55
+              <span 
+                {...getEditableProps("lugar.nombre", "text-[17px] sm:text-[20px] font-black text-sky-950 font-fredoka leading-snug")}
+              >
+                {locationName}
               </span>
-              <span className="text-[14px] sm:text-[16px] font-semibold text-slate-700 font-fredoka mt-1 leading-relaxed">
-                Edificio Jade – Piso 13
-              </span>
-              <span className="text-[13px] sm:text-[15px] font-bold text-sky-700 font-fredoka mt-2 leading-relaxed">
-                Terraza con espacio cubierto
+              <span 
+                {...getEditableProps("lugar.direccion", "text-[14px] sm:text-[16px] font-semibold text-slate-700 font-fredoka mt-1 leading-relaxed")}
+              >
+                {locationAddress}
               </span>
               
               {/* Features and attributes badges */}
               <div className="mt-3 flex flex-wrap gap-2 items-center justify-center sm:justify-start w-full">
                 <span className="text-[11px] sm:text-[12px] font-black text-emerald-700 uppercase bg-emerald-50 border border-emerald-250/30 px-3 py-1 rounded-full font-fredoka flex items-center gap-1 shadow-3xs">
-                  Parqueadero disponible
+                  {String(extra?.txtParqueadero || "Parqueadero disponible")}
                 </span>
                 <span className="text-[11px] sm:text-[12px] font-black text-sky-600 uppercase bg-sky-50 border border-sky-100 px-3 py-1 rounded-full font-fredoka shadow-3xs">
                   Bogotá, Colombia
@@ -244,7 +289,7 @@ export const InvitationDateBackground: React.FC<InvitationDateBackgroundProps> =
             id="btn-smart-calendar"
           >
             <span className="text-sm">📅</span>
-            <span>Agendar Evento</span>
+            <span>{String(extra?.txtAgendar || "Agendar Evento")}</span>
           </motion.button>
 
           {/* Button 2: Cómo Llegar (Interactive Mapbox Modal) */}
@@ -256,7 +301,7 @@ export const InvitationDateBackground: React.FC<InvitationDateBackgroundProps> =
             id="btn-show-interactive-map"
           >
             <span>📍</span>
-            <span>Cómo llegar</span>
+            <span>{String(extra?.txtComoLlegar || "Cómo llegar")}</span>
           </motion.button>
         </div>
 

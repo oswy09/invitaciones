@@ -15,6 +15,7 @@ export default function App() {
   const [showCard, setShowCard] = useState(false);
   const [carriedSynth, setCarriedSynth] = useState<LullabySynth | null>(null);
   const [babyName, setBabyName] = useState<string | undefined>(undefined);
+  const [extra, setExtra] = useState<Record<string, any> | undefined>(undefined);
   const [previewDetails, setPreviewDetails] = useState<InvitationDetails | null>(null);
   const [previewPagado, setPreviewPagado] = useState(false);
 
@@ -30,7 +31,10 @@ export default function App() {
   useEffect(() => {
     if (isPreview) return; // en preview, los datos llegan por postMessage, no por Supabase
     loadEvento().then((result) => {
-      if (result.details) setBabyName(result.details.babyName);
+      if (result.details) {
+        setBabyName(result.details.babyName);
+        setExtra(result.details.extra);
+      }
     });
   }, [isPreview]);
 
@@ -39,10 +43,12 @@ export default function App() {
     setShowCard(true);
   };
 
+  const currentExtra = isPreview ? previewDetails?.extra : extra;
+
   return (
     <div className="w-full min-h-screen bg-[#1a0a3a] overflow-x-hidden">
       {!showCard ? (
-        <IntroRocket onIntroComplete={handleIntroComplete} babyName={babyName} />
+        <IntroRocket onIntroComplete={handleIntroComplete} babyName={babyName} extra={currentExtra} />
       ) : (
         <BabyShowerCard
           initialAudioSynth={carriedSynth}

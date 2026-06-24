@@ -230,9 +230,14 @@ interface InvitationCardProps {
   onClose: () => void;
   isOpened: boolean;
   pagado?: boolean;
+  isPreview?: boolean;
 }
 
-export default function InvitationCard({ details, onClose, isOpened, pagado = true }: InvitationCardProps) {
+export default function InvitationCard({ details, onClose, isOpened, pagado = true, isPreview = false }: InvitationCardProps) {
+  const getEditableProps = (field: string, baseClass: string = "") => {
+    return { className: baseClass };
+  };
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioObj] = useState(() => {
     const audio = new Audio(BACKGROUND_MUSIC_URL);
@@ -286,6 +291,7 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
   const [showRsvpSuccess, setShowRsvpSuccess] = useState(false);
   const [myRsvp, setMyRsvp] = useState<Guest | null>(null);
   const [isLooping, setIsLooping] = useState(false);
+  const [demoTooltip, setDemoTooltip] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [addressCopied, setAddressCopied] = useState(false);
 
@@ -299,7 +305,7 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
     `https://waze.com/ul?q=${encodeURIComponent(details.locationName + ", " + details.locationAddress)}&navigate=yes`;
 
   const getGoogleMapsUrl = () =>
-    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(details.locationName + ", " + details.locationAddress)}`;
+    details.locationMapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(details.locationName + ", " + details.locationAddress)}`;
 
   const downloadICS = () => {
     const dateStr = details.date.replace(/-/g, "");
@@ -370,6 +376,11 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
 
   const handleRsvpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!pagado) {
+      setDemoTooltip(true);
+      setTimeout(() => setDemoTooltip(false), 4000);
+      return;
+    }
     if (!formName.trim() || formAttending === null) return;
 
     const newGuest: Guest = {
@@ -417,6 +428,11 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
 
   const handleWishSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!pagado) {
+      setDemoTooltip(true);
+      setTimeout(() => setDemoTooltip(false), 4000);
+      return;
+    }
     if (!wishName.trim() || !wishMessage.trim()) return;
 
     const name = wishName.trim();
@@ -459,6 +475,12 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
 
   return (
     <div id="invitation-card" className="w-full max-w-2xl mx-auto min-h-screen flex flex-col relative z-50 bg-transparent">
+      {demoTooltip && (
+        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[1000] bg-rose-600 text-white font-sans font-bold px-4 py-2.5 rounded-2xl shadow-xl text-xs md:text-sm text-center flex items-center gap-2 border border-rose-500 whitespace-nowrap">
+          <span>⚠️</span>
+          <span>Invitación en modo demo, falta realizar el pago</span>
+        </div>
+      )}
 
       {/* Marca de agua de preview — desaparece cuando el operador marca el evento como pagado */}
       {!pagado && (
@@ -516,7 +538,7 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
             </span>
-            <span className="font-serif-lux text-[11px] tracking-[0.2em] font-semibold text-stone-600">Te invitamos a bordo</span>
+            <span className="font-serif-lux text-[11px] tracking-[0.2em] font-semibold text-stone-600">{String(details.extra?.txtBordo || "Te invitamos a bordo")}</span>
           </div>
 
           <div className="flex items-center space-x-2">
@@ -657,7 +679,7 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
           <div className="text-center relative flex flex-col items-center">
 
           <p className="font-serif-lux text-xl md:text-2xl italic text-[#2F4554] font-semibold tracking-wide mb-2 mt-6">
-            Un pequeño príncipe está por aterrizar...
+            {String(details.extra?.txtIntro || "Un pequeño príncipe está por aterrizar...")}
           </p>
 
           {/* Main Illustration Area with interactive dinosaur pilot */}
@@ -751,15 +773,19 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
           </div>
 
           <div className="space-y-2 relative z-10 flex flex-col items-center -mt-2">
-            <h2 className="font-serif-lux text-[2.05rem] md:text-5xl font-bold text-stone-800 tracking-wide">
-              Baby Shower Brunch
+            <h2 
+              {...getEditableProps("tituloEvento", "font-serif-lux text-[2.05rem] md:text-5xl font-bold text-stone-800 tracking-wide")}
+            >
+              {details.tituloEvento}
             </h2>
             <div className="text-[#C3A66A] text-[10px] tracking-widest animate-pulse my-1">
               ✦
             </div>
             <div className="flex items-center justify-center space-x-4 w-full max-w-xs md:max-w-sm">
               <span className="h-[1px] bg-[#C3A66A]/40 flex-1"></span>
-              <h1 className="font-script text-6xl md:text-7xl text-[#9B7A46] font-medium leading-none -mt-2 mb-2 drop-shadow-[0_2px_4px_rgba(74,93,107,0.18)]">
+              <h1 
+                {...getEditableProps("nombresPrincipales", "font-script text-6xl md:text-7xl text-[#9B7A46] font-medium leading-none -mt-2 mb-2 drop-shadow-[0_2px_4px_rgba(74,93,107,0.18)]")}
+              >
                 {details.babyName}
               </h1>
               <span className="h-[1px] bg-[#C3A66A]/40 flex-1"></span>
@@ -767,8 +793,10 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
           </div>
 
           <div className="max-w-md mx-auto space-y-4">
-            <p className="font-serif-lux text-2xl md:text-3xl italic text-stone-750 leading-relaxed font-medium px-4">
-              "Acompáñanos a compartir una mañana especial al aire libre, llena de amor, buenos momentos y muchas bendiciones."
+            <p 
+              {...getEditableProps("mensajePersonalizado", "font-serif-lux text-2xl md:text-3xl italic text-stone-750 leading-relaxed font-medium px-4")}
+            >
+              "{details.welcomeMessage}"
             </p>
             <div className="flex justify-center items-center space-x-3 text-stone-400">
               <span className="w-1.5 h-1.5 rounded-full bg-stone-300"></span>
@@ -782,7 +810,14 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
         {/* Interactive Alphabet Sopa de Letras, Date/Hour & Countdown Row */}
         <ScrollReveal delay={0.1}>
           <div className="space-y-6">
-            <BabyWordSoup rsvpDeadline={details.rsvpDeadline} dressCode={details.dressCode} />
+            <BabyWordSoup 
+              rsvpDeadline={details.rsvpDeadline} 
+              dressCode={details.dressCode} 
+              date={details.date}
+              time={details.time}
+              isPreview={isPreview}
+              getEditableProps={getEditableProps}
+            />
           </div>
         </ScrollReveal>
 
@@ -796,15 +831,19 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
                 <span className="text-xs md:text-sm font-extrabold tracking-[0.12em] text-[#8F6E3D] block leading-none">
                   Lugar
                 </span>
-                <h3 className="font-serif-lux text-4xl text-stone-900 font-extrabold tracking-wide">
+                <h3 
+                  {...getEditableProps("lugar.nombre", "font-serif-lux text-4xl text-stone-900 font-extrabold tracking-wide")}
+                >
                   {details.locationName}
                 </h3>
-                <p className="font-serif-lux text-xl md:text-2xl text-[#2F4554] font-semibold leading-relaxed max-w-sm mx-auto">
+                <p 
+                  {...getEditableProps("lugar.direccion", "font-serif-lux text-xl md:text-2xl text-[#2F4554] font-semibold leading-relaxed max-w-sm mx-auto")}
+                >
                   {details.locationAddress}
                 </p>
                 <div className="flex flex-wrap justify-center gap-2 pt-1">
                   <span className="inline-flex items-center gap-1.5 bg-[#D1E1EC]/70 text-[#2F4554] text-xs md:text-sm font-bold font-serif-lux px-3 py-1.5 rounded-full border border-[#A5BFD2]/50">
-                    🚗 Parqueadero disponible
+                    {String(details.extra?.txtParqueadero || "🚗 Parqueadero disponible")}
                   </span>
                 </div>
               </div>
@@ -899,7 +938,7 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
               {/* Agendar el evento — siempre visible */}
               <div className="bg-white/80 backdrop-blur-sm border border-white/60 rounded-2xl p-4 space-y-3 shadow-sm w-full">
                 <h4 className="font-serif-lux text-xl md:text-2xl font-bold text-stone-800 text-center tracking-wide flex items-center justify-center gap-2">
-                  <CalendarPlus size={20} className="text-[#8F6E3D]" /> Agendar el evento
+                  <CalendarPlus size={20} className="text-[#8F6E3D]" /> {String(details.extra?.txtAgendar || "Agendar el evento")}
                 </h4>
                 <div className="grid grid-cols-2 gap-2.5">
                   <a
@@ -959,9 +998,9 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
             <BabyHangingClothes />
 
             <div className="space-y-3 max-w-md">
-              <h3 className="font-serif-lux text-3xl md:text-4xl text-stone-850 font-bold tracking-wide">Sugerencia de regalo</h3>
-              <p className="font-serif-lux text-xl md:text-2xl text-[#2F4554] leading-relaxed font-semibold">
-                ¡Tu cariño es nuestro mejor regalo! Si quieres complementarlo con un detalle, te sugerimos ropa para el bebé en la talla que desees.
+              <h3 className="font-serif-lux text-3xl md:text-4xl text-stone-850 font-bold tracking-wide">{String(details.extra?.txtSugerenciaRegalo || "Sugerencia de regalo")}</h3>
+              <p className="font-serif-lux text-base md:text-lg text-[#2F4554] leading-relaxed max-w-md mx-auto">
+                {String(details.extra?.txtNotaRegalo || "¡Tu cariño es nuestro mejor regalo! Si quieres complementarlo con un detalle, te sugerimos ropa para el bebé en la talla que desees.")}
               </p>
             </div>
           </div>
@@ -970,7 +1009,7 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
         <ScrollReveal delay={0.18}>
           <div className="text-center px-4">
             <p className="font-serif-lux text-3xl md:text-4xl text-[#2F4554] leading-relaxed font-semibold">
-              ¡Te esperamos con los brazos abiertos!
+              {String(details.extra?.txtEspera || "¡Te esperamos con los brazos abiertos!")}
             </p>
           </div>
         </ScrollReveal>
@@ -995,9 +1034,9 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
                     className="w-14 h-14 md:w-16 md:h-16 object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.2)]"
                   />
                 </div>
-                <h3 className="font-serif-lux text-3xl md:text-4xl text-stone-850 font-bold tracking-wide">Confirmación de asistencia</h3>
+                <h3 className="font-serif-lux text-3xl md:text-4xl text-stone-850 font-bold tracking-wide">{String(details.extra?.txtRsvpTitulo || "Confirmación de asistencia")}</h3>
                 <p className="text-[#2F4554] text-xl md:text-2xl max-w-sm mx-auto font-serif-lux font-semibold">
-                  Por favor ayúdanos a planear mejor confirmando antes del <strong className="text-stone-705">{details.rsvpDeadline}</strong>.
+                  {String(details.extra?.txtRsvpSub || "Por favor ayúdanos a planear mejor confirmando antes del ")} <strong {...getEditableProps("extra.rsvpDeadline", "text-stone-705")}>{details.rsvpDeadline}</strong>.
                 </p>
               </div>
 
@@ -1097,7 +1136,7 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
                 {/* Dietary Preferences */}
                 <div className="space-y-2">
                   <label className="font-sans text-sm md:text-base font-semibold text-stone-600 block">
-                    ¿Tienes alguna preferencia o restricción alimentaria?
+                    {String(details.extra?.txtDietas || "¿Tienes alguna preferencia o restricción alimentaria?")}
                   </label>
                   <div className="space-y-2">
                     {[
@@ -1206,10 +1245,10 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
           
           <div className="text-center relative space-y-1">
             <h3 className="font-serif-lux text-3xl md:text-4xl text-stone-900 font-bold tracking-wide flex items-center justify-center gap-1.5">
-              🧸 El muro de deseos de {details.babyName}
+              {String(details.extra?.txtMuroTitulo || `🧸 El muro de deseos de ${details.babyName}`)}
             </h3>
-            <p className="text-[#2F4554] text-xl md:text-2xl max-w-sm mx-auto font-serif-lux leading-relaxed font-semibold">
-              Escribe unas tiernas palabras en el muro. ¡Elige tu estampa de animalito para sellar tu mensaje!
+            <p className="font-serif-lux text-[#2F4554] text-base md:text-lg max-w-md mx-auto leading-relaxed">
+              {String(details.extra?.txtMuroInstrucciones || "Escribe unas tiernas palabras en el muro. ¡Elige tu estampa de animalito para sellar tu mensaje!")}
             </p>
           </div>
 
@@ -1277,7 +1316,7 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
                 id="wish-input-message"
                 value={wishMessage} 
                 onChange={(e) => setWishMessage(e.target.value)}
-                placeholder="¡Escribe tus hermosas oraciones, consejos amorosos y deseos sinceros aquí! ❤️" 
+                placeholder={String(details.extra?.txtMuroPlaceholder || "Escribe tu hermoso mensaje de felicitación")}
                 rows={3}
                 required
                 className="w-full text-stone-850 text-base md:text-lg outline-none p-3.5 rounded-xl transition-all resize-none font-serif-lux bg-white/50 border border-stone-200/40 focus:border-[#C3A66A]/35 focus:bg-white"
@@ -1351,10 +1390,10 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
 
       <div className="pb-4 text-center px-6">
         <p className="font-serif-lux text-stone-600 text-xl md:text-2xl leading-relaxed font-medium tracking-wide italic">
-          Con todo el amor,
+          {String(details.extra?.txtMuroCierre || "Con todo el amor,")}
         </p>
         <p className="font-serif-lux text-4xl md:text-5xl font-bold tracking-wide mt-1" style={{ color: "#C3A66A", textShadow: "0 2px 8px rgba(195,166,106,0.25)" }}>
-          Mummy & Daddy
+          {String(details.extra?.txtMuroFirmas || "Mummy & Daddy")}
         </p>
         <span className="text-2xl">💙</span>
       </div>

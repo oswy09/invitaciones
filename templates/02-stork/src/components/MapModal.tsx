@@ -9,6 +9,7 @@ interface MapModalProps {
   babyName?: string;
   venueName?: string;
   venueAddress?: string;
+  venueMapUrl?: string;
 }
 
 const ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -21,6 +22,7 @@ export const MapModal: React.FC<MapModalProps> = ({
   babyName = 'Thomas',
   venueName = 'Edificio Jade – Piso 13',
   venueAddress = 'Carrera 14A #109-55, Bogotá',
+  venueMapUrl = '',
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -177,11 +179,34 @@ export const MapModal: React.FC<MapModalProps> = ({
                 </p>
               </div>
 
-              {/* Copy address action instead of external mobile app redirects */}
-              <div className="w-full mt-1">
+              {/* Waze + Google Maps Launchers */}
+              <div className="grid grid-cols-2 gap-3 mt-1 font-fredoka">
+                <a
+                  href={`https://waze.com/ul?q=${encodeURIComponent(venueName + ", " + venueAddress)}&navigate=yes`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-3 px-3.5 rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 text-center cursor-pointer bg-[#E8F8FF] hover:bg-[#d0f0fc] border border-[#33CCFF]/30 text-[#0088BB] shadow-3xs transition-all"
+                >
+                  <span>🚗</span>
+                  <span>Abrir Waze</span>
+                </a>
+                
+                <a
+                  href={venueMapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(venueName + ", " + venueAddress)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-3 px-3.5 rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 text-center cursor-pointer bg-[#EEF3FF] hover:bg-[#dde7ff] border border-[#4285F4]/30 text-[#4285F4] shadow-3xs transition-all"
+                >
+                  <span>🗺️</span>
+                  <span>Google Maps</span>
+                </a>
+              </div>
+
+              {/* Copy address action */}
+              <div className="w-full">
                 <button
                   onClick={handleCopy}
-                  className={`w-full py-3.5 px-6 rounded-full text-[15px] sm:text-[16px] font-black uppercase tracking-wider shadow-xs transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 border ${
+                  className={`w-full py-3 px-6 rounded-full text-[13px] sm:text-[14px] font-black uppercase tracking-wider shadow-2xs transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 border ${
                     copied
                       ? 'bg-emerald-50 hover:bg-emerald-100/80 border-emerald-200 text-emerald-800'
                       : 'bg-indigo-50 hover:bg-indigo-100/80 border-indigo-150 text-[#57423f]'
@@ -190,12 +215,12 @@ export const MapModal: React.FC<MapModalProps> = ({
                 >
                   {copied ? (
                     <>
-                      <Check className="w-4 h-4 text-emerald-600 stroke-[2.5]" />
+                      <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
                       <span>¡Dirección Copiada!</span>
                     </>
                   ) : (
                     <>
-                      <Copy className="w-4 h-4 text-slate-500 stroke-[2.5]" />
+                      <Copy className="w-3.5 h-3.5 text-slate-500 stroke-[2.5]" />
                       <span>Copiar Dirección</span>
                     </>
                   )}

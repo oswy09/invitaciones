@@ -140,6 +140,143 @@ el catálogo llegue a 8-10 plantillas y los patrones sean obvios.
 
 ---
 
+## 2.3 Hosting y despliegue: Netlify (cuenta Legacy existente)
+
+Se usará **Netlify** para publicar cada invitación generada, conectado a GitHub
+para despliegue automático en cada push (sin subida manual de `dist/`).
+
+### Detalle importante de la cuenta a usar
+
+La cuenta de Netlify ya existente del operador es de tipo **Free Legacy**
+(creada antes del 4 de septiembre de 2025), lo cual es relevante porque usa un
+modelo de límites distinto al de las cuentas nuevas:
+
+- **Legacy** (la actual): límites separados de **100 GB de bandwidth/mes** y
+  **300 minutos de build/mes**, sin concepto de "créditos".
+- **Credit-based** (cuentas nuevas desde sept. 2025): un pool de 300 créditos/mes
+  compartido entre bandwidth, builds y compute, que se agota mucho más rápido
+  con el volumen esperado (15+ invitaciones/mes).
+
+Uso real verificado al momento de planear este proyecto: ~38-78 MB de bandwidth
+mensual, 0 minutos de build usados, 32 de 500 proyectos — margen amplio para
+absorber el volumen de invitaciones sin acercarse a los límites de Legacy.
+
+**Regla a seguir: NO usar el botón "Change team plan" hacia los planes nuevos
+(Free/Personal/Pro de créditos) en esta cuenta.** Ese cambio es irreversible
+(no se puede volver a Legacy después). Si en el futuro se necesita más
+capacidad que la del plan Free Legacy, la ruta es subir a **Legacy Pro**
+(sigue dentro del modelo antiguo, sin créditos), no migrar al modelo nuevo.
+
+### Cómo monitorear el consumo
+
+Panel: Netlify → **Usage & billing → Account usage insights**, secciones
+Bandwidth y Builds. Revisar periódicamente al ir agregando clientes para
+detectar con datos reales (no estimaciones) cuándo se acerca a los límites
+de Legacy y si hace falta subir a Legacy Pro.
+
+### Estrategia de sitios — DECISIÓN FINAL: una plantilla publicada = N clientes por ruta
+
+Se descarta la idea de crear un "site" de Netlify nuevo por cada cliente. En su
+lugar, **cada plantilla se publica una sola vez** en Netlify (ej.
+`dino.tudominio.com`), y cada cliente nuevo es simplemente **una fila nueva en
+la tabla `eventos` de Supabase**, identificada por su `eventoId`. La plantilla,
+ya desplegada, lee el `eventoId` desde la ruta de la URL (ej.
+`dino.tudominio.com/boda-juan-maria-2026`) y consulta Supabase para renderizar
+los datos correspondientes a ese cliente — el mismo patrón que **ya implementa
+Dino actualmente**, solo que el `eventoId` debe pasar a leerse de la URL en
+lugar de un valor fijo en `types.ts`.
+
+**Implicaciones de esta decisión (importante, afecta varias fases):**
+
+- **No se requiere integración con la API/CLI de Netlify para crear sitios
+  programáticamente.** Publicar un cliente nuevo = escribir un registro en
+  Supabase, no hacer un deploy. Esto elimina ese requisito de la Fase 5.
+- **El consumo de build minutes de Netlify queda desacoplado del número de
+  clientes.** Solo se gastan minutos de build cuando se publica o actualiza
+  una *plantilla*, no cuando se crea un cliente nuevo — refuerza aún más el
+  margen calculado en la sección 2.3.
+- **Cada plantilla debe implementar lectura del `eventoId` desde la URL**
+  (ej. con un router o leyendo `window.location.pathname`), reemplazando el
+  uso de un valor fijo (`DEFAULT_SHOWER_DETAILS` en Dino) — este es un
+  requisito técnico nuevo a agregar en la Fase 3 (migración de plantillas).
+- El dominio final de cada plantilla puede vivir bajo un dominio propio del
+  operador (ej. `dino.tudominio.com`) apuntado por DNS a Netlify, o bajo el
+  subdominio gratuito de Netlify (`dino-template.netlify.app`) mientras no se
+  tenga dominio propio configurado.
+
+### Configuración técnica requerida: SPA redirects en Netlify
+
+Para que el enrutamiento por `eventoId` (sección anterior) funcione, cada
+plantilla publicada en Netlify necesita un archivo de configuración que le
+indique a Netlify que sirva siempre `index.html` sin importar la ruta
+solicitada — de lo contrario, visitar directamente
+`dino.tudominio.com/boda-juan-maria-2026` devolvería un error 404, ya que
+Netlify buscaría un archivo físico con ese nombre y no lo encontraría (es una
+Single Page Application: el enrutamiento real lo resuelve React en el
+navegador, no Netlify).
+
+Esto se configura **una sola vez por plantilla**, al momento de publicarla, y
+a partir de ahí cualquier `eventoId`/cliente nuevo de esa plantilla funciona
+sin tocar Netlify de nuevo. Dos formas equivalentes de configurarlo:
+
+**Opción 1 — archivo `_redirects`** (en la carpeta `public/` del proyecto, se
+copia automáticamente al `dist/` en el build):
+```
+/*    /index.html   200
+```
+
+**Opción 2 — archivo `netlify.toml`** (en la raíz del proyecto):
+```toml
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+```
+
+Se debe agregar este archivo a cada una de las 3 plantillas existentes
+durante la Fase 3 (migración), y a cualquier plantilla nueva que se cree en
+el futuro — agregar este punto al skill de diseño (Fase 4) como un paso
+obligatorio de toda plantilla nueva.
+
+---
+
+## 2.4 Estimación de capacidad: ¿cuántos clientes/mes soporta el plan Free Legacy?
+
+Con la arquitectura de "una plantilla publicada, N clientes por ruta" (sección
+2.3), el número de clientes mensuales deja de estar limitado por build minutes
+(ya que publicar un cliente no consume build) y pasa a depender casi
+exclusivamente del **bandwidth** generado por las visitas de los invitados.
+
+Cálculo de referencia, con los parámetros reales de este negocio:
+
+- ~50-60 invitados por evento (dato proporcionado).
+- Estimando ~3 visitas por invitado en promedio (revisar, recordar fecha,
+  reenviar) → ~150-180 visitas por cliente.
+- Peso estimado por carga completa de página (HTML+CSS+JS+imágenes de una
+  plantilla típica como Dino, con imágenes optimizadas): ~2-4 MB.
+- Consumo estimado por cliente: ~150 visitas × 3 MB ≈ **450 MB por cliente**,
+  durante toda la vida activa de esa invitación.
+
+Con el límite de **100 GB/mes** del plan Free Legacy:
+
+```
+100,000 MB ÷ 450 MB por cliente ≈ ~220 clientes/mes en el límite teórico
+```
+
+Dejando margen de seguridad razonable (no usar el 100% del límite, dejar
+espacio para picos de tráfico, plantillas más pesadas de lo estimado, fotos
+subidas por clientes sin comprimir, etc.), una cifra prudente y "relajada"
+para operar sin preocuparse del límite es de **hasta ~60 clientes nuevos al
+mes**, considerando además que las invitaciones de meses anteriores también
+siguen recibiendo tráfico residual mientras el evento no haya pasado.
+
+Esta cifra debe confirmarse con datos reales una vez haya tráfico real (ver
+sección 2.3, monitoreo en Usage & billing → Account usage insights), ya que
+la estimación de peso por página es aproximada hasta que se mida con las
+plantillas finales y fotos reales de clientes.
+
+---
+
 ## 3. Esquema de datos estándar (la pieza más importante)
 
 Este es el "contrato" entre el formulario de cliente, el backend, y cada
@@ -341,6 +478,12 @@ dependen de que las plantillas ya lean datos desde el esquema estándar.
   `nombresPrincipales` como array y `registroRegalos` como array).
 - [ ] Conectar la tabla `eventos.datos` como fuente de los datos, en lugar del
   objeto `DEFAULT_SHOWER_DETAILS` hardcodeado en `types.ts`.
+- [ ] **Implementar lectura del `eventoId` desde la ruta de la URL** (ver
+  sección 2.3 — decisión de "una plantilla, múltiples clientes por ruta"), en
+  lugar de usar el valor fijo `eventoId: "baby-shower-thomas"` de
+  `DEFAULT_SHOWER_DETAILS`. Si el `eventoId` de la URL no existe en la base de
+  datos, mostrar una pantalla de error/no encontrado en vez de caer al valor
+  por defecto.
 - [ ] Implementar lectura de `pagado`/`aprobado` para mostrar/ocultar marca de agua.
 
 ### 5.2 Stork (requiere más trabajo — migrar de localStorage a Supabase)
@@ -349,6 +492,8 @@ dependen de que las plantillas ya lean datos desde el esquema estándar.
 - [ ] Reemplazar el uso de `localStorage` para el "Libro de Firmas" por las
   tablas `muro_deseos` / `confirmaciones_rsvp` de Supabase (usando el hook
   compartido de `core/features/muro-deseos` una vez exista).
+- [ ] **Implementar lectura del `eventoId` desde la ruta de la URL** (mismo
+  patrón que Dino, ver sección 2.3).
 - [ ] Mover credenciales de Mapbox de código a `.env`.
 - [ ] Verificar que el botón de "Confirmar por WhatsApp" siga funcionando como
   alternativa, pero que la fuente de verdad para el conteo de invitados sea
@@ -358,6 +503,10 @@ dependen de que las plantillas ya lean datos desde el esquema estándar.
 - [ ] Adaptar `InvitationDetails` al nuevo esquema `InvitationData` (aplanar o
   mapear `parents.mother/father` a `nombresPrincipales`/`anfitriones`, mapear
   `giftRegistry` directamente ya que el array coincide con el esquema general).
+- [ ] **Implementar lectura del `eventoId` desde la ruta de la URL** (mismo
+  patrón que Dino, ver sección 2.3). Como Space hoy no tiene backend, este
+  paso implica también conectar por primera vez con Supabase para leer los
+  datos del cliente correspondiente a esa ruta.
 - [ ] Si se desea agregar muro de deseos/RSVP a esta plantilla (hoy no tiene
   ninguno persistente), conectar los hooks compartidos de `core/features/`.
 
@@ -406,8 +555,12 @@ No avanzar a una fase sin terminar la anterior.
    (sección 5), cada una usando las features de la Fase 2.
 5. **Fase 4 — Skill de diseño**: Documentar patrones (sección 6).
 6. **Fase 5 — Formulario de cliente**: App que genera un registro en `eventos`
-   siguiendo el esquema, dispara el build de la plantilla elegida, y muestra
-   la preview con marca de agua.
+   siguiendo el esquema (esto YA ES la "publicación" del cliente, ver sección
+   2.3 — no se crea un sitio nuevo de Netlify, solo se escribe en la base de
+   datos). El link final entregado al cliente es
+   `[dominio-de-la-plantilla]/[eventoId]`. El formulario muestra la preview
+   en vivo navegando a esa misma URL con `pagado=false` en la base de datos
+   (controla la marca de agua, sin necesidad de un build/deploy distinto).
 7. **Fase 6 — Dashboard de admin**: Lista de pedidos, preview, aprobar pago
    (cambia `pagado`/`aprobado` en la base de datos), moderar mensajes del
    muro de deseos (cambia `oculto`).

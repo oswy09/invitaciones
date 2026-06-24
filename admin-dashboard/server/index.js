@@ -47,11 +47,55 @@ app.get("/api/pedidos/:id/rsvps", async (req, res) => {
   res.json(data);
 });
 
+app.get("/api/precios", async (_req, res) => {
+  const { data, error } = await supabase
+    .from("eventos")
+    .select("datos")
+    .eq("id", "config-precios")
+    .maybeSingle();
+
+  if (error) return res.status(500).json({ error: error.message });
+
+  if (!data) {
+    const defaultPrices = {
+      "01-dino": { cop: 70000, usd: 20 },
+      "02-stork": { cop: 60000, usd: 18 },
+      "03-space": { cop: 70000, usd: 20 }
+    };
+    return res.json(defaultPrices);
+  }
+
+  res.json(data.datos.precios || {});
+});
+
+app.post("/api/precios", async (req, res) => {
+  const precios = req.body;
+
+  const { error } = await supabase.from("eventos").upsert(
+    {
+      id: "config-precios",
+      template_id: "config",
+      nombre_evento: "Configuración de Precios",
+      fecha_evento: null,
+      datos: { precios },
+      pagado: true,
+      aprobado: true
+    },
+    { onConflict: "id" }
+  );
+
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ ok: true });
+});
+
 app.patch("/api/pedidos/:id", async (req, res) => {
-  const { pagado, aprobado } = req.body;
+  const { pagado, aprobado, datos, nombre_evento, template_id } = req.body;
   const cambios = {};
   if (typeof pagado === "boolean") cambios.pagado = pagado;
   if (typeof aprobado === "boolean") cambios.aprobado = aprobado;
+  if (datos && typeof datos === "object") cambios.datos = datos;
+  if (typeof nombre_evento === "string") cambios.nombre_evento = nombre_evento;
+  if (typeof template_id === "string") cambios.template_id = template_id;
 
   const { error } = await supabase.from("eventos").update(cambios).eq("id", req.params.id);
   if (error) return res.status(500).json({ error: error.message });
@@ -63,6 +107,19 @@ app.patch("/api/wishes/:id", async (req, res) => {
   const { error } = await supabase.from("muro_deseos").update({ oculto }).eq("id", req.params.id);
   if (error) return res.status(500).json({ error: error.message });
   res.json({ ok: true });
+});
+
+app.delete("/api/pedidos/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await supabase.from("confirmaciones_rsvp").delete().eq("evento_id", id);
+    await supabase.from("muro_deseos").delete().eq("evento_id", id);
+    const { error } = await supabase.from("eventos").delete().eq("id", id);
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err instanceof Error ? err.message : "Error de servidor" });
+  }
 });
 
 const PORT = process.env.ADMIN_SERVER_PORT || 3301;

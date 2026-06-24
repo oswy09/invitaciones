@@ -40,6 +40,10 @@ export default function App() {
 
   const isPreview = usePreviewBridge<InvitationData>(handlePreviewUpdate);
 
+  const getEditableProps = (field: string, baseClass: string = "") => {
+    return { className: baseClass };
+  };
+
   // Carga el evento real desde Supabase (eventos.datos) si existe; si no, se
   // conservan los datos por defecto de Thomas para que la plantilla siga
   // funcionando como demo/standalone.
@@ -60,6 +64,7 @@ export default function App() {
   // Signature Form States for Libro de Firmas y Recuerdos
   const [signatureName, setSignatureName] = useState('');
   const [signatureMessage, setSignatureMessage] = useState('');
+  const [demoTooltip, setDemoTooltip] = useState(false);
 
   // Libro de Firmas: antes vivía en localStorage ('baby_shower_rsvps_thomas'),
   // visible solo en el navegador de quien firmaba. Ahora usa muro_deseos en
@@ -111,6 +116,11 @@ export default function App() {
 
   const handleSignatureSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!pagado) {
+      setDemoTooltip(true);
+      setTimeout(() => setDemoTooltip(false), 4000);
+      return;
+    }
     if (!signatureName.trim() || !signatureMessage.trim()) return;
 
     const name = signatureName.trim();
@@ -132,6 +142,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen relative overflow-x-hidden selection:bg-sky-200 selection:text-sky-900">
+      {demoTooltip && (
+        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[1000] bg-rose-600 text-white font-sans font-bold px-4 py-2.5 rounded-2xl shadow-xl text-xs md:text-sm text-center flex items-center gap-2 border border-rose-500 whitespace-nowrap">
+          <span>⚠️</span>
+          <span>Invitación en modo demo, falta realizar el pago</span>
+        </div>
+      )}
 
       {/* Marca de agua de preview — desaparece cuando el operador marca el evento como pagado */}
       {!pagado && (
@@ -151,7 +167,7 @@ export default function App() {
         {screen === 'intro' && (
           <StorkAnimation 
             onComplete={() => setScreen('invitation')} 
-            text="¡Hola! Tenemos un mensaje muy especial para ti..."
+            text={String(details.extra?.txtIntroAnimacion || "¡Hola! Tenemos un mensaje muy especial para ti...")}
             durationSeconds={7}
           />
         )}
@@ -171,6 +187,7 @@ export default function App() {
             babyName={details.babyName}
             venueName={details.locationName}
             venueAddress={details.locationAddress}
+            venueMapUrl={details.locationMapUrl}
           />
 
           {/* Ambient Music Box Synthesizer Button */}
@@ -200,7 +217,7 @@ export default function App() {
             className="w-full max-w-[720px] relative mb-10 transition-all px-3"
           >
             {/* Interactive Bunting Banner with letters spelling B-A-B-Y */}
-            <BuntingBanner babyName={details.babyName} />
+            <BuntingBanner babyName={details.babyName} isPreview={isPreview} getEditableProps={getEditableProps} extra={details.extra} />
 
             {/* Central Piece: GORGEOUS INTERACTIVE ANIMATED BABY LOGO */}
             <div className="mt-4 mb-0">
@@ -209,8 +226,10 @@ export default function App() {
 
             {/* Warm, charming invitation intro text directly below the baby icon */}
             <div className="max-w-[500px] mx-auto text-center px-4 mb-4 mt-1">
-              <p className="text-slate-800 font-semibold font-cormorant text-[22px] sm:text-[26px] italic leading-relaxed select-none">
-                Acompáñanos a compartir una mañana especial al aire libre, llena de amor, buenos momentos y muchas bendiciones.
+              <p 
+                {...getEditableProps("mensajePersonalizado", "text-slate-800 font-semibold font-cormorant text-[22px] sm:text-[26px] italic leading-relaxed select-none")}
+              >
+                {details.welcomeMessage}
               </p>
             </div>
 
@@ -219,6 +238,12 @@ export default function App() {
               <InvitationDateBackground 
                 onEnterClick={handleAddToCalendar}
                 onHowToGetThereClick={() => setIsMapOpen(true)}
+                timestamp={details.timestamp}
+                locationName={details.locationName}
+                locationAddress={details.locationAddress}
+                isPreview={isPreview}
+                getEditableProps={getEditableProps}
+                extra={details.extra}
               />
             </div>
 
@@ -240,11 +265,11 @@ export default function App() {
                 <div className="p-2.5 bg-sky-100/65 text-sky-600 rounded-full">
                   <Gift className="w-5.5 h-5.5 flex-shrink-0 animate-bounce" />
                 </div>
-                <h3 className="text-[24px] sm:text-[28px] font-black text-slate-800 font-fredoka tracking-wide leading-tight">¿Qué le puedes regalar a {details.babyName}?</h3>
+                <h3 className="text-[24px] sm:text-[28px] font-black text-slate-800 font-fredoka tracking-wide leading-tight">{String(details.extra?.txtSugerenciaRegalo || `¿Qué le puedes regalar a ${details.babyName}?`)}</h3>
               </div>
               
               <p className="text-[20px] sm:text-[22px] text-slate-800 font-cormorant italic font-semibold leading-relaxed mb-4 text-center max-w-[500px]">
-                ¡Tu cariño es nuestro mejor regalo! Ropa para bebé en cualquier talla.
+                {String(details.extra?.txtNotaRegalo || "¡Tu cariño es nuestro mejor regalo! Ropa para bebé en cualquier talla.")}
               </p>
 
               {/* Beautiful Animated Clothes Stork Image requested */}
@@ -274,7 +299,7 @@ export default function App() {
               </div>
 
               <p className="text-[24px] sm:text-[26px] text-slate-800 font-cormorant italic font-semibold leading-relaxed mt-3 text-center max-w-[500px]">
-                ¡Te esperamos con los brazos abiertos!
+                {String(details.extra?.txtEspera || "¡Te esperamos con los brazos abiertos!")}
               </p>
 
             </motion.div>
@@ -290,14 +315,14 @@ export default function App() {
                 <div className="p-2 bg-sky-100/70 text-sky-600 rounded-xl">
                   <Heart className="w-5 h-5 text-sky-500 fill-sky-200" />
                 </div>
-                <h3 className="text-[24px] sm:text-[28px] font-black text-slate-800 font-fredoka tracking-wide leading-tight">Confirmar Asistencia</h3>
+                <h3 className="text-[24px] sm:text-[28px] font-black text-slate-800 font-fredoka tracking-wide leading-tight">{String(details.extra?.txtRsvpTitulo || "Confirmar Asistencia")}</h3>
               </div>
 
               <div className="space-y-4">
                 
                 {/* Guest Name input */}
                 <div>
-                  <label className="block text-[17px] sm:text-[18px] font-bold text-slate-600 mb-1 font-cormorant">Tu Nombre / Familia</label>
+                  <label className="block text-[17px] sm:text-[18px] font-bold text-slate-600 mb-1 font-cormorant">{String(details.extra?.txtRsvpNombreLabel || "Tu Nombre / Familia")}</label>
                   <input
                     type="text"
                     required
@@ -312,7 +337,7 @@ export default function App() {
 
                 {/* Attending toggle */}
                 <div>
-                  <label className="block text-[17px] sm:text-[18px] font-bold text-slate-600 mb-2 font-cormorant">¿Podrás acompañarnos?</label>
+                  <label className="block text-[17px] sm:text-[18px] font-bold text-slate-600 mb-2 font-cormorant">{String(details.extra?.txtRsvpPregunta || "¿Podrás acompañarnos?")}</label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
@@ -324,7 +349,7 @@ export default function App() {
                       }`}
                       id="btn-attending-yes"
                     >
-                      <span>🍼 ¡Sí, claro!</span>
+                      <span>{String(details.extra?.txtRsvpSi || "🍼 ¡Sí, claro!")}</span>
                     </button>
                     <button
                       type="button"
@@ -336,7 +361,7 @@ export default function App() {
                       }`}
                       id="btn-attending-no"
                     >
-                      <span>No podré</span>
+                      <span>{String(details.extra?.txtRsvpNo || "No podré")}</span>
                     </button>
                   </div>
                 </div>
@@ -348,7 +373,7 @@ export default function App() {
                     animate={{ opacity: 1, height: 'auto' }}
                     className="space-y-2 overflow-hidden"
                   >
-                    <label className="block text-[17px] sm:text-[18px] font-bold text-slate-600 mb-1 font-cormorant">Acompañantes adicionales</label>
+                    <label className="block text-[17px] sm:text-[18px] font-bold text-slate-600 mb-1 font-cormorant">{String(details.extra?.txtRsvpAcompanantes || "Acompañantes adicionales")}</label>
                     <div className="flex gap-2">
                       {[0, 1, 2, 3, 4].map((num) => (
                         <button
@@ -362,7 +387,7 @@ export default function App() {
                           }`}
                           id={`btn-companion-num-${num}`}
                         >
-                          {num === 0 ? "Solo yo" : `+${num}`}
+                          {num === 0 ? String(details.extra?.txtRsvpSoloYo || "Solo yo") : `+${num}`}
                         </button>
                       ))}
                     </div>
@@ -380,6 +405,12 @@ export default function App() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => {
+                      if (!pagado) {
+                        e.preventDefault();
+                        setDemoTooltip(true);
+                        setTimeout(() => setDemoTooltip(false), 4000);
+                        return;
+                      }
                       if (!rsvpName.trim()) {
                         e.preventDefault();
                         return;
@@ -401,11 +432,11 @@ export default function App() {
                     }`}
                     id="btn-rsvp-whatsapp"
                   >
-                    <span>Confirmar por WhatsApp</span>
+                    <span>{String(details.extra?.txtRsvpBoton || "Confirmar por WhatsApp")}</span>
                   </a>
                   {!rsvpName.trim() && (
                     <p className="text-[14px] sm:text-[15px] text-slate-400 font-cormorant italic text-center mt-1.5">
-                      Ingresa tu nombre arriba para activar la confirmación por WhatsApp
+                      {String(details.extra?.txtRsvpNota || "Ingresa tu nombre arriba para activar la confirmación por WhatsApp")}
                     </p>
                   )}
                 </div>
@@ -425,21 +456,21 @@ export default function App() {
                   <div className="p-2 bg-sky-100/70 text-sky-500 rounded-xl">
                     <Users className="w-5 h-5 text-sky-500" />
                   </div>
-                  <h3 className="text-[24px] sm:text-[28px] font-black text-slate-800 font-fredoka tracking-wide leading-tight">Libro de Firmas y Recuerdos</h3>
+                  <h3 className="text-[24px] sm:text-[28px] font-black text-slate-800 font-fredoka tracking-wide leading-tight">{String(details.extra?.txtMuroTitulo || "Libro de Firmas y Recuerdos")}</h3>
                 </div>
               </div>
 
               {/* Direct message interaction in the guest book */}
               <form onSubmit={handleSignatureSubmit} className="bg-white/45 border border-white/30 rounded-2xl p-4 mb-5 space-y-3">
                 <p className="text-[18px] sm:text-[20px] text-slate-600 font-cormorant italic font-medium leading-snug mb-1">
-                  ¡Déjale un mensaje, dedicatoria o bendición a {details.babyName} y sus papás!
+                  {String(details.extra?.txtMuroInstrucciones || `¡Déjale un mensaje, dedicatoria o bendición a ${details.babyName} y sus papás!`)}
                 </p>
                 <div>
                   <input
                     type="text"
                     required
                     maxLength={35}
-                    placeholder="Tu Nombre (Ej: Tía Sonia o Familia Rojas)"
+                    placeholder={String(details.extra?.txtMuroNombrePlaceholder || "Tu Nombre (Ej: Tía Sonia o Familia Rojas)")}
                     value={signatureName}
                     onChange={(e) => setSignatureName(e.target.value)}
                     className="w-full bg-white/70 border border-white/40 rounded-xl px-3 py-2.5 text-[16px] sm:text-[17px] font-cormorant focus:ring-1 focus:ring-sky-300 focus:outline-hidden text-slate-800 font-bold"
@@ -450,7 +481,7 @@ export default function App() {
                     rows={2}
                     required
                     maxLength={140}
-                    placeholder="Escribe tus hermosos deseos o palabras de cariño..."
+                    placeholder={String(details.extra?.txtMuroPlaceholder || "Escribe tus hermosos deseos o palabras de cariño...")}
                     value={signatureMessage}
                     onChange={(e) => setSignatureMessage(e.target.value)}
                     className="w-full bg-white/70 border border-white/40 rounded-xl px-3 py-2.5 text-[16px] sm:text-[17px] font-cormorant focus:ring-1 focus:ring-sky-300 focus:outline-hidden text-slate-805"
@@ -460,13 +491,13 @@ export default function App() {
                   type="submit"
                   className="w-full py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold text-[15px] sm:text-[16px] font-cormorant rounded-xl shadow-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5 border border-white/30"
                 >
-                  <span>Firmar Libro</span>
+                  <span>{String(details.extra?.txtMuroBoton || "Firmar Libro")}</span>
                 </button>
               </form>
 
               {wishes.length === 0 ? (
                 <div className="text-center py-6">
-                  <p className="text-[17px] sm:text-[18px] text-slate-500 font-bold font-cormorant italic">Nadie ha firmado el libro aún. ¡Sé el primero!</p>
+                  <p className="text-[17px] sm:text-[18px] text-slate-500 font-bold font-cormorant italic">{String(details.extra?.txtMuroVacio || "Nadie ha firmado el libro aún. ¡Sé el primero!")}</p>
                 </div>
               ) : (
                 <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1">

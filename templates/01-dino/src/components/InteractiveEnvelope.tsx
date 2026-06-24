@@ -380,7 +380,7 @@ export default function InteractiveEnvelope() {
                     className="absolute -bottom-8 md:-bottom-12 left-0 right-0 text-center pointer-events-none z-30"
                   >
                     <p className="font-serif-lux text-lg md:text-xl font-extrabold text-[#1E3340] tracking-[0.06em] select-none inline-flex items-center justify-center px-3 py-1.5 rounded-full bg-white/60 border border-white/50 shadow-[0_2px_10px_rgba(36,59,74,0.2)] animate-pulse">
-                      Dale clic al sobre para abrir
+                      {String(details.extra?.txtSobre || "Dale clic al sobre para abrir")}
                     </p>
                   </motion.div>
                 )}
@@ -402,6 +402,7 @@ export default function InteractiveEnvelope() {
                 onClose={handleCloseEnvelope}
                 isOpened={envelopeState === 'opened'}
                 pagado={pagado}
+                isPreview={isPreview}
               />
             </motion.div>
           )}

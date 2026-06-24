@@ -2,9 +2,34 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sparkles, UtensilsCrossed } from "lucide-react";
 
-export default function BabyWordSoup() {
-  // Target date: July 5, 2026 at 10:30
-  const targetDate = new Date("2026-07-05T10:30:00");
+interface BabyWordSoupProps {
+  rsvpDeadline?: string;
+  dressCode?: string;
+  date?: string;
+  time?: string;
+  isPreview?: boolean;
+  getEditableProps?: (field: string, baseClass?: string) => any;
+}
+
+export default function BabyWordSoup({
+  rsvpDeadline = "",
+  dressCode = "",
+  date = "2026-07-05",
+  time = "10:30",
+  isPreview = false,
+  getEditableProps = () => ({}),
+}: BabyWordSoupProps) {
+  // Target date parsing dynamically
+  const targetDate = new Date(`${date}T${time}:00`);
+
+  const year = isNaN(targetDate.getTime()) ? "2026" : targetDate.getFullYear().toString();
+  const dayNum = isNaN(targetDate.getTime()) ? "05" : targetDate.getDate().toString().padStart(2, "0");
+  
+  const dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+  const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+  
+  const dayName = isNaN(targetDate.getTime()) ? "Domingo" : dias[targetDate.getDay()];
+  const monthName = isNaN(targetDate.getTime()) ? "Julio" : meses[targetDate.getMonth()];
 
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -44,7 +69,7 @@ export default function BabyWordSoup() {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [date, time]);
 
   // Run intro animation only when the soup section first enters viewport.
   useEffect(() => {
@@ -139,34 +164,40 @@ export default function BabyWordSoup() {
             <div className="w-full bg-[#4A5D6B] text-white py-5 shadow-sm border-y-[3px] border-dashed border-[#C3A66A]/45 grid grid-cols-[1fr_auto_1fr] px-4 md:px-8 items-center relative gap-2">
               
               {/* Left text on ribbon */}
-              <div className="font-sans text-lg md:text-xl font-extrabold tracking-[0.04em] text-[#F4F8FB] text-center pr-2 border-r border-white/10 flex items-center justify-center gap-2 min-w-0">
-                <span>10:30 AM</span>
+              <div 
+                {...getEditableProps("hora", "font-sans text-lg md:text-xl font-extrabold tracking-[0.04em] text-[#F4F8FB] text-center pr-2 border-r border-white/10 flex items-center justify-center gap-2 min-w-0")}
+              >
+                <span>{time}</span>
               </div>
               
               {/* Placeholder spacer for the large circle badge overlaying in the center */}
               <div className="w-28 md:w-32"></div>
               
               {/* Right text on ribbon */}
-              <div className="font-sans text-lg md:text-xl font-extrabold tracking-[0.06em] text-[#F4F8FB] text-center pl-2 border-l border-white/10 min-w-0">
-                2026
+              <div 
+                {...getEditableProps("fecha", "font-sans text-lg md:text-xl font-extrabold tracking-[0.06em] text-[#F4F8FB] text-center pl-2 border-l border-white/10 min-w-0")}
+              >
+                {year}
               </div>
             </div>
             
             {/* Huge Circular Badge overlaying on top of the ribbon */}
-            <div className="absolute z-20 w-30 h-30 md:w-34 md:h-34 rounded-full bg-[#C3A66A] text-stone-900 border-2 border-white shadow-lg flex flex-col items-center justify-center text-center px-2 py-2.5">
+            <div 
+              {...getEditableProps("fecha", "absolute z-20 w-30 h-30 md:w-34 md:h-34 rounded-full bg-[#C3A66A] text-stone-900 border-2 border-white shadow-lg flex flex-col items-center justify-center text-center px-2 py-2.5")}
+            >
               
               {/* Dashed outer circular trace inside circle */}
               <div className="absolute inset-1.5 border border-dashed border-white/60 rounded-full pointer-events-none"></div>
               
               {/* Circle contents */}
               <span className="font-sans text-[12px] md:text-[14px] font-extrabold tracking-[0.05em] text-white leading-none">
-                Domingo
+                {dayName}
               </span>
               <span className="font-sans text-5xl md:text-6xl font-black py-0.5 leading-none tracking-tight text-white">
-                05
+                {dayNum}
               </span>
               <span className="font-sans text-[12px] md:text-[14px] font-extrabold tracking-[0.05em] text-stone-50 leading-none">
-                Julio
+                {monthName}
               </span>
             </div>
             

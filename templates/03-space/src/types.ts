@@ -18,6 +18,9 @@ export interface InvitationDetails {
     alternativeText?: string;
   }[];
   whatsappNumber: string; // default number to RSVP
+  welcomeMessage?: string;
+  tituloEvento?: string;
+  extra?: Record<string, unknown>; // Campo para textos y configuraciones personalizadas del admin
 }
 
 export interface RSVP {
@@ -46,6 +49,7 @@ export interface InvitationData {
   vestimenta?: string;
   registroRegalos?: { tienda: string; url?: string; codigo?: string; notaAlternativa?: string }[];
   whatsappNumero?: string;
+  mensajePersonalizado?: string;
   extra?: Record<string, unknown>;
 }
 
@@ -70,5 +74,8 @@ export function fromInvitationData(data: InvitationData): InvitationDetails {
       alternativeText: r.notaAlternativa,
     })),
     whatsappNumber: data.whatsappNumero ?? "",
+    welcomeMessage: data.mensajePersonalizado || "¡Te invitamos a celebrar con nosotros!",
+    tituloEvento: data.tituloEvento || "Baby Shower",
+    extra: data.extra,
   };
 }

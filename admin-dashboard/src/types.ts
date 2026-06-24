@@ -14,6 +14,7 @@ export interface InvitationData {
   registroRegalos?: { tienda: string; url?: string; codigo?: string; notaAlternativa?: string }[];
   whatsappNumero?: string;
   features: { muroDeseos: boolean; rsvp: boolean; countdown: boolean; mapa: boolean; musica: boolean };
+  asistido?: boolean;
   extra?: Record<string, unknown>;
 }
 

@@ -6,16 +6,17 @@ import { LullabySynth } from '../utils/audioSynth';
 interface IntroRocketProps {
   onIntroComplete: (audioSynthInstance: LullabySynth | null) => void;
   babyName?: string;
+  extra?: Record<string, any>;
 }
 
-export default function IntroRocket({ onIntroComplete, babyName = "Martín" }: IntroRocketProps) {
+export default function IntroRocket({ onIntroComplete, babyName = "Martín", extra }: IntroRocketProps) {
   const mainCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const starCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const rocketRef = useRef<HTMLDivElement | null>(null);
 
   const [hasStarted, setHasStarted] = useState(false);
   const [isAutomated, setIsAutomated] = useState(false);
-  const [touchHint, setTouchHint] = useState('¡Preparando despegue automático de amor... 🚀!');
+  const [touchHint, setTouchHint] = useState(() => extra?.txtIntroHint || '¡Preparando despegue automático de amor... 🚀!');
   const [distanceToTarget, setDistanceToTarget] = useState(1); // 1 = start, 0 = end
   const [countdownText, setCountdownText] = useState('3');
   const [isCounting, setIsCounting] = useState(true);
@@ -46,6 +47,12 @@ export default function IntroRocket({ onIntroComplete, babyName = "Martín" }: I
 
   const isAutomatedRef = useRef(isAutomated);
   isAutomatedRef.current = isAutomated;
+
+  useEffect(() => {
+    if (extra?.txtIntroHint) {
+      setTouchHint(extra.txtIntroHint);
+    }
+  }, [extra]);
 
   useEffect(() => {
     const mainCanvas = mainCanvasRef.current;
@@ -711,7 +718,7 @@ export default function IntroRocket({ onIntroComplete, babyName = "Martín" }: I
       >
         <div className="bg-[#FFF9E6]/95 text-[#281154] text-[11px] font-sans font-bold tracking-wide px-3.5 py-2.5 rounded-2xl shadow-xl border border-white/60 text-center relative flex items-center justify-center gap-1.5 animate-bounce">
           <span>👶</span>
-          <span>{babyName} ya se acerca a nosotros</span>
+          <span>{String(extra?.txtIntroTooltip || `${babyName} ya se acerca a nosotros`)}</span>
           <span>✨</span>
           {/* Custom Petit speech bubble arrow pointing upwards */}
           <div className="absolute bottom-[99%] left-1/2 -translate-x-1/2 border-4 border-transparent border-b-[#FFF9E6]/95" />
@@ -751,7 +758,7 @@ export default function IntroRocket({ onIntroComplete, babyName = "Martín" }: I
       {/* Tender overlay banner on stars destination */}
       <div className="absolute bottom-[115px] left-1/2 -translate-x-1/2 z-30 pointer-events-none text-center w-full max-w-[90vw] sm:max-w-md md:max-w-lg px-2 flex justify-center">
         <h2 className="w-full font-serif font-bold text-sm sm:text-lg text-[#2A4660] drop-shadow-xs bg-[#D4EAF1]/90 backdrop-blur-xs py-2 px-4 sm:px-6 rounded-full border border-[#BDE0FE] shadow-sm">
-          ✨ ¡Destino: Baby Shower de {babyName}! ✨
+          {String(extra?.txtIntroDestino || `✨ ¡Destino: Baby Shower de ${babyName}! ✨`)}
         </h2>
       </div>
 
@@ -795,10 +802,10 @@ export default function IntroRocket({ onIntroComplete, babyName = "Martín" }: I
               </div>
 
               <h2 className="text-3xl font-serif font-black text-[#4A443C] mb-2 tracking-tight italic">
-                ¡Aterrizaje Exitoso!
+                {String(extra?.txtIntroAterrizaje || "¡Aterrizaje Exitoso!")}
               </h2>
               <p className="text-xs font-sans text-[#7C7569] leading-relaxed">
-                ¡El cohete ha traído de forma segura al regalo más hermoso del universo! Entrando a la tarjeta de acuarela...
+                {String(extra?.txtIntroAterrizajeSub || "¡El cohete ha traído de forma segura al regalo más hermoso del universo! Entrando a la tarjeta de acuarela...")}
               </p>
             </motion.div>
           </motion.div>

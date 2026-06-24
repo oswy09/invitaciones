@@ -32,6 +32,9 @@ export interface BabyShowerDetails {
   rsvpDeadline: string; // "2026-06-30"
   dressCode: string; // "Azul pastel, beige y blanco"
   whatsappNumber?: string; // dígitos, ej: "573154384042"
+  welcomeMessage?: string;
+  tituloEvento?: string;
+  extra?: Record<string, unknown>; // Campo para textos y configuraciones personalizadas del admin
 }
 
 export const DEFAULT_SHOWER_DETAILS: BabyShowerDetails = {
@@ -46,7 +49,9 @@ export const DEFAULT_SHOWER_DETAILS: BabyShowerDetails = {
   giftRegistryStore: "Amazon & Liverpool",
   giftRegistryUrl: "https://www.amazon.com",
   rsvpDeadline: "26 de junio",
-  dressCode: "Azul Serenity, Blanco y Tonos Tierra (Beige/Café claro)"
+  dressCode: "Azul Serenity, Blanco y Tonos Tierra (Beige/Café claro)",
+  welcomeMessage: "Te invitamos a bordo",
+  tituloEvento: "Baby Shower Brunch"
 };
 
 // InvitationData es el esquema estándar compartido (core/schema/invitation-schema.ts).
@@ -66,6 +71,7 @@ export interface InvitationData {
   vestimenta?: string;
   registroRegalos?: { tienda: string; url?: string; codigo?: string; notaAlternativa?: string }[];
   whatsappNumero?: string;
+  mensajePersonalizado?: string;
   extra?: Record<string, unknown>;
 }
 
@@ -87,5 +93,8 @@ export function fromInvitationData(data: InvitationData): BabyShowerDetails {
     rsvpDeadline: (data.extra?.rsvpDeadline as string) ?? "",
     dressCode: data.vestimenta ?? "",
     whatsappNumber: data.whatsappNumero?.replace(/[^+\d]/g, ""),
+    welcomeMessage: data.mensajePersonalizado || "Te invitamos a bordo",
+    tituloEvento: data.tituloEvento || "Baby Shower Brunch",
+    extra: data.extra,
   };
 }

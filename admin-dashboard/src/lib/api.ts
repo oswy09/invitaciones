@@ -18,8 +18,20 @@ export const api = {
   listarPedidos: () => req<Pedido[]>("/api/pedidos"),
   listarWishes: (eventoId: string) => req<WishRow[]>(`/api/pedidos/${eventoId}/wishes`),
   listarRsvps: (eventoId: string) => req<RsvpRow[]>(`/api/pedidos/${eventoId}/rsvps`),
-  actualizarPedido: (eventoId: string, cambios: { pagado?: boolean; aprobado?: boolean }) =>
-    req<{ ok: true }>(`/api/pedidos/${eventoId}`, { method: "PATCH", body: JSON.stringify(cambios) }),
+  actualizarPedido: (
+    eventoId: string,
+    cambios: {
+      pagado?: boolean;
+      aprobado?: boolean;
+      datos?: any;
+      nombre_evento?: string;
+      template_id?: string;
+    }
+  ) => req<{ ok: true }>(`/api/pedidos/${eventoId}`, { method: "PATCH", body: JSON.stringify(cambios) }),
   actualizarWish: (wishId: string, oculto: boolean) =>
     req<{ ok: true }>(`/api/wishes/${wishId}`, { method: "PATCH", body: JSON.stringify({ oculto }) }),
+  obtenerPrecios: () => req<Record<string, { cop: number; usd: number }>>("/api/precios"),
+  guardarPrecios: (precios: Record<string, { cop: number; usd: number }>) =>
+    req<{ ok: true }>("/api/precios", { method: "POST", body: JSON.stringify(precios) }),
+  eliminarPedido: (eventoId: string) => req<{ ok: true }>(`/api/pedidos/${eventoId}`, { method: "DELETE" }),
 };
