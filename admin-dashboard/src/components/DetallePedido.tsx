@@ -93,7 +93,7 @@ export default function DetallePedido({ pedido, onUpdated, onDeleted }: DetalleP
 
   const datos = pedido.datos;
   const devPort = DEV_PORT_POR_TEMPLATE[pedido.template_id];
-  const invitacionUrl = devPort ? `http://localhost:${devPort}/?evento=${pedido.id}` : null;
+  const invitacionUrl = devPort ? `http://localhost:${devPort}/${pedido.id}` : null;
   const cancion = datos.extra?.cancionSeleccionada as { titulo: string; artista: string } | undefined;
   const origen = datos.extra?.origen as string | undefined;
   const telefonoContacto = datos.extra?.telefonoContacto as string | undefined;

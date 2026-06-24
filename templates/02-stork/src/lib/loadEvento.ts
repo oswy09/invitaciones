@@ -9,6 +9,12 @@ export interface EventoResult {
 }
 
 export function getEventoIdFromUrl(): string {
+  // Patrón de hosting (ver docs/PLAN..., sección 2.3): una plantilla publicada
+  // en Netlify sirve a N clientes por ruta, ej. stork.tudominio.com/boda-juan-2026.
+  const path = window.location.pathname.replace(/^\/+/, "").replace(/\/+$/, "");
+  if (path) return decodeURIComponent(path.split("/")[0]);
+
+  // Compatibilidad: ?evento=slug sigue funcionando por si algún link viejo lo usa.
   const params = new URLSearchParams(window.location.search);
   return params.get("evento") ?? "baby-shower-demo";
 }

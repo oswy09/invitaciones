@@ -116,7 +116,7 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
       return;
     }
 
-    setResultUrl(`http://localhost:${template.devPort}/?evento=${eventoId}`);
+    setResultUrl(`http://localhost:${template.devPort}/${eventoId}`);
   }
 
   if (resultUrl) {
