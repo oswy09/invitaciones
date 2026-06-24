@@ -6,3 +6,8 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# package-lock.json excluido a proposito: la version generada en Windows
+# rompe el build en Netlify (Linux) por binarios nativos de rollup/lightningcss.
+# Se deja que npm install genere uno fresco en cada entorno.
+package-lock.json
