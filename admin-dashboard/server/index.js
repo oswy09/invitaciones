@@ -21,6 +21,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Exige una sesión válida de Supabase Auth antes de tocar la service_role key.
+// El JWT viene del login del dashboard (Authorization: Bearer <token>).
+async function requireAuth(req, res, next) {
+  const header = req.headers.authorization ?? "";
+  const token = header.startsWith("Bearer ") ? header.slice(7) : null;
+  if (!token) return res.status(401).json({ error: "No autenticado" });
+
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error || !data.user) return res.status(401).json({ error: "Sesión inválida o vencida" });
+
+  next();
+}
+
+app.use("/api", requireAuth);
+
 app.get("/api/pedidos", async (_req, res) => {
   const { data, error } = await supabase.from("eventos").select("*").order("created_at", { ascending: false });
   if (error) return res.status(500).json({ error: error.message });

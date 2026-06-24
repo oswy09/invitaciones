@@ -1,10 +1,17 @@
 import { Pedido, WishRow, RsvpRow } from "../types";
+import { authClient } from "./authClient";
 
 const BASE_URL = import.meta.env.VITE_ADMIN_SERVER_URL ?? "http://localhost:3301";
 
 async function req<T>(path: string, options?: RequestInit): Promise<T> {
+  const { data } = await authClient.auth.getSession();
+  const token = data.session?.access_token;
+
   const res = await fetch(`${BASE_URL}${path}`, {
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
     ...options,
   });
   if (!res.ok) {

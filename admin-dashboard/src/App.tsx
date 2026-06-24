@@ -1,12 +1,32 @@
 import { useEffect, useState } from "react";
+import type { Session } from "@supabase/supabase-js";
 import { api } from "./lib/api";
+import { authClient } from "./lib/authClient";
 import { Pedido } from "./types";
 import ListaPedidos from "./components/ListaPedidos";
 import DetallePedido from "./components/DetallePedido";
 import GestionPrecios from "./components/GestionPrecios";
+import Login from "./components/Login";
 import { IconDollar, IconRefresh, IconTrendingUp, IconUser, IconCheckCircle, IconWarning, IconCalendar, IconTag } from "./components/Icons";
 
 export default function App() {
+  const [session, setSession] = useState<Session | null | undefined>(undefined);
+
+  useEffect(() => {
+    authClient.auth.getSession().then(({ data }) => setSession(data.session));
+    const { data: subscription } = authClient.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession);
+    });
+    return () => subscription.subscription.unsubscribe();
+  }, []);
+
+  if (session === undefined) return null; // evita parpadeo mientras se resuelve la sesión inicial
+  if (session === null) return <Login />;
+
+  return <Dashboard onLogout={() => authClient.auth.signOut()} />;
+}
+
+function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [seleccionadoId, setSeleccionadoId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -123,6 +143,13 @@ export default function App() {
             title="Sincronizar Datos"
           >
             <IconRefresh className={`w-4 h-4 ${isRefreshing ? "animate-spin text-violet-600" : ""}`} />
+          </button>
+
+          <button
+            onClick={onLogout}
+            className="text-xs font-semibold px-3 py-2 rounded-xl border border-stone-200 text-stone-500 hover:bg-stone-50 cursor-pointer"
+          >
+            Salir
           </button>
         </div>
       </header>
