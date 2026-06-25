@@ -50,7 +50,14 @@ export interface RsvpRow {
   created_at: string;
 }
 
-/** Puertos de dev server local por plantilla — en producción serían URLs reales publicadas. */
+/** URL real publicada en Netlify por plantilla. Vacío = todavía no está publicada (usa localhost de desarrollo). */
+export const BASE_URL_POR_TEMPLATE: Record<string, string> = {
+  "01-dino": "https://celebrarte-dino.netlify.app",
+  "02-stork": "",
+  "03-space": "",
+};
+
+/** Puertos de dev server local, usados como fallback mientras una plantilla no esté publicada. */
 export const DEV_PORT_POR_TEMPLATE: Record<string, number> = {
   "01-dino": 3101,
   "02-stork": 3102,

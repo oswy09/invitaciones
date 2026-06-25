@@ -93,12 +93,22 @@ export default function Catalogo({ onSelect }: CatalogoProps) {
             </div>
             
             <div className="flex flex-col gap-2">
-              <button
-                onClick={() => onSelect(t)}
-                className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm py-2.5 px-3 rounded-xl cursor-pointer transition-colors text-center"
-              >
-                Ver plantilla ➔
-              </button>
+              {t.baseUrl ? (
+                <button
+                  onClick={() => onSelect(t)}
+                  className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm py-2.5 px-3 rounded-xl cursor-pointer transition-colors text-center"
+                >
+                  Ver plantilla ➔
+                </button>
+              ) : (
+                <button
+                  disabled
+                  title="Esta plantilla todavía no está publicada"
+                  className="w-full bg-slate-100 text-slate-400 font-bold text-sm py-2.5 px-3 rounded-xl cursor-not-allowed text-center"
+                >
+                  Próximamente
+                </button>
+              )}
             </div>
           </div>
         ))}

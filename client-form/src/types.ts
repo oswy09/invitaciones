@@ -41,16 +41,16 @@ export interface TemplateInfo {
   nombre: string;
   descripcion: string;
   emoji: string;
-  /** Puerto del dev server local (solo desarrollo — en producción esto sería la URL real publicada). */
-  devPort: number;
+  /** URL real publicada en Netlify. Vacío = todavía no está publicada. */
+  baseUrl: string;
 }
 
 export const WHATSAPP_CONTACTO = "573057502790";
 
 export const CATALOGO: TemplateInfo[] = [
-  { id: "01-dino", nombre: "Dino", descripcion: "Baby shower de dinosaurios, con sobre interactivo", emoji: "🦖", devPort: 3101 },
-  { id: "02-stork", nombre: "Cigüeña", descripcion: "Baby shower de cigüeña y nubes, intro animada", emoji: "🦢", devPort: 3102 },
-  { id: "03-space", nombre: "Espacio", descripcion: "Baby shower espacial, cohete y estrellas", emoji: "🚀", devPort: 3103 },
+  { id: "01-dino", nombre: "Dino", descripcion: "Baby shower de dinosaurios, con sobre interactivo", emoji: "🦖", baseUrl: "https://celebrarte-dino.netlify.app" },
+  { id: "02-stork", nombre: "Cigüeña", descripcion: "Baby shower de cigüeña y nubes, intro animada", emoji: "🦢", baseUrl: "" },
+  { id: "03-space", nombre: "Espacio", descripcion: "Baby shower espacial, cohete y estrellas", emoji: "🚀", baseUrl: "" },
 ];
 
 const DIAS_SEMANA = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];

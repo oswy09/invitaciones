@@ -25,7 +25,7 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
   const [error, setError] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const previewUrl = `http://localhost:${template.devPort}/?preview=1`;
+  const previewUrl = `${template.baseUrl}/?preview=1`;
 
   function sendDraftToPreview() {
     iframeRef.current?.contentWindow?.postMessage(
@@ -116,7 +116,7 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
       return;
     }
 
-    setResultUrl(`http://localhost:${template.devPort}/${eventoId}`);
+    setResultUrl(`${template.baseUrl}/${eventoId}`);
   }
 
   if (resultUrl) {

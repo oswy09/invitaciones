@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../lib/api";
-import { Pedido, WishRow, RsvpRow, DEV_PORT_POR_TEMPLATE } from "../types";
+import { Pedido, WishRow, RsvpRow, DEV_PORT_POR_TEMPLATE, BASE_URL_POR_TEMPLATE } from "../types";
 import {
   IconWhatsApp,
   IconLink,
@@ -92,8 +92,13 @@ export default function DetallePedido({ pedido, onUpdated, onDeleted }: DetalleP
   }
 
   const datos = pedido.datos;
+  const baseUrl = BASE_URL_POR_TEMPLATE[pedido.template_id];
   const devPort = DEV_PORT_POR_TEMPLATE[pedido.template_id];
-  const invitacionUrl = devPort ? `http://localhost:${devPort}/${pedido.id}` : null;
+  const invitacionUrl = baseUrl
+    ? `${baseUrl}/${pedido.id}`
+    : devPort
+    ? `http://localhost:${devPort}/${pedido.id}`
+    : null;
   const cancion = datos.extra?.cancionSeleccionada as { titulo: string; artista: string } | undefined;
   const origen = datos.extra?.origen as string | undefined;
   const telefonoContacto = datos.extra?.telefonoContacto as string | undefined;
