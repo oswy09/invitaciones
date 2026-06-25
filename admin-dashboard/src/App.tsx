@@ -89,66 +89,58 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
   return (
     <div className="h-screen flex flex-col bg-stone-50 select-none overflow-hidden font-sans">
-      {/* Header Premium */}
-      <header className="h-16 px-6 bg-white border-b border-stone-200 flex items-center justify-between shrink-0 shadow-sm z-10">
+      {/* Header */}
+      <header className="h-16 px-6 bg-white border-b border-stone-200 flex items-center justify-between shrink-0 z-10">
         <div
           onClick={() => { setVista("pedidos"); setSeleccionadoId(null); }}
-          className="flex items-center gap-3 cursor-pointer select-none hover:opacity-90 active:scale-98 transition-all"
+          className="flex items-center gap-2.5 cursor-pointer select-none"
         >
-          <div className="w-9 h-9 rounded-xl bg-violet-600 flex items-center justify-center text-white shadow-md shadow-violet-600/20">
-            <span className="font-bold text-lg font-inter">I</span>
+          <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center text-white">
+            <span className="font-bold text-sm font-inter">I</span>
           </div>
-          <div>
-            <h1 className="text-base font-bold text-stone-900 tracking-tight leading-none">Invitaciones Admin</h1>
-            <p className="text-[10px] text-stone-400 font-inter mt-0.5 font-medium uppercase tracking-wider">Dashboard de Control</p>
-          </div>
+          <h1 className="text-[15px] font-bold text-stone-900 tracking-tight">Invitaciones</h1>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Volver a Inicio */}
+        {/* Navegación: segmented control */}
+        <div className="flex items-center gap-0.5 bg-stone-100 rounded-full p-1">
           <button
             onClick={() => { setVista("pedidos"); setSeleccionadoId(null); }}
-            className={`flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-xl border transition-all cursor-pointer ${
-              vista === "pedidos" && seleccionadoId === null
-                ? "bg-stone-950 text-white border-stone-950 shadow-md shadow-stone-950/10"
-                : "bg-white text-stone-700 border-stone-200 hover:bg-stone-50"
+            className={`text-[13px] font-semibold px-4 py-1.5 rounded-full transition-all cursor-pointer ${
+              vista === "pedidos"
+                ? "bg-white text-stone-900 shadow-sm"
+                : "text-stone-500 hover:text-stone-700"
             }`}
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            <span>Inicio</span>
+            Pedidos
           </button>
-
-          {/* Ajustar Precios — vista propia, separada de la navegación de pedidos */}
           <button
-            onClick={() => setVista(vista === "precios" ? "pedidos" : "precios")}
-            className={`flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-xl border transition-all cursor-pointer ${
+            onClick={() => setVista("precios")}
+            className={`text-[13px] font-semibold px-4 py-1.5 rounded-full transition-all cursor-pointer ${
               vista === "precios"
-                ? "bg-violet-600 text-white border-violet-600 shadow-md shadow-violet-600/10"
-                : "bg-white text-stone-700 border-stone-200 hover:bg-stone-50"
+                ? "bg-white text-stone-900 shadow-sm"
+                : "text-stone-500 hover:text-stone-700"
             }`}
           >
-            <IconDollar className="w-4 h-4" />
-            <span>Ajustar Precios</span>
+            Precios
           </button>
+        </div>
 
-          {/* Actualizar */}
+        <div className="flex items-center gap-1">
           <button
             onClick={() => {
               cargarPedidos();
               cargarPrecios();
             }}
             disabled={isRefreshing}
-            className="p-2 text-stone-500 hover:text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 rounded-xl transition-all cursor-pointer disabled:opacity-50"
-            title="Sincronizar Datos"
+            className="p-2 text-stone-400 hover:text-stone-700 hover:bg-stone-100 rounded-lg transition-all cursor-pointer disabled:opacity-50"
+            title="Sincronizar datos"
           >
             <IconRefresh className={`w-4 h-4 ${isRefreshing ? "animate-spin text-violet-600" : ""}`} />
           </button>
 
           <button
             onClick={onLogout}
-            className="text-xs font-semibold px-3 py-2 rounded-xl border border-stone-200 text-stone-500 hover:bg-stone-50 cursor-pointer"
+            className="text-[13px] font-semibold px-3 py-1.5 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 cursor-pointer"
           >
             Salir
           </button>
@@ -200,89 +192,54 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             />
           ) : (
             /* Vista por defecto: Stats Dashboard */
-            <div className="h-full overflow-y-auto p-8 space-y-8 max-w-5xl mx-auto">
+            <div className="h-full overflow-y-auto p-8 space-y-10 max-w-5xl mx-auto">
               {/* Saludo */}
               <div>
-                <h2 className="text-2xl font-bold text-stone-900">Bienvenido al Panel Administrativo</h2>
-                <p className="text-sm text-stone-500 mt-1">
-                  Aquí tienes una visión general del estado de tus ventas y del flujo de confirmaciones de invitados.
+                <h2 className="text-[22px] font-bold text-stone-900 tracking-tight">Resumen general</h2>
+                <p className="text-sm text-stone-400 mt-0.5">
+                  Estado de tus ventas y confirmaciones de invitados.
                 </p>
               </div>
 
               {/* Grid de Tarjetas Estadísticas */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-                {/* Ingresos COP */}
-                <div className="bg-white border border-stone-200/80 rounded-2xl p-5 shadow-sm space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400 font-inter">Ingresos COP (Est.)</span>
-                    <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                      <IconDollar className="w-4.5 h-4.5" />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="text-2xl font-bold text-stone-900 font-inter">
-                      ${copEstimado.toLocaleString("es-CO")}
-                    </h3>
-                    <p className="text-[10px] text-stone-400 font-inter font-medium">De {pedidosPagados} pedidos pagados</p>
-                  </div>
-                </div>
-
-                {/* Ingresos USD */}
-                <div className="bg-white border border-stone-200/80 rounded-2xl p-5 shadow-sm space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400 font-inter">Ingresos USD (Est.)</span>
-                    <div className="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
-                      <IconTrendingUp className="w-4.5 h-4.5" />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="text-2xl font-bold text-stone-900 font-inter">
-                      ${usdEstimado.toLocaleString("en-US")} USD
-                    </h3>
-                    <p className="text-[10px] text-stone-400 font-inter font-medium">Equivalente en moneda extranjera</p>
-                  </div>
-                </div>
-
-                {/* Por Aprobar */}
-                <div className="bg-white border border-stone-200/80 rounded-2xl p-5 shadow-sm space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400 font-inter">Por Aprobar</span>
-                    <div className="w-8 h-8 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
-                      <IconCheckCircle className="w-4.5 h-4.5" />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="text-2xl font-bold text-stone-900 font-inter">
-                      {pedidosPendientesAprobacion}
-                    </h3>
-                    <p className="text-[10px] text-stone-400 font-inter font-medium">Pendientes de verificar datos</p>
-                  </div>
-                </div>
-
-                {/* Soporte Asistido */}
-                <div className="bg-white border border-stone-200/80 rounded-2xl p-5 shadow-sm space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400 font-inter">Soporte Manual</span>
-                    <div className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
-                      <IconWarning className="w-4.5 h-4.5" />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="text-2xl font-bold text-stone-900 font-inter">
-                      {pedidosAsistidos}
-                    </h3>
-                    <p className="text-[10px] text-rose-500 font-inter font-medium">Requiere contacto WhatsApp</p>
-                  </div>
-                </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <StatCard
+                  label="Ingresos COP"
+                  valor={`$${copEstimado.toLocaleString("es-CO")}`}
+                  nota={`${pedidosPagados} pagados`}
+                  icon={<IconDollar className="w-4 h-4" />}
+                  color="emerald"
+                />
+                <StatCard
+                  label="Ingresos USD"
+                  valor={`$${usdEstimado.toLocaleString("en-US")}`}
+                  nota="equivalente"
+                  icon={<IconTrendingUp className="w-4 h-4" />}
+                  color="sky"
+                />
+                <StatCard
+                  label="Por aprobar"
+                  valor={String(pedidosPendientesAprobacion)}
+                  nota="pendientes"
+                  icon={<IconCheckCircle className="w-4 h-4" />}
+                  color="amber"
+                />
+                <StatCard
+                  label="Soporte manual"
+                  valor={String(pedidosAsistidos)}
+                  nota="vía WhatsApp"
+                  icon={<IconWarning className="w-4 h-4" />}
+                  color="rose"
+                />
               </div>
 
               {/* Fila Inferior: Desglose y accesos */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {/* Tarjeta de Popularidad de Plantillas */}
-                <div className="md:col-span-2 bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-5">
-                  <h3 className="text-sm font-bold text-stone-800 uppercase tracking-wide flex items-center gap-2">
-                    <IconTag className="w-4 h-4 text-violet-600" />
-                    Distribución de Ventas por Plantilla
+                <div className="md:col-span-2 bg-white border border-stone-100 rounded-2xl p-6 space-y-5">
+                  <h3 className="text-[13px] font-bold text-stone-700 flex items-center gap-2">
+                    <IconTag className="w-4 h-4 text-violet-500" />
+                    Distribución por plantilla
                   </h3>
 
                   <div className="space-y-4 font-inter">
@@ -308,19 +265,18 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                 </div>
 
                 {/* Tarjeta de Atajos Rápidos */}
-                <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-                  <div className="space-y-3">
-                    <h3 className="text-sm font-bold text-stone-800 uppercase tracking-wide flex items-center gap-2">
-                      <IconUser className="w-4 h-4 text-violet-600" />
-                      Acciones Rápidas
+                <div className="bg-stone-50 rounded-2xl p-6 flex flex-col justify-between">
+                  <div className="space-y-2.5">
+                    <h3 className="text-[13px] font-bold text-stone-700 flex items-center gap-2">
+                      <IconUser className="w-4 h-4 text-violet-500" />
+                      Acciones rápidas
                     </h3>
-                    <p className="text-xs text-stone-500 leading-relaxed font-inter">
-                      Selecciona un pedido de la lista lateral para ver todos los detalles del evento, aprobar la invitación, habilitar el pago y moderar los mensajes recibidos del muro de deseos.
+                    <p className="text-[12.5px] text-stone-500 leading-relaxed font-inter">
+                      Selecciona un pedido de la lista para ver los detalles, aprobarlo, marcarlo como pagado o moderar el muro de deseos.
                     </p>
                   </div>
-                  <div className="pt-4 border-t border-stone-100 mt-4 flex items-center justify-between text-xs text-stone-400 font-inter font-medium">
-                    <span>Total Pedidos: {totalPedidos}</span>
-                    <span>Modo Admin Activo</span>
+                  <div className="pt-4 mt-4 border-t border-stone-200/70 flex items-center justify-between text-[11px] text-stone-400 font-inter font-semibold">
+                    <span>{totalPedidos} pedidos en total</span>
                   </div>
                 </div>
               </div>
@@ -345,6 +301,37 @@ function TemplateProgress({ name, count, total, colorClass }: { name: string; co
       </div>
       <div className="w-full bg-stone-100 h-2 rounded-full overflow-hidden">
         <div className={`h-full ${colorClass} rounded-full transition-all duration-500`} style={{ width: `${percentage}%` }} />
+      </div>
+    </div>
+  );
+}
+
+const STAT_COLORS = {
+  emerald: "bg-emerald-50 text-emerald-600",
+  sky: "bg-sky-50 text-sky-600",
+  amber: "bg-amber-50 text-amber-600",
+  rose: "bg-rose-50 text-rose-600",
+} as const;
+
+function StatCard({
+  label,
+  valor,
+  nota,
+  icon,
+  color,
+}: {
+  label: string;
+  valor: string;
+  nota: string;
+  icon: React.ReactNode;
+  color: keyof typeof STAT_COLORS;
+}) {
+  return (
+    <div className="bg-stone-50 rounded-2xl p-4 space-y-3">
+      <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${STAT_COLORS[color]}`}>{icon}</div>
+      <div>
+        <p className="text-xl font-bold text-stone-900 font-inter leading-tight">{valor}</p>
+        <p className="text-[11px] text-stone-400 font-inter font-medium mt-0.5">{label} · {nota}</p>
       </div>
     </div>
   );

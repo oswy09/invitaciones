@@ -10,13 +10,29 @@ interface ListaPedidosProps {
 
 type FiltroEstado = "todos" | "pagados" | "sin_pagar" | "pendientes_aprobacion" | "asistidos" | "contacto";
 
+const TEMPLATE_INFO: Record<string, { emoji: string; nombre: string; color: string }> = {
+  "01-dino": { emoji: "🦖", nombre: "Dino", color: "bg-emerald-50 text-emerald-700" },
+  "02-stork": { emoji: "🦢", nombre: "Cigüeña", color: "bg-sky-50 text-sky-700" },
+  "03-space": { emoji: "🚀", nombre: "Espacio", color: "bg-indigo-50 text-indigo-700" },
+};
+
+function tiempoRelativo(fechaISO: string): string {
+  const diffMs = Date.now() - new Date(fechaISO).getTime();
+  const min = Math.floor(diffMs / 60000);
+  if (min < 1) return "ahora";
+  if (min < 60) return `hace ${min} min`;
+  const horas = Math.floor(min / 60);
+  if (horas < 24) return `hace ${horas} h`;
+  const dias = Math.floor(horas / 24);
+  if (dias < 7) return `hace ${dias} d`;
+  return new Date(fechaISO).toLocaleDateString("es-CO", { day: "numeric", month: "short" });
+}
+
 export default function ListaPedidos({ pedidos, seleccionadoId, onSelect }: ListaPedidosProps) {
   const [busqueda, setBusqueda] = useState("");
   const [filtro, setFiltro] = useState<FiltroEstado>("todos");
 
-  // Filtrar pedidos
   const pedidosFiltrados = pedidos.filter((p) => {
-    // Filtro por texto (Nombre del evento, ID o Nombre del cliente en whatsapp/anfitriones)
     const coincideBusqueda =
       p.nombre_evento.toLowerCase().includes(busqueda.toLowerCase()) ||
       p.id.toLowerCase().includes(busqueda.toLowerCase()) ||
@@ -25,7 +41,6 @@ export default function ListaPedidos({ pedidos, seleccionadoId, onSelect }: List
 
     if (!coincideBusqueda) return false;
 
-    // Filtro por estado
     switch (filtro) {
       case "pagados":
         return p.pagado;
@@ -45,65 +60,42 @@ export default function ListaPedidos({ pedidos, seleccionadoId, onSelect }: List
 
   return (
     <div className="flex flex-col h-full bg-white">
-      {/* Buscador */}
-      <div className="p-4 border-b border-stone-100 space-y-3">
+      <div className="p-4 pb-3 space-y-3">
         <div className="relative">
-          <IconSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 w-4 h-4 pointer-events-none" />
+          <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 w-4 h-4 pointer-events-none" />
           <input
             type="text"
-            placeholder="Buscar por evento o cliente..."
+            placeholder="Buscar pedido o cliente..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-sm bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all font-inter placeholder:text-stone-400"
+            className="w-full pl-9 pr-4 py-2 text-[13px] bg-stone-100/80 border border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/15 focus:bg-white focus:border-stone-200 transition-all font-inter placeholder:text-stone-400"
           />
-          {busqueda && (
-            <button
-              onClick={() => setBusqueda("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 text-xs font-bold font-inter cursor-pointer"
-            >
-              Limpiar
-            </button>
-          )}
         </div>
 
-        {/* Filtros rápidos horizontal */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-thin">
           <FilterChip active={filtro === "todos"} label="Todos" onClick={() => setFiltro("todos")} count={pedidos.length} />
+          <FilterChip
+            active={filtro === "pendientes_aprobacion"}
+            label="Por aprobar"
+            onClick={() => setFiltro("pendientes_aprobacion")}
+            count={pedidos.filter((p) => !p.aprobado).length}
+          />
+          <FilterChip
+            active={filtro === "sin_pagar"}
+            label="Sin pagar"
+            onClick={() => setFiltro("sin_pagar")}
+            count={pedidos.filter((p) => !p.pagado).length}
+          />
           <FilterChip
             active={filtro === "pagados"}
             label="Pagados"
             onClick={() => setFiltro("pagados")}
             count={pedidos.filter((p) => p.pagado).length}
           />
-          <FilterChip
-            active={filtro === "sin_pagar"}
-            label="Impagos"
-            onClick={() => setFiltro("sin_pagar")}
-            count={pedidos.filter((p) => !p.pagado).length}
-          />
-          <FilterChip
-            active={filtro === "pendientes_aprobacion"}
-            label="Por Aprobar"
-            onClick={() => setFiltro("pendientes_aprobacion")}
-            count={pedidos.filter((p) => !p.aprobado).length}
-          />
-          <FilterChip
-            active={filtro === "asistidos"}
-            label="Asistidos"
-            onClick={() => setFiltro("asistidos")}
-            count={pedidos.filter((p) => p.datos.asistido).length}
-          />
-          <FilterChip
-            active={filtro === "contacto"}
-            label="Desde WA"
-            onClick={() => setFiltro("contacto")}
-            count={pedidos.filter((p) => p.datos.extra?.origen === "formulario_contacto").length}
-          />
         </div>
       </div>
 
-      {/* Lista de Pedidos */}
-      <div className="flex-1 overflow-y-auto divide-y divide-stone-100">
+      <div className="flex-1 overflow-y-auto px-2 pb-2 space-y-0.5">
         {pedidosFiltrados.length === 0 ? (
           <div className="p-8 text-center text-stone-400 space-y-1">
             <p className="text-sm font-medium">No se encontraron pedidos</p>
@@ -112,49 +104,39 @@ export default function ListaPedidos({ pedidos, seleccionadoId, onSelect }: List
         ) : (
           pedidosFiltrados.map((p) => {
             const isSelected = seleccionadoId === p.id;
+            const tpl = TEMPLATE_INFO[p.template_id] ?? { emoji: "✨", nombre: p.template_id, color: "bg-stone-100 text-stone-600" };
             return (
               <button
                 key={p.id}
                 onClick={() => onSelect(p.id)}
-                className={`w-full text-left p-4 hover:bg-stone-50/50 cursor-pointer transition-all flex flex-col gap-2 relative ${
-                  isSelected ? "bg-violet-50/60 hover:bg-violet-50/60 border-l-4 border-violet-600 pl-3" : "border-l-4 border-transparent"
+                className={`w-full text-left p-3 rounded-xl cursor-pointer transition-all flex items-start gap-3 ${
+                  isSelected ? "bg-violet-50" : "hover:bg-stone-50"
                 }`}
               >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="space-y-0.5 min-w-0">
-                    <p className="font-semibold text-stone-900 text-[14px] leading-tight truncate">{p.nombre_evento}</p>
-                    <p className="text-[11px] font-medium text-stone-400 font-inter truncate uppercase">
-                      ID: {p.id.slice(0, 8)}...
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-base shrink-0 ${tpl.color}`}>
+                  {tpl.emoji}
+                </div>
+
+                <div className="min-w-0 flex-1 space-y-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className={`text-[13px] font-semibold leading-tight truncate ${isSelected ? "text-violet-900" : "text-stone-900"}`}>
+                      {p.nombre_evento}
                     </p>
+                    <span className="text-[11px] text-stone-400 font-inter shrink-0">{tiempoRelativo(p.created_at)}</span>
                   </div>
-                  <TemplateBadge templateId={p.template_id} />
-                </div>
 
-                <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-                  <StatusBadge type="paid" active={p.pagado} />
-                  <StatusBadge type="approved" active={p.aprobado} />
-                  {p.datos.asistido && (
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-100 font-inter">
-                      Asistido
-                    </span>
-                  )}
-                  {p.datos.extra?.origen === "formulario_contacto" && (
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100 font-inter">
-                      Desde WhatsApp
-                    </span>
-                  )}
-                </div>
+                  <p className="text-[11px] text-stone-400 font-inter truncate">
+                    {tpl.nombre}
+                    {p.datos.anfitriones ? ` · ${p.datos.anfitriones}` : ""}
+                  </p>
 
-                <div className="flex items-center justify-between mt-1 text-[11px] text-stone-400 font-inter">
-                  <span>{p.datos.anfitriones || "Sin anfitrión"}</span>
-                  <span>
-                    {new Date(p.created_at).toLocaleDateString("es-CO", {
-                      month: "short",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
+                  <div className="flex items-center gap-2.5 pt-0.5">
+                    <EstadoPunto ok={p.aprobado} labelOk="Aprobado" labelNo="Por aprobar" />
+                    <EstadoPunto ok={p.pagado} labelOk="Pagado" labelNo="Sin pagar" colorOk="emerald" />
+                    {p.datos.asistido && (
+                      <span className="text-[10px] font-bold text-rose-500 font-inter">· Asistido</span>
+                    )}
+                  </div>
                 </div>
               </button>
             );
@@ -165,70 +147,37 @@ export default function ListaPedidos({ pedidos, seleccionadoId, onSelect }: List
   );
 }
 
-// Subcomponente FilterChip
 function FilterChip({ active, label, count, onClick }: { active: boolean; label: string; count: number; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg font-inter shrink-0 cursor-pointer transition-all flex items-center gap-1.5 border ${
-        active
-          ? "bg-violet-600 text-white border-violet-600 shadow-sm"
-          : "bg-stone-50 text-stone-600 border-stone-200 hover:bg-stone-100"
+      className={`px-2.5 py-1 text-[11.5px] font-semibold rounded-full font-inter shrink-0 cursor-pointer transition-all flex items-center gap-1.5 ${
+        active ? "bg-stone-900 text-white" : "bg-stone-100 text-stone-500 hover:bg-stone-200"
       }`}
     >
       <span>{label}</span>
-      <span className={`px-1.5 py-0.2 rounded-md text-[9px] font-bold ${active ? "bg-violet-700 text-violet-100" : "bg-stone-200/70 text-stone-500"}`}>
-        {count}
-      </span>
+      {count > 0 && <span className={active ? "text-stone-300" : "text-stone-400"}>{count}</span>}
     </button>
   );
 }
 
-// Subcomponente TemplateBadge
-function TemplateBadge({ templateId }: { templateId: string }) {
-  let label = templateId;
-  let bg = "bg-stone-100 text-stone-600 border-stone-200";
-
-  if (templateId === "01-dino") {
-    label = "🦖 Dino";
-    bg = "bg-emerald-50 text-emerald-700 border-emerald-100";
-  } else if (templateId === "02-stork") {
-    label = "🦢 Cigüeña";
-    bg = "bg-sky-50 text-sky-700 border-sky-100";
-  } else if (templateId === "03-space") {
-    label = "🚀 Espacio";
-    bg = "bg-indigo-50 text-indigo-700 border-indigo-100";
-  }
-
+function EstadoPunto({
+  ok,
+  labelOk,
+  labelNo,
+  colorOk = "violet",
+}: {
+  ok: boolean;
+  labelOk: string;
+  labelNo: string;
+  colorOk?: "violet" | "emerald";
+}) {
+  const dotColor = ok ? (colorOk === "emerald" ? "bg-emerald-500" : "bg-violet-500") : "bg-amber-400";
+  const textColor = ok ? "text-stone-600" : "text-amber-600";
   return (
-    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${bg}`}>
-      {label}
+    <span className={`inline-flex items-center gap-1 text-[10.5px] font-semibold font-inter ${textColor}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
+      {ok ? labelOk : labelNo}
     </span>
   );
 }
-
-// Subcomponente StatusBadge
-function StatusBadge({ type, active }: { type: "paid" | "approved"; active: boolean }) {
-  if (type === "paid") {
-    return active ? (
-      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 font-inter">
-        Pagado
-      </span>
-    ) : (
-      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 border border-amber-100 font-inter">
-        Sin pagar
-      </span>
-    );
-  } else {
-    return active ? (
-      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-100 font-inter">
-        Aprobado
-      </span>
-    ) : (
-      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-50 text-orange-600 border border-orange-100 font-inter">
-        Pendiente
-      </span>
-    );
-  }
-}
-

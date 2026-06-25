@@ -245,8 +245,8 @@ export default function DetallePedido({ pedido, onUpdated, onDeleted }: DetalleP
       )}
 
       {/* Grid de Estado y Configuración (Toggles) */}
-      <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-4">
-        <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider font-inter">Configuración del Pedido</h3>
+      <div className="bg-white border border-stone-100 rounded-2xl p-6 space-y-4">
+        <h3 className="text-[13px] font-bold text-stone-700 font-inter">Configuración del Pedido</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Toggle Aprobado */}
@@ -309,8 +309,8 @@ export default function DetallePedido({ pedido, onUpdated, onDeleted }: DetalleP
 
       {/* Contacto de Seguimiento */}
       {!!datos.extra?.telefonoContacto && (
-        <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-3">
-          <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider font-inter">Contacto de Seguimiento</h3>
+        <div className="bg-white border border-stone-100 rounded-2xl p-6 space-y-3">
+          <h3 className="text-[13px] font-bold text-stone-700 font-inter">Contacto de Seguimiento</h3>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 bg-violet-50/40 rounded-xl border border-violet-100">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-violet-100 text-violet-600 flex items-center justify-center font-inter font-bold">
@@ -335,8 +335,8 @@ export default function DetallePedido({ pedido, onUpdated, onDeleted }: DetalleP
       )}
 
       {/* Datos del Evento en Tarjeta Estilizada */}
-      <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-5">
-        <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider font-inter">Información del Evento</h3>
+      <div className="bg-white border border-stone-100 rounded-2xl p-6 space-y-5">
+        <h3 className="text-[13px] font-bold text-stone-700 font-inter">Información del Evento</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <DatoCard icon={<IconUser className="text-violet-600" />} label="Anfitriones / Padres" valor={datos.anfitriones} />
@@ -371,9 +371,9 @@ export default function DetallePedido({ pedido, onUpdated, onDeleted }: DetalleP
       </div>
 
       {/* Confirmaciones RSVP */}
-      <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-5">
+      <div className="bg-white border border-stone-100 rounded-2xl p-6 space-y-5">
         <div className="flex items-center justify-between">
-          <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider font-inter">Confirmaciones RSVP ({rsvps.length})</h3>
+          <h3 className="text-[13px] font-bold text-stone-700 font-inter">Confirmaciones RSVP ({rsvps.length})</h3>
           <div className="flex gap-2 text-[10px] font-bold font-inter">
             <span className="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-md">
               Asistentes: {adultosAsistentes}
@@ -414,8 +414,8 @@ export default function DetallePedido({ pedido, onUpdated, onDeleted }: DetalleP
       </div>
 
       {/* Muro de Deseos */}
-      <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-5">
-        <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider font-inter">Muro de Deseos ({wishes.length})</h3>
+      <div className="bg-white border border-stone-100 rounded-2xl p-6 space-y-5">
+        <h3 className="text-[13px] font-bold text-stone-700 font-inter">Muro de Deseos ({wishes.length})</h3>
 
         {wishes.length === 0 ? (
           <p className="text-xs text-stone-400 py-2 font-inter">El muro de deseos no tiene dedicatorias aún.</p>
