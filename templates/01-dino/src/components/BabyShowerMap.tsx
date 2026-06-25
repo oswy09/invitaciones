@@ -22,8 +22,10 @@ const BabyShowerMap: React.FC<BabyShowerMapProps> = ({ locationName, locationAdd
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    // Define coords for Edificio Jade
-    const centerCoords: [number, number] = [-74.0326, 4.69176];
+    // Coordenadas aproximadas de Calle 185 #45-3, Bogotá (zona Usaquén, cerca
+    // del Centro Comercial Santafé). Obtenidas por geocodificación (Nominatim/
+    // OSM) — no es un pin exacto a nivel de puerta, solo de la cuadra.
+    const centerCoords: [number, number] = [-74.0343, 4.7617];
 
     try {
       // Initialize map

@@ -75,22 +75,53 @@ export interface InvitationData {
   extra?: Record<string, unknown>;
 }
 
+const MESES_AÑO = [
+  "enero", "febrero", "marzo", "abril", "mayo", "junio",
+  "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+];
+
+// Para demos/links de prueba: si el evento tiene extra.diasDesdeHoy, la fecha
+// del evento y el límite de confirmación se calculan en cada visita relativos
+// a "hoy", en vez de usar un valor fijo guardado en la base de datos. Así el
+// link de demo siempre muestra "faltan N días" sin importar cuándo se vea.
+function calcularFecha(data: InvitationData) {
+  const diasDesdeHoy = data.extra?.diasDesdeHoy;
+  if (typeof diasDesdeHoy !== "number") {
+    return { fecha: data.fecha, hora: data.hora, rsvpDeadline: (data.extra?.rsvpDeadline as string) ?? "" };
+  }
+
+  const fechaEvento = new Date();
+  fechaEvento.setDate(fechaEvento.getDate() + diasDesdeHoy);
+
+  const diasConfirmacionAntes =
+    typeof data.extra?.diasConfirmacionAntes === "number" ? data.extra.diasConfirmacionAntes : 7;
+  const fechaLimite = new Date(fechaEvento);
+  fechaLimite.setDate(fechaLimite.getDate() - diasConfirmacionAntes);
+
+  return {
+    fecha: fechaEvento.toISOString().slice(0, 10),
+    hora: data.hora,
+    rsvpDeadline: `${fechaLimite.getDate()} de ${MESES_AÑO[fechaLimite.getMonth()]}`,
+  };
+}
+
 // Convierte el esquema estándar InvitationData (lo que vive en eventos.datos)
 // a la forma BabyShowerDetails que ya consume el resto de esta plantilla.
 export function fromInvitationData(data: InvitationData): BabyShowerDetails {
   const registro = data.registroRegalos?.[0];
+  const { fecha, hora, rsvpDeadline } = calcularFecha(data);
   return {
     eventoId: data.eventoId,
     babyName: data.nombresPrincipales[0] ?? "",
     parentsNames: data.anfitriones ?? "",
-    date: data.fecha,
-    time: data.hora,
+    date: fecha,
+    time: hora,
     locationName: data.lugar.nombre,
     locationAddress: data.lugar.direccion,
     locationMapUrl: data.lugar.mapUrl,
     giftRegistryStore: registro?.tienda,
     giftRegistryUrl: registro?.url,
-    rsvpDeadline: (data.extra?.rsvpDeadline as string) ?? "",
+    rsvpDeadline,
     dressCode: data.vestimenta ?? "",
     whatsappNumber: data.whatsappNumero?.replace(/[^+\d]/g, ""),
     welcomeMessage: data.mensajePersonalizado || "Te invitamos a bordo",
