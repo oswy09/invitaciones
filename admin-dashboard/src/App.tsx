@@ -29,6 +29,7 @@ export default function App() {
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [seleccionadoId, setSeleccionadoId] = useState<string | null>(null);
+  const [vista, setVista] = useState<"pedidos" | "precios">("pedidos");
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -90,8 +91,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     <div className="h-screen flex flex-col bg-stone-50 select-none overflow-hidden font-sans">
       {/* Header Premium */}
       <header className="h-16 px-6 bg-white border-b border-stone-200 flex items-center justify-between shrink-0 shadow-sm z-10">
-        <div 
-          onClick={() => setSeleccionadoId(null)}
+        <div
+          onClick={() => { setVista("pedidos"); setSeleccionadoId(null); }}
           className="flex items-center gap-3 cursor-pointer select-none hover:opacity-90 active:scale-98 transition-all"
         >
           <div className="w-9 h-9 rounded-xl bg-violet-600 flex items-center justify-center text-white shadow-md shadow-violet-600/20">
@@ -106,9 +107,9 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         <div className="flex items-center gap-2">
           {/* Volver a Inicio */}
           <button
-            onClick={() => setSeleccionadoId(null)}
+            onClick={() => { setVista("pedidos"); setSeleccionadoId(null); }}
             className={`flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-xl border transition-all cursor-pointer ${
-              seleccionadoId === null
+              vista === "pedidos" && seleccionadoId === null
                 ? "bg-stone-950 text-white border-stone-950 shadow-md shadow-stone-950/10"
                 : "bg-white text-stone-700 border-stone-200 hover:bg-stone-50"
             }`}
@@ -119,11 +120,11 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             <span>Inicio</span>
           </button>
 
-          {/* Ajustar Precios */}
+          {/* Ajustar Precios — vista propia, separada de la navegación de pedidos */}
           <button
-            onClick={() => setSeleccionadoId(seleccionadoId === "__precios__" ? null : "__precios__")}
+            onClick={() => setVista(vista === "precios" ? "pedidos" : "precios")}
             className={`flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-xl border transition-all cursor-pointer ${
-              seleccionadoId === "__precios__"
+              vista === "precios"
                 ? "bg-violet-600 text-white border-violet-600 shadow-md shadow-violet-600/10"
                 : "bg-white text-stone-700 border-stone-200 hover:bg-stone-50"
             }`}
@@ -156,33 +157,35 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
       {/* Cuerpo Principal */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar con lista */}
-        <aside className="w-[360px] border-r border-stone-200 bg-white flex flex-col shrink-0 overflow-hidden">
-          {loading ? (
-            <div className="flex-1 flex flex-col items-center justify-center p-8 space-y-3">
-              <div className="w-8 h-8 rounded-full border-2 border-stone-200 border-t-violet-600 animate-spin" />
-              <p className="text-xs text-stone-400 font-inter">Cargando base de datos...</p>
-            </div>
-          ) : error ? (
-            <div className="p-6 text-center space-y-3">
-              <IconWarning className="w-8 h-8 text-rose-500 mx-auto" />
-              <p className="text-sm font-semibold text-stone-800">Error de Conexión</p>
-              <p className="text-xs text-stone-500 leading-relaxed font-inter">{error}</p>
-              <button
-                onClick={cargarPedidos}
-                className="text-xs bg-stone-900 text-white font-bold px-4 py-2 rounded-xl hover:bg-stone-800 transition-colors"
-              >
-                Reintentar
-              </button>
-            </div>
-          ) : (
-            <ListaPedidos pedidos={pedidos} seleccionadoId={seleccionadoId} onSelect={setSeleccionadoId} />
-          )}
-        </aside>
+        {/* Sidebar con lista — no aplica en la vista de Precios, que es ajena a un pedido puntual */}
+        {vista === "pedidos" && (
+          <aside className="w-[360px] border-r border-stone-200 bg-white flex flex-col shrink-0 overflow-hidden">
+            {loading ? (
+              <div className="flex-1 flex flex-col items-center justify-center p-8 space-y-3">
+                <div className="w-8 h-8 rounded-full border-2 border-stone-200 border-t-violet-600 animate-spin" />
+                <p className="text-xs text-stone-400 font-inter">Cargando base de datos...</p>
+              </div>
+            ) : error ? (
+              <div className="p-6 text-center space-y-3">
+                <IconWarning className="w-8 h-8 text-rose-500 mx-auto" />
+                <p className="text-sm font-semibold text-stone-800">Error de Conexión</p>
+                <p className="text-xs text-stone-500 leading-relaxed font-inter">{error}</p>
+                <button
+                  onClick={cargarPedidos}
+                  className="text-xs bg-stone-900 text-white font-bold px-4 py-2 rounded-xl hover:bg-stone-800 transition-colors"
+                >
+                  Reintentar
+                </button>
+              </div>
+            ) : (
+              <ListaPedidos pedidos={pedidos} seleccionadoId={seleccionadoId} onSelect={setSeleccionadoId} />
+            )}
+          </aside>
+        )}
 
         {/* Panel Central */}
         <main className="flex-1 bg-stone-50 overflow-hidden relative">
-          {seleccionadoId === "__precios__" ? (
+          {vista === "precios" ? (
             <div className="h-full overflow-y-auto">
               <GestionPrecios />
             </div>

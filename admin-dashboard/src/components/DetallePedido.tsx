@@ -91,6 +91,14 @@ export default function DetallePedido({ pedido, onUpdated, onDeleted }: DetalleP
     setTimeout(() => setCopied(false), 2000);
   }
 
+  const [linkCopiado, setLinkCopiado] = useState(false);
+  function copiarLink() {
+    if (!invitacionUrl) return;
+    navigator.clipboard.writeText(invitacionUrl);
+    setLinkCopiado(true);
+    setTimeout(() => setLinkCopiado(false), 2000);
+  }
+
   const datos = pedido.datos;
   const baseUrl = BASE_URL_POR_TEMPLATE[pedido.template_id];
   const devPort = DEV_PORT_POR_TEMPLATE[pedido.template_id];
@@ -163,12 +171,30 @@ export default function DetallePedido({ pedido, onUpdated, onDeleted }: DetalleP
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-xs font-bold text-violet-600 bg-violet-50 hover:bg-violet-100 border border-violet-200 rounded-xl px-4 py-2.5 transition-all shadow-sm cursor-pointer"
             >
-              <span>Ver Invitación Activa</span>
+              <span>Abrir</span>
               <IconLink className="w-3.5 h-3.5" />
             </a>
           )}
         </div>
       </div>
+
+      {/* Link de la invitación — el que se comparte con el cliente */}
+      {invitacionUrl && (
+        <div className="bg-violet-50/60 border border-violet-200 rounded-2xl p-4 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold text-violet-500 uppercase tracking-wider font-inter mb-1">
+              Link para compartir con el cliente
+            </p>
+            <p className="text-sm font-bold text-violet-800 truncate font-inter">{invitacionUrl}</p>
+          </div>
+          <button
+            onClick={copiarLink}
+            className="shrink-0 inline-flex items-center gap-1.5 text-xs font-bold text-white bg-violet-600 hover:bg-violet-700 rounded-xl px-4 py-2.5 transition-all shadow-sm cursor-pointer"
+          >
+            {linkCopiado ? "¡Copiado!" : "Copiar link"}
+          </button>
+        </div>
+      )}
 
       {/* Alerta de Acompañamiento Asistido */}
       {datos.asistido && (
@@ -229,19 +255,26 @@ export default function DetallePedido({ pedido, onUpdated, onDeleted }: DetalleP
               <p className="text-sm font-bold text-stone-800">Aprobación del Pedido</p>
               <p className="text-[11px] text-stone-400 font-inter">Autoriza la publicación online de la tarjeta</p>
             </div>
-            <button
-              onClick={toggleAprobado}
-              disabled={working}
-              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 ${
-                pedido.aprobado ? "bg-violet-600" : "bg-stone-200"
-              }`}
-            >
-              <span
-                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                  pedido.aprobado ? "translate-x-5" : "translate-x-0"
+            <div className="flex items-center gap-2.5 shrink-0">
+              <span className={`text-[10px] font-bold uppercase tracking-wide font-inter px-2 py-0.5 rounded-full ${
+                pedido.aprobado ? "bg-violet-100 text-violet-700" : "bg-amber-100 text-amber-700"
+              }`}>
+                {pedido.aprobado ? "Aprobado" : "Pendiente"}
+              </span>
+              <button
+                onClick={toggleAprobado}
+                disabled={working}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 ${
+                  pedido.aprobado ? "bg-violet-600" : "bg-stone-200"
                 }`}
-              />
-            </button>
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    pedido.aprobado ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
           </div>
 
           {/* Toggle Pagado */}
@@ -250,19 +283,26 @@ export default function DetallePedido({ pedido, onUpdated, onDeleted }: DetalleP
               <p className="text-sm font-bold text-stone-800">Estado del Pago</p>
               <p className="text-[11px] text-stone-400 font-inter">Remueve la marca de agua de demo en el cliente</p>
             </div>
-            <button
-              onClick={togglePagado}
-              disabled={working}
-              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 ${
-                pedido.pagado ? "bg-emerald-500" : "bg-stone-200"
-              }`}
-            >
-              <span
-                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                  pedido.pagado ? "translate-x-5" : "translate-x-0"
+            <div className="flex items-center gap-2.5 shrink-0">
+              <span className={`text-[10px] font-bold uppercase tracking-wide font-inter px-2 py-0.5 rounded-full ${
+                pedido.pagado ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+              }`}>
+                {pedido.pagado ? "Pagado" : "Sin pagar"}
+              </span>
+              <button
+                onClick={togglePagado}
+                disabled={working}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 ${
+                  pedido.pagado ? "bg-emerald-500" : "bg-stone-200"
                 }`}
-              />
-            </button>
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    pedido.pagado ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
           </div>
         </div>
       </div>
