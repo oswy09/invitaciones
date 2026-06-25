@@ -85,6 +85,7 @@ export function datosEjemplo(templateId: string): InvitationData {
       mapUrl: "",
     },
     vestimenta: "Casual elegante, tonos pastel",
+    mensajePersonalizado: "Acompáñanos a compartir una mañana especial al aire libre, llena de amor, buenos momentos y muchas bendiciones.",
     whatsappNumero: "573000000000",
     features: { muroDeseos: true, rsvp: true, countdown: true, mapa: true, musica: false },
   };
