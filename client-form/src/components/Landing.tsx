@@ -32,9 +32,7 @@ export default function Landing({ onVerPlantillas }: { onVerPlantillas: () => vo
 
       {/* NAV */}
       <nav className="flex items-center justify-between px-6 py-4 max-w-5xl mx-auto">
-        <span className="text-xl font-bold tracking-tight" style={{ color: "#5A1B5E", fontFamily: "'Playfair Display', serif" }}>
-          Celebrarte
-        </span>
+        <img src="https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png" alt="Celebrarte" className="h-8 w-auto" />
         <button
           onClick={onVerPlantillas}
           className="text-sm font-semibold px-4 py-2 rounded-full transition-all cursor-pointer"

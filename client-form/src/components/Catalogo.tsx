@@ -63,10 +63,10 @@ export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
         {onBack ? (
           <button onClick={onBack} className="flex items-center gap-2 text-sm font-semibold cursor-pointer transition-opacity hover:opacity-70" style={{ color: "#5A1B5E" }}>
             <span>←</span>
-            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem" }}>Celebrarte</span>
+            <img src="https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png" alt="Celebrarte" className="h-7 w-auto" />
           </button>
         ) : (
-          <span className="text-xl font-bold" style={{ color: "#5A1B5E", fontFamily: "'Playfair Display', serif" }}>Celebrarte</span>
+          <img src="https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png" alt="Celebrarte" className="h-8 w-auto" />
         )}
         <a
           href={`https://wa.me/${WHATSAPP_CONTACTO}?text=${encodeURIComponent(WHATSAPP_MENSAJE)}`}
