@@ -3,7 +3,6 @@
 // detecta y la rechaza), asi que el dashboard (que SI corre en el
 // navegador) le habla a este proceso de Node en vez de a Supabase
 // directamente. Este servidor solo debe correr en localhost.
-import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { createClient } from "@supabase/supabase-js";
