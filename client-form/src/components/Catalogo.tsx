@@ -56,90 +56,105 @@ export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
   }, []);
 
   return (
-    <div className="max-w-3xl mx-auto py-12 px-4">
-      {onBack && (
-        <button onClick={onBack} className="text-sm font-semibold mb-6 flex items-center gap-1.5 cursor-pointer" style={{ color: "#5A1B5E" }}>
-          ← Volver al inicio
-        </button>
-      )}
-      <div className="flex items-start justify-between gap-4 mb-2">
-        <h1 className="text-3xl font-bold text-slate-800">Elige tu plantilla</h1>
+    <div className="min-h-screen" style={{ backgroundColor: "#F8F5F0", fontFamily: "'Poppins', sans-serif", color: "#2B2B2B" }}>
+
+      {/* NAV */}
+      <nav className="flex items-center justify-between px-6 py-4 max-w-5xl mx-auto">
+        {onBack ? (
+          <button onClick={onBack} className="flex items-center gap-2 text-sm font-semibold cursor-pointer transition-opacity hover:opacity-70" style={{ color: "#5A1B5E" }}>
+            <span>←</span>
+            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem" }}>Celebrarte</span>
+          </button>
+        ) : (
+          <span className="text-xl font-bold" style={{ color: "#5A1B5E", fontFamily: "'Playfair Display', serif" }}>Celebrarte</span>
+        )}
         <a
           href={`https://wa.me/${WHATSAPP_CONTACTO}?text=${encodeURIComponent(WHATSAPP_MENSAJE)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="shrink-0 text-sm font-bold text-emerald-600 border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 rounded-full px-4 py-2 transition-colors"
+          className="text-sm font-semibold px-4 py-2 rounded-full border-2 transition-all"
+          style={{ borderColor: "#5A1B5E", color: "#5A1B5E" }}
         >
-          💬 ¿Tienes dudas? Escríbenos
+          💬 ¿Tienes dudas?
         </a>
+      </nav>
+
+      {/* HEADER */}
+      <div className="text-center px-6 pt-10 pb-12 max-w-2xl mx-auto">
+        <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: "#C49B3A" }}>Nuestras plantillas</p>
+        <h1 className="text-3xl md:text-4xl font-bold mb-3" style={{ fontFamily: "'Playfair Display', serif", color: "#5A1B5E" }}>
+          Elige tu diseño
+        </h1>
+        <p className="text-sm leading-relaxed" style={{ opacity: 0.7 }}>
+          Selecciona una plantilla, personalízala con tus datos y compártela al instante por WhatsApp.
+        </p>
       </div>
-      <p className="text-slate-500 mb-8">Selecciona un diseño para empezar a ver e ingresar tus datos.</p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        {CATALOGO.map((t) => (
-          <div
-            key={t.id}
-            className="bg-white border border-slate-200 rounded-2xl p-5 hover:shadow-md transition-all flex flex-col justify-between"
-          >
-            <div>
-              <div className="text-4xl mb-3">{t.emoji}</div>
-              <h2 className="text-lg font-bold text-slate-800">{t.nombre}</h2>
-              <p className="text-sm text-slate-500 mt-1 mb-4">{t.descripcion}</p>
-
-              {/* Sección de Precio */}
-              <div className="mb-5 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Precio</span>
-                <span className="text-base font-extrabold text-slate-800">
-                  {isColombia 
-                    ? `$${(precios[t.id]?.cop ?? 0).toLocaleString("es-CO")} COP`
-                    : `$${precios[t.id]?.usd ?? 0} USD`
-                  }
-                </span>
+      {/* GRID DE PLANTILLAS */}
+      <div className="max-w-4xl mx-auto px-6 pb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          {CATALOGO.map((t) => (
+            <div
+              key={t.id}
+              className="rounded-2xl p-6 flex flex-col justify-between transition-all"
+              style={{ backgroundColor: "white", border: "1.5px solid #E8B4BC" }}
+            >
+              <div>
+                <div className="text-5xl mb-4">{t.emoji}</div>
+                <h2 className="text-base font-bold mb-1" style={{ fontFamily: "'Playfair Display', serif", color: "#5A1B5E" }}>
+                  {t.nombre}
+                </h2>
+                <p className="text-xs leading-relaxed mb-4" style={{ opacity: 0.65 }}>{t.descripcion}</p>
+                <div className="rounded-xl px-3 py-2 mb-5" style={{ backgroundColor: "#F8F5F0" }}>
+                  <span className="text-[10px] font-bold uppercase tracking-wider block mb-0.5" style={{ color: "#C49B3A" }}>Precio</span>
+                  <span className="text-base font-bold" style={{ color: "#3A1140" }}>
+                    {isColombia
+                      ? `$${(precios[t.id]?.cop ?? 0).toLocaleString("es-CO")} COP`
+                      : `$${precios[t.id]?.usd ?? 0} USD`}
+                  </span>
+                </div>
               </div>
-            </div>
-            
-            <div className="flex flex-col gap-2">
               {t.baseUrl ? (
                 <button
                   onClick={() => onSelect(t)}
-                  className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm py-2.5 px-3 rounded-xl cursor-pointer transition-colors text-center"
+                  className="w-full font-bold text-sm py-2.5 rounded-xl cursor-pointer transition-all text-center"
+                  style={{ backgroundColor: "#5A1B5E", color: "#F8F5F0" }}
                 >
-                  Ver plantilla ➔
+                  Ver plantilla →
                 </button>
               ) : (
                 <button
                   disabled
-                  title="Esta plantilla todavía no está publicada"
-                  className="w-full bg-slate-100 text-slate-400 font-bold text-sm py-2.5 px-3 rounded-xl cursor-not-allowed text-center"
+                  className="w-full font-bold text-sm py-2.5 rounded-xl cursor-not-allowed text-center"
+                  style={{ backgroundColor: "#F8F5F0", color: "#C49B3A", border: "1px solid #C49B3A" }}
                 >
                   Próximamente
                 </button>
               )}
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Opción de diseño 100% personalizado */}
-      <div className="mt-12 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="space-y-2 text-center md:text-left">
-          <h3 className="text-xl font-bold flex items-center justify-center md:justify-start gap-2">
-            <span>✨</span> ¿Buscas un diseño 100% personalizado?
-          </h3>
-          <p className="text-white/90 text-sm max-w-xl leading-relaxed">
-            Si tienes una idea específica, colores especiales o una temática única que no ves en nuestro catálogo, creamos tu invitación digital desde cero según tus gustos.
-          </p>
+          ))}
         </div>
-        <a
-          href={`https://wa.me/${WHATSAPP_CONTACTO}?text=${encodeURIComponent(
-            "¡Hola! Me gustaría cotizar un diseño 100% personalizado para mi invitación digital."
-          )}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-white hover:bg-slate-50 text-violet-700 font-bold px-6 py-3 rounded-2xl shadow-md transition-all cursor-pointer whitespace-nowrap text-sm text-center w-full md:w-auto"
-        >
-          💬 Solicitar Diseño a Medida
-        </a>
+
+        {/* Diseño personalizado */}
+        <div className="mt-12 rounded-3xl p-7 sm:p-9 flex flex-col md:flex-row items-center justify-between gap-6" style={{ backgroundColor: "#3A1140" }}>
+          <div className="space-y-2 text-center md:text-left">
+            <h3 className="text-lg font-bold" style={{ fontFamily: "'Playfair Display', serif", color: "#F8F5F0" }}>
+              ¿Tienes una idea única en mente?
+            </h3>
+            <p className="text-sm leading-relaxed" style={{ color: "#E8B4BC" }}>
+              Creamos tu invitación digital desde cero con colores, temática y detalles completamente a tu gusto.
+            </p>
+          </div>
+          <a
+            href={`https://wa.me/${WHATSAPP_CONTACTO}?text=${encodeURIComponent("¡Hola! Me gustaría cotizar un diseño 100% personalizado para mi invitación digital.")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold px-6 py-3 rounded-2xl transition-all cursor-pointer whitespace-nowrap text-sm text-center w-full md:w-auto"
+            style={{ backgroundColor: "#C49B3A", color: "#F8F5F0" }}
+          >
+            Solicitar diseño a medida →
+          </a>
+        </div>
       </div>
     </div>
   );
