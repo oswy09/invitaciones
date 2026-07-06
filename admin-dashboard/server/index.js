@@ -137,7 +137,7 @@ app.delete("/api/pedidos/:id", async (req, res) => {
   }
 });
 
-const PORT = process.env.ADMIN_SERVER_PORT || 3301;
+const PORT = process.env.PORT || process.env.ADMIN_SERVER_PORT || 3301;
 app.listen(PORT, () => {
   console.log(`Admin server (usa service_role key) corriendo en http://localhost:${PORT}`);
 });
