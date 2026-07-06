@@ -6,9 +6,10 @@ const WHATSAPP_MENSAJE = "¡Hola! Tengo una duda sobre las invitaciones digitale
 
 interface CatalogoProps {
   onSelect: (template: TemplateInfo) => void;
+  onBack?: () => void;
 }
 
-export default function Catalogo({ onSelect }: CatalogoProps) {
+export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
   const [isColombia, setIsColombia] = useState(true);
   const [precios, setPrecios] = useState<Record<string, { cop: number; usd: number }>>({
     "01-dino": { cop: 70000, usd: 20 },
@@ -56,6 +57,11 @@ export default function Catalogo({ onSelect }: CatalogoProps) {
 
   return (
     <div className="max-w-3xl mx-auto py-12 px-4">
+      {onBack && (
+        <button onClick={onBack} className="text-sm font-semibold mb-6 flex items-center gap-1.5 cursor-pointer" style={{ color: "#5A1B5E" }}>
+          ← Volver al inicio
+        </button>
+      )}
       <div className="flex items-start justify-between gap-4 mb-2">
         <h1 className="text-3xl font-bold text-slate-800">Elige tu plantilla</h1>
         <a
