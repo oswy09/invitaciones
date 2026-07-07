@@ -6,6 +6,12 @@
 [build.environment]
   NODE_VERSION = "20"
 
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "frame-ancestors *"
+    X-Frame-Options = "ALLOWALL"
+
 [[redirects]]
   from   = "/*"
   to     = "/index.html"
