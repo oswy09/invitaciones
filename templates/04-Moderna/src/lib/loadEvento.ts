@@ -16,6 +16,8 @@ function getEventoIdFromUrl(): string {
   return params.get("evento") ?? "boda-demo";
 }
 
+export { fromCoreData };
+
 // Maps the core InvitationData schema (stored in Supabase) to the wedding InvitationData shape.
 // Core fields: nombresPrincipales[], fecha, hora, lugar{nombre,direccion,mapUrl},
 //              mensajePersonalizado, extra{} (wedding-specific extras go here)

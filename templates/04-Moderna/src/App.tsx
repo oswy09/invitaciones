@@ -8,7 +8,7 @@ import { InvitationData } from './types';
 import { THEMES, FONTS, DEFAULT_INVITATION } from './constants';
 import Envelope from './components/Envelope';
 import InvitationPreview from './components/InvitationPreview';
-import { loadEvento } from './lib/loadEvento';
+import { loadEvento, fromCoreData } from './lib/loadEvento';
 import { usePreviewBridge } from './hooks/usePreviewBridge';
 
 export default function App() {
@@ -39,9 +39,9 @@ export default function App() {
     return () => clearTimeout(fallback);
   }, []);
 
-  // Preview bridge: receives live data from client-form iframe parent
-  const handlePreviewUpdate = useCallback((newData: InvitationData, newPagado: boolean) => {
-    setData(newData);
+  // Preview bridge: client-form sends core InvitationData schema — convert to wedding schema
+  const handlePreviewUpdate = useCallback((newData: Record<string, unknown>, newPagado: boolean) => {
+    setData(fromCoreData(newData));
     setPagado(newPagado);
     setIsLoading(false);
   }, []);
