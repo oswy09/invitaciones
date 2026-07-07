@@ -1,0 +1,64 @@
+---
+const ITEMS = [
+  {
+    emoji: "🎁",
+    titulo: "Se abre como un regalo",
+    desc: "Un sobre animado que el invitado abre con un toque — no una imagen que scrollea. Una experiencia que se recuerda.",
+  },
+  {
+    emoji: "🔗",
+    titulo: "Todo en un solo link",
+    desc: "Fecha, lugar, mapa, RSVP y muro de deseos. Sin PDFs, sin capturas de pantalla, sin confusiones.",
+  },
+  {
+    emoji: "⚡",
+    titulo: "Lista en minutos",
+    desc: "Rellenas el formulario, previsualizas en tiempo real y recibes el link listo el mismo día.",
+  },
+];
+---
+
+<section
+  aria-label="Por qué elegir una invitación digital animada"
+  style="background-color: #ffffff; padding: 5rem 1.5rem;"
+>
+  <div style="max-width: 56rem; margin: 0 auto; text-align: center;">
+    <p
+      class="text-sm font-semibold tracking-widest uppercase mb-3"
+      style="color: #7A5C10;"
+    >
+      ¿Por qué digital y animada?
+    </p>
+    <h2
+      class="text-2xl md:text-3xl font-bold mb-4"
+      style="font-family: 'Playfair Display', serif; color: #5A1B5E;"
+    >
+      Más que una imagen, una experiencia
+    </h2>
+    <p class="text-sm mb-14" style="color: #4A4A4A; max-width: 38rem; margin: 0 auto 3.5rem;">
+      Una invitación de WhatsApp se ignora. La tuya se va a recordar.
+    </p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+      {ITEMS.map((item) => (
+        <div class="flex flex-col items-center gap-4">
+          <div
+            class="w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-sm"
+            style="background-color: #F3E8F7;"
+          >
+            {item.emoji}
+          </div>
+          <h3
+            class="text-base font-bold"
+            style="color: #5A1B5E; font-family: 'Playfair Display', serif;"
+          >
+            {item.titulo}
+          </h3>
+          <p class="text-sm leading-relaxed" style="color: #4A4A4A;">
+            {item.desc}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

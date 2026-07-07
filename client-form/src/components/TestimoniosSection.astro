@@ -1,0 +1,77 @@
+---
+const TESTIMONIOS = [
+  {
+    inicial: "V",
+    nombre: "Valentina M.",
+    evento: "Baby Shower · Abril 2026",
+    texto: "Mis invitados quedaron sorprendidos cuando abrieron el sobre animado. Nunca habían visto algo así. El link llegó el mismo día que lo pedí.",
+  },
+  {
+    inicial: "C",
+    nombre: "Carolina R.",
+    evento: "Boda · Marzo 2026",
+    texto: "Súper fácil de personalizar y el resultado fue espectacular. Todos mis invitados me preguntaron dónde lo conseguí.",
+  },
+  {
+    inicial: "D",
+    nombre: "Daniela P.",
+    evento: "Baby Shower · Mayo 2026",
+    texto: "El muro de deseos fue lo mejor. Ver los mensajes de todos en tiempo real durante el baby shower fue muy emotivo.",
+  },
+];
+---
+
+<section
+  aria-label="Testimonios de clientes"
+  style="background-color: #F8F5F0; padding: 5rem 1.5rem;"
+>
+  <div style="max-width: 56rem; margin: 0 auto;">
+    <p
+      class="text-sm font-semibold tracking-widest uppercase mb-3 text-center"
+      style="color: #7A5C10;"
+    >
+      Prueba social
+    </p>
+    <h2
+      class="text-2xl md:text-3xl font-bold mb-14 text-center"
+      style="font-family: 'Playfair Display', serif; color: #5A1B5E;"
+    >
+      Lo que dicen nuestras clientas
+    </h2>
+
+    <!-- Desktop: 3 col | Mobile: scroll horizontal -->
+    <div
+      class="grid grid-cols-1 sm:grid-cols-3 gap-6"
+      style="overflow-x: auto;"
+    >
+      {TESTIMONIOS.map((t) => (
+        <article
+          class="flex flex-col gap-4 p-6 rounded-2xl shadow-sm"
+          style="background-color: white; border: 1px solid #F0E0E8; min-width: 260px;"
+        >
+          <!-- Avatar + nombre -->
+          <div class="flex items-center gap-3">
+            <div
+              class="w-11 h-11 rounded-full flex items-center justify-center text-base font-bold flex-shrink-0"
+              style="background-color: #5A1B5E; color: #F8F5F0;"
+            >
+              {t.inicial}
+            </div>
+            <div>
+              <p class="text-sm font-bold" style="color: #3A1140;">{t.nombre}</p>
+              <p class="text-xs" style="color: #7A5C10;">{t.evento}</p>
+            </div>
+          </div>
+
+          <!-- Estrellas -->
+          <p class="text-base" aria-label="5 estrellas">⭐⭐⭐⭐⭐</p>
+
+          <!-- Texto -->
+          <p class="text-sm leading-relaxed" style="color: #4A4A4A;">
+            "{t.texto}"
+          </p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

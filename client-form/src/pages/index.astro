@@ -1,20 +1,86 @@
 ---
 import Base from '../layouts/Base.astro';
+import DiferenciadorSection from '../components/DiferenciadorSection.astro';
+import TestimoniosSection from '../components/TestimoniosSection.astro';
+import FAQSection from '../components/FAQSection';
 
 const WHATSAPP_CONTACTO = "573057502790";
-const WHATSAPP_MENSAJE = encodeURIComponent("¡Hola! Quiero saber más sobre las invitaciones digitales de Celebrarte.");
+const WHATSAPP_MENSAJE   = encodeURIComponent("¡Hola! Quiero saber más sobre las invitaciones digitales de Celebrarte.");
+// TODO: reemplazar mensaje del CTA final si se desea personalizar
+const WHATSAPP_CTA       = encodeURIComponent("Hola, quiero crear mi invitación digital con Celebrarte");
 
-const PASOS = [
-  { num: "01", titulo: "Elige tu plantilla", desc: "Explora nuestras invitaciones y elige la que mejor se adapte a tu celebración." },
-  { num: "02", titulo: "Personalizala",       desc: "Agrega el nombre, fecha, lugar y un mensaje especial. Previsualiza en tiempo real." },
-  { num: "03", titulo: "Compártela",          desc: "Recibe el enlace listo para enviar por WhatsApp, Instagram o donde quieras." },
+const PLANTILLAS = [
+  {
+    id: "01-dino",
+    nombre: "Baby Shower Dino",
+    categoria: "Baby Shower",
+    gradiente: "linear-gradient(to bottom, #3a6b2a, #1a3a10)",
+    textColor: "#c8f0a0",
+    features: [
+      { emoji: "✉️", label: "Sobre animado interactivo" },
+      { emoji: "💬", label: "Muro de deseos en tiempo real" },
+      { emoji: "✅", label: "Confirmación de asistencia (RSVP)" },
+      { emoji: "⏱️", label: "Cuenta regresiva al evento" },
+      { emoji: "🗺️", label: "Mapa interactivo del lugar" },
+    ],
+    // TODO: reemplazar con precio real
+    precio: "$70.000 COP",
+  },
+  {
+    id: "02-stork",
+    nombre: "Cigüeña Dulce",
+    categoria: "Baby Shower",
+    gradiente: "linear-gradient(to bottom, #7ec8e3, #b8dff0)",
+    textColor: "#1a4a6b",
+    features: [
+      { emoji: "✉️", label: "Sobre animado interactivo" },
+      { emoji: "💬", label: "Muro de deseos en tiempo real" },
+      { emoji: "✅", label: "Confirmación de asistencia (RSVP)" },
+      { emoji: "⏱️", label: "Cuenta regresiva al evento" },
+      { emoji: "🗺️", label: "Mapa interactivo del lugar" },
+    ],
+    // TODO: reemplazar con precio real
+    precio: "$60.000 COP",
+  },
+  {
+    id: "03-space",
+    nombre: "Aventura Espacial",
+    categoria: "Baby Shower",
+    gradiente: "linear-gradient(to bottom, #0d1b3e, #000000)",
+    textColor: "#e0e8ff",
+    esEspacio: true,
+    features: [
+      { emoji: "✉️", label: "Sobre animado interactivo" },
+      { emoji: "💬", label: "Muro de deseos en tiempo real" },
+      { emoji: "✅", label: "Confirmación de asistencia (RSVP)" },
+      { emoji: "⏱️", label: "Cuenta regresiva al evento" },
+      { emoji: "🗺️", label: "Mapa interactivo del lugar" },
+    ],
+    // TODO: reemplazar con precio real
+    precio: "$70.000 COP",
+  },
+  {
+    id: "04-Moderna",
+    nombre: "Boda Moderna",
+    categoria: "Boda",
+    gradiente: "linear-gradient(to bottom, #3A1140, #5A1B5E)",
+    textColor: "#f0d9a0",
+    features: [
+      { emoji: "✉️", label: "Sobre animado interactivo" },
+      { emoji: "🎵", label: "Música de fondo personalizada" },
+      { emoji: "✅", label: "Confirmación de asistencia (RSVP)" },
+      { emoji: "⏱️", label: "Cuenta regresiva a la boda" },
+      { emoji: "🗺️", label: "Mapa de ceremonia y recepción" },
+    ],
+    // TODO: reemplazar con precio real
+    precio: "$80.000 COP",
+  },
 ];
 
-const EVENTOS = [
-  { emoji: "🦖", nombre: "Baby Shower Dino",  categoria: "Baby Shower", disponible: true  },
-  { emoji: "🦢", nombre: "Cigüeña Dulce",      categoria: "Baby Shower", disponible: true  },
-  { emoji: "🚀", nombre: "Aventura Espacial",  categoria: "Baby Shower", disponible: true  },
-  { emoji: "💍", nombre: "Boda Moderna",       categoria: "Boda",        disponible: true  },
+const PASOS = [
+  { num: "01", titulo: "Elige tu plantilla",  desc: "Explora nuestras invitaciones y elige la que mejor se adapte a tu celebración." },
+  { num: "02", titulo: "Personalizala",        desc: "Agrega el nombre, fecha, lugar y un mensaje especial. Previsualiza en tiempo real." },
+  { num: "03", titulo: "Compártela",           desc: "Recibe el enlace listo para enviar por WhatsApp, Instagram o donde quieras." },
 ];
 
 const GOLD_TEXT = "#7A5C10";
@@ -48,7 +114,7 @@ const GOLD_TEXT = "#7A5C10";
 
   <div class="min-h-screen" style="background-color: #F8F5F0; color: #2B2B2B; font-family: 'Poppins', sans-serif;">
 
-    <!-- NAV -->
+    <!-- 1. NAV -->
     <nav aria-label="Navegación principal" class="flex items-center justify-between px-6 py-4 max-w-5xl mx-auto">
       <img
         src="https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png"
@@ -65,8 +131,9 @@ const GOLD_TEXT = "#7A5C10";
     </nav>
 
     <main>
-      <!-- HERO -->
-      <section class="text-center px-6 pt-16 pb-20 max-w-3xl mx-auto">
+
+      <!-- 2. HERO -->
+      <section aria-label="Propuesta de valor" class="text-center px-6 pt-16 pb-20 max-w-3xl mx-auto">
         <p class="text-sm font-semibold tracking-widest uppercase mb-4" style={`color: ${GOLD_TEXT};`}>
           Invitaciones digitales
         </p>
@@ -77,9 +144,10 @@ const GOLD_TEXT = "#7A5C10";
           Tu celebración merece una primera impresión memorable
         </h1>
         <p class="text-base md:text-lg leading-relaxed mb-10" style="color: #4A4A4A;">
-          Diseñamos invitaciones digitales para baby showers, bodas y cumpleaños, listas para compartir por WhatsApp en segundos.
+          Diseñamos invitaciones digitales animadas para baby showers, bodas y cumpleaños,
+          listas para compartir por WhatsApp en segundos.
         </p>
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
           <a
             href="/plantillas"
             class="w-full sm:w-auto text-base font-semibold px-8 py-3.5 rounded-full transition-all shadow-lg text-center"
@@ -97,47 +165,98 @@ const GOLD_TEXT = "#7A5C10";
             Preguntar por WhatsApp
           </a>
         </div>
+
+        <!-- Barra de credibilidad -->
+        <p class="text-xs font-medium" style="color: #8B5AA0;">
+          <!-- TODO: reemplazar +XX y X.X con valores reales -->
+          🎉&nbsp; +50 celebraciones &nbsp;·&nbsp; ⭐ 5.0 en Google &nbsp;·&nbsp; 📲 Link listo en 24 h
+        </p>
       </section>
 
-      <!-- PLANTILLAS PREVIEW -->
-      <section aria-label="Muestra de plantillas" class="px-6 pb-20 max-w-4xl mx-auto">
-        <h2
-          class="text-center text-2xl font-bold mb-10"
-          style="font-family: 'Playfair Display', serif; color: #5A1B5E;"
-        >
-          Nuestras plantillas
-        </h2>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
-          {EVENTOS.map((e) => (
-            <div
-              class="rounded-2xl p-6 text-center flex flex-col items-center gap-3 border"
-              style="background-color: white; border-color: #E8B4BC;"
-            >
-              <span class="text-5xl" role="img" aria-hidden="true">{e.emoji}</span>
-              <p class="font-semibold text-base" style="color: #5A1B5E; font-family: 'Playfair Display', serif;">
-                {e.nombre}
-              </p>
-              <span
-                class="text-xs font-semibold px-3 py-1 rounded-full"
-                style="background-color: #5A1B5E; color: #F8F5F0;"
-              >
-                Disponible
-              </span>
-            </div>
-          ))}
-        </div>
-        <div class="text-center mt-8">
-          <a
-            href="/plantillas"
-            class="text-sm font-semibold px-6 py-2.5 rounded-full transition-all inline-block"
-            style="background-color: #5A1B5E; color: #F8F5F0;"
+      <!-- 3. DIFERENCIADOR -->
+      <DiferenciadorSection />
+
+      <!-- 4. PLANTILLAS PREVIEW -->
+      <section aria-label="Nuestras plantillas" class="px-6 py-20" style="background-color: #ffffff;">
+        <div class="max-w-5xl mx-auto">
+          <p class="text-sm font-semibold tracking-widest uppercase mb-3 text-center" style={`color: ${GOLD_TEXT};`}>
+            Diseños disponibles
+          </p>
+          <h2
+            class="text-center text-2xl md:text-3xl font-bold mb-14"
+            style="font-family: 'Playfair Display', serif; color: #5A1B5E;"
           >
-            Ver todas las plantillas →
-          </a>
+            Nuestras plantillas
+          </h2>
+
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {PLANTILLAS.map((p) => (
+              <article
+                class="flex flex-col rounded-2xl overflow-hidden border"
+                style="border-color: #E8B4BC; background-color: white;"
+              >
+                <!-- Preview 9:16 -->
+                <div
+                  class="relative w-full flex items-end justify-center pb-5"
+                  style={`aspect-ratio: 9/16; background: ${p.gradiente}; ${p.esEspacio ? 'overflow: hidden;' : ''}`}
+                >
+                  {p.esEspacio && (
+                    <div
+                      aria-hidden="true"
+                      style="position:absolute;inset:0;background-image:radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px);background-size:24px 24px;"
+                    />
+                  )}
+                  <span
+                    class="relative text-sm font-bold tracking-wide text-center px-3"
+                    style={`font-family: 'Playfair Display', serif; color: ${p.textColor};`}
+                  >
+                    {p.nombre}
+                  </span>
+                </div>
+
+                <!-- Info -->
+                <div class="flex flex-col gap-3 p-4 flex-1">
+                  <!-- Categoría -->
+                  <span
+                    class="inline-block self-start text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
+                    style="background-color: #F3E8F7; color: #5A1B5E;"
+                  >
+                    {p.categoria}
+                  </span>
+
+                  <!-- Features -->
+                  <ul class="flex flex-col gap-1.5">
+                    {p.features.map((f) => (
+                      <li class="flex items-center gap-2 text-xs" style="color: #4A4A4A;">
+                        <span>{f.emoji}</span>
+                        <span>{f.label}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <!-- Precio -->
+                  <div class="mt-auto pt-3 border-t" style="border-color: #F0E0E8;">
+                    <p class="text-[10px] font-bold uppercase tracking-wider mb-0.5" style="color: #7A5C10;">Precio</p>
+                    <p class="text-sm font-bold" style="color: #3A1140;">{p.precio}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div class="text-center mt-10">
+            <a
+              href="/plantillas"
+              class="text-sm font-semibold px-8 py-3 rounded-full transition-all inline-block shadow-sm"
+              style="background-color: #5A1B5E; color: #F8F5F0;"
+            >
+              Ver todas y personalizar →
+            </a>
+          </div>
         </div>
       </section>
 
-      <!-- CÓMO FUNCIONA -->
+      <!-- 5. CÓMO FUNCIONA -->
       <section aria-label="Cómo funciona" class="px-6 py-20" style="background-color: #5A1B5E;">
         <div class="max-w-4xl mx-auto">
           <h2
@@ -149,9 +268,7 @@ const GOLD_TEXT = "#7A5C10";
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
             {PASOS.map((p) => (
               <div class="text-center">
-                <p class="text-4xl font-bold mb-3" style="color: #C49B3A; font-family: 'Playfair Display', serif;">
-                  {p.num}
-                </p>
+                <p class="text-4xl font-bold mb-3" style="color: #C49B3A; font-family: 'Playfair Display', serif;">{p.num}</p>
                 <p class="font-semibold text-base mb-2" style="color: #F8F5F0;">{p.titulo}</p>
                 <p class="text-sm leading-relaxed" style="color: #E8B4BC;">{p.desc}</p>
               </div>
@@ -160,7 +277,13 @@ const GOLD_TEXT = "#7A5C10";
         </div>
       </section>
 
-      <!-- CTA FINAL -->
+      <!-- 6. TESTIMONIOS -->
+      <TestimoniosSection />
+
+      <!-- 7. FAQ (isla React por la interactividad del acordeón) -->
+      <FAQSection client:load />
+
+      <!-- 8. CTA FINAL -->
       <section class="px-6 py-20 text-center max-w-2xl mx-auto">
         <h2
           class="text-2xl md:text-3xl font-bold mb-4"
@@ -171,17 +294,21 @@ const GOLD_TEXT = "#7A5C10";
         <p class="text-sm mb-8" style="color: #4A4A4A;">
           Personaliza tu invitación en minutos y compártela al instante.
         </p>
+        <!-- Botón funcional → WhatsApp mientras el formulario automático no esté listo -->
         <a
-          href="/plantillas"
+          href={`https://wa.me/${WHATSAPP_CONTACTO}?text=${WHATSAPP_CTA}`}
+          target="_blank"
+          rel="noopener noreferrer"
           class="text-base font-semibold px-10 py-4 rounded-full shadow-lg transition-all inline-block"
           style="background-color: #5A1B5E; color: #F8F5F0;"
         >
-          Crear mi invitación
+          Crear mi invitación →
         </a>
       </section>
+
     </main>
 
-    <!-- FOOTER -->
+    <!-- 9. FOOTER -->
     <footer class="px-6 py-8 border-t text-center text-xs" style="border-color: #E8B4BC; color: #5A5A5A;">
       © 2026 Celebrarte · Invitaciones digitales · Hecho con amor ✨
     </footer>
