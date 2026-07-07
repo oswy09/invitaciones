@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Allow: /plantillas
+
+# Excluir rutas de formulario y preview (contenido dinámico sin valor SEO)
+Disallow: /?contacto=1
+Disallow: /?whatsapp=1
+
+Sitemap: https://celebrarte.com.co/sitemap.xml
