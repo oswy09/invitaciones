@@ -20,13 +20,23 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [guestName, setGuestName] = useState('');
 
+  const isPreviewMode = new URLSearchParams(window.location.search).get("preview") === "1";
+
   // Load from Supabase on mount (skipped in preview mode)
   useEffect(() => {
+    // Fallback: always hide loader after 4s even if something fails
+    const fallback = setTimeout(() => setIsLoading(false), 4000);
+    if (isPreviewMode) { clearTimeout(fallback); setIsLoading(false); return; }
     loadEvento().then((result) => {
       setData(result.data);
       setPagado(result.pagado);
+      clearTimeout(fallback);
       setTimeout(() => setIsLoading(false), 2500);
+    }).catch(() => {
+      clearTimeout(fallback);
+      setIsLoading(false);
     });
+    return () => clearTimeout(fallback);
   }, []);
 
   // Preview bridge: receives live data from client-form iframe parent
