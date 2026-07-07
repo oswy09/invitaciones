@@ -1,0 +1,190 @@
+---
+import Base from '../layouts/Base.astro';
+
+const WHATSAPP_CONTACTO = "573057502790";
+const WHATSAPP_MENSAJE = encodeURIComponent("¡Hola! Quiero saber más sobre las invitaciones digitales de Celebrarte.");
+
+const PASOS = [
+  { num: "01", titulo: "Elige tu plantilla", desc: "Explora nuestras invitaciones y elige la que mejor se adapte a tu celebración." },
+  { num: "02", titulo: "Personalizala",       desc: "Agrega el nombre, fecha, lugar y un mensaje especial. Previsualiza en tiempo real." },
+  { num: "03", titulo: "Compártela",          desc: "Recibe el enlace listo para enviar por WhatsApp, Instagram o donde quieras." },
+];
+
+const EVENTOS = [
+  { emoji: "🦖", nombre: "Baby Shower Dino",  categoria: "Baby Shower", disponible: true  },
+  { emoji: "🦢", nombre: "Cigüeña Dulce",      categoria: "Baby Shower", disponible: true  },
+  { emoji: "🚀", nombre: "Aventura Espacial",  categoria: "Baby Shower", disponible: true  },
+  { emoji: "💍", nombre: "Boda Moderna",       categoria: "Boda",        disponible: true  },
+];
+
+const GOLD_TEXT = "#7A5C10";
+---
+
+<Base
+  title="Celebrarte · Invitaciones Digitales para Baby Shower, Bodas y Cumpleaños"
+  description="Crea y personaliza invitaciones digitales únicas para baby showers, bodas y cumpleaños. Listas para compartir por WhatsApp en segundos. Diseños elegantes y cálidos."
+  canonical="https://celebrarte.com.co/"
+>
+  <slot name="head" slot="head">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Celebrarte",
+      "description": "Diseño de invitaciones digitales para baby showers, bodas y cumpleaños, listas para compartir por WhatsApp.",
+      "url": "https://celebrarte.com.co",
+      "logo": "https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+57-305-750-2790",
+        "contactType": "customer service",
+        "availableLanguage": "Spanish"
+      },
+      "areaServed": "CO",
+      "serviceType": ["Invitaciones digitales", "Baby shower", "Bodas", "Cumpleaños"]
+    }
+    </script>
+  </slot>
+
+  <div class="min-h-screen" style="background-color: #F8F5F0; color: #2B2B2B; font-family: 'Poppins', sans-serif;">
+
+    <!-- NAV -->
+    <nav aria-label="Navegación principal" class="flex items-center justify-between px-6 py-4 max-w-5xl mx-auto">
+      <img
+        src="https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png"
+        alt="Celebrarte"
+        class="h-8 w-auto"
+      />
+      <a
+        href="/plantillas"
+        class="text-sm font-semibold px-4 py-2 rounded-full transition-all"
+        style="background-color: #5A1B5E; color: #F8F5F0;"
+      >
+        Ver plantillas
+      </a>
+    </nav>
+
+    <main>
+      <!-- HERO -->
+      <section class="text-center px-6 pt-16 pb-20 max-w-3xl mx-auto">
+        <p class="text-sm font-semibold tracking-widest uppercase mb-4" style={`color: ${GOLD_TEXT};`}>
+          Invitaciones digitales
+        </p>
+        <h1
+          class="text-4xl md:text-5xl font-bold leading-tight mb-6"
+          style="font-family: 'Playfair Display', serif; color: #5A1B5E;"
+        >
+          Tu celebración merece una primera impresión memorable
+        </h1>
+        <p class="text-base md:text-lg leading-relaxed mb-10" style="color: #4A4A4A;">
+          Diseñamos invitaciones digitales para baby showers, bodas y cumpleaños, listas para compartir por WhatsApp en segundos.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a
+            href="/plantillas"
+            class="w-full sm:w-auto text-base font-semibold px-8 py-3.5 rounded-full transition-all shadow-lg text-center"
+            style="background-color: #5A1B5E; color: #F8F5F0;"
+          >
+            Explorar plantillas
+          </a>
+          <a
+            href={`https://wa.me/${WHATSAPP_CONTACTO}?text=${WHATSAPP_MENSAJE}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-full sm:w-auto text-base font-semibold px-8 py-3.5 rounded-full border-2 transition-all text-center"
+            style="border-color: #5A1B5E; color: #5A1B5E;"
+          >
+            Preguntar por WhatsApp
+          </a>
+        </div>
+      </section>
+
+      <!-- PLANTILLAS PREVIEW -->
+      <section aria-label="Muestra de plantillas" class="px-6 pb-20 max-w-4xl mx-auto">
+        <h2
+          class="text-center text-2xl font-bold mb-10"
+          style="font-family: 'Playfair Display', serif; color: #5A1B5E;"
+        >
+          Nuestras plantillas
+        </h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
+          {EVENTOS.map((e) => (
+            <div
+              class="rounded-2xl p-6 text-center flex flex-col items-center gap-3 border"
+              style="background-color: white; border-color: #E8B4BC;"
+            >
+              <span class="text-5xl" role="img" aria-hidden="true">{e.emoji}</span>
+              <p class="font-semibold text-base" style="color: #5A1B5E; font-family: 'Playfair Display', serif;">
+                {e.nombre}
+              </p>
+              <span
+                class="text-xs font-semibold px-3 py-1 rounded-full"
+                style="background-color: #5A1B5E; color: #F8F5F0;"
+              >
+                Disponible
+              </span>
+            </div>
+          ))}
+        </div>
+        <div class="text-center mt-8">
+          <a
+            href="/plantillas"
+            class="text-sm font-semibold px-6 py-2.5 rounded-full transition-all inline-block"
+            style="background-color: #5A1B5E; color: #F8F5F0;"
+          >
+            Ver todas las plantillas →
+          </a>
+        </div>
+      </section>
+
+      <!-- CÓMO FUNCIONA -->
+      <section aria-label="Cómo funciona" class="px-6 py-20" style="background-color: #5A1B5E;">
+        <div class="max-w-4xl mx-auto">
+          <h2
+            class="text-center text-2xl font-bold mb-12"
+            style="font-family: 'Playfair Display', serif; color: #F8F5F0;"
+          >
+            ¿Cómo funciona?
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {PASOS.map((p) => (
+              <div class="text-center">
+                <p class="text-4xl font-bold mb-3" style="color: #C49B3A; font-family: 'Playfair Display', serif;">
+                  {p.num}
+                </p>
+                <p class="font-semibold text-base mb-2" style="color: #F8F5F0;">{p.titulo}</p>
+                <p class="text-sm leading-relaxed" style="color: #E8B4BC;">{p.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA FINAL -->
+      <section class="px-6 py-20 text-center max-w-2xl mx-auto">
+        <h2
+          class="text-2xl md:text-3xl font-bold mb-4"
+          style="font-family: 'Playfair Display', serif; color: #5A1B5E;"
+        >
+          ¿Lista para sorprender a tus invitados?
+        </h2>
+        <p class="text-sm mb-8" style="color: #4A4A4A;">
+          Personaliza tu invitación en minutos y compártela al instante.
+        </p>
+        <a
+          href="/plantillas"
+          class="text-base font-semibold px-10 py-4 rounded-full shadow-lg transition-all inline-block"
+          style="background-color: #5A1B5E; color: #F8F5F0;"
+        >
+          Crear mi invitación
+        </a>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="px-6 py-8 border-t text-center text-xs" style="border-color: #E8B4BC; color: #5A5A5A;">
+      © 2026 Celebrarte · Invitaciones digitales · Hecho con amor ✨
+    </footer>
+
+  </div>
+</Base>

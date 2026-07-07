@@ -1,0 +1,30 @@
+---
+import Base from '../../layouts/Base.astro';
+import CatalogoIsland from '../../components/CatalogoIsland';
+import { CATALOGO } from '../../types';
+---
+
+<Base
+  title="Plantillas de Invitaciones Digitales · Celebrarte"
+  description="Explora nuestras plantillas de invitaciones digitales para baby shower, bodas y cumpleaños. Personaliza con tu nombre, fecha y lugar. Desde $60.000 COP."
+  canonical="https://celebrarte.com.co/plantillas"
+>
+  <slot name="head" slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Plantillas de invitaciones digitales Celebrarte",
+      "url": "https://celebrarte.com.co/plantillas",
+      "itemListElement": CATALOGO.map((t, i) => ({
+        "@type": "ListItem",
+        "position": i + 1,
+        "name": t.nombre,
+        "description": t.descripcion,
+        "url": `https://celebrarte.com.co/plantillas#${t.id}`,
+      })),
+    })} />
+  </slot>
+
+  <!-- Isla React: catálogo interactivo con precios + formulario -->
+  <CatalogoIsland client:load />
+</Base>
