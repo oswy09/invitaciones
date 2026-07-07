@@ -36,23 +36,99 @@ export interface InvitationData {
   extra?: Record<string, unknown>;
 }
 
+export interface TemplateFeature {
+  emoji: string;
+  label: string;
+}
+
 export interface TemplateInfo {
   id: string;
   nombre: string;
+  nombreDisplay: string;
   descripcion: string;
   emoji: string;
   categoria: "Baby Shower" | "Boda" | "Cumpleaños" | "Quinceaños";
   /** URL real publicada en Netlify. Vacío = todavía no está publicada. */
   baseUrl: string;
+  gradiente: string;
+  textColor: string;
+  esEspacio?: boolean;
+  features: TemplateFeature[];
+  precioDefault: { cop: number; usd: number };
 }
 
 export const WHATSAPP_CONTACTO = "573057502790";
 
+const FEATURES_BABY_SHOWER: TemplateFeature[] = [
+  { emoji: "✉️", label: "Sobre animado interactivo" },
+  { emoji: "💬", label: "Muro de deseos en tiempo real" },
+  { emoji: "✅", label: "Confirmación de asistencia (RSVP)" },
+  { emoji: "⏱️", label: "Cuenta regresiva al evento" },
+  { emoji: "🗺️", label: "Mapa interactivo del lugar" },
+  { emoji: "🎵", label: "Música de fondo personalizada" },
+];
+
 export const CATALOGO: TemplateInfo[] = [
-  { id: "01-dino", nombre: "Dino", descripcion: "Baby shower de dinosaurios, con sobre interactivo", emoji: "🦖", categoria: "Baby Shower", baseUrl: "https://dino.celebrarte.com.co" },
-  { id: "02-stork", nombre: "Cigüeña", descripcion: "Baby shower de cigüeña y nubes, intro animada", emoji: "🦢", categoria: "Baby Shower", baseUrl: "https://stork.celebrarte.com.co" },
-  { id: "03-space", nombre: "Espacio", descripcion: "Baby shower espacial, cohete y estrellas", emoji: "🚀", categoria: "Baby Shower", baseUrl: "https://space.celebrarte.com.co" },
-  { id: "04-Moderna", nombre: "Boda Moderna", descripcion: "Invitación de bodas elegante, sobre animado y música", emoji: "💍", categoria: "Boda", baseUrl: "https://boda-moderna.celebrarte.com.co" },
+  {
+    id: "01-dino",
+    nombre: "Dino",
+    nombreDisplay: "Baby Shower Dino",
+    descripcion: "Baby shower de dinosaurios, con sobre interactivo",
+    emoji: "🦖",
+    categoria: "Baby Shower",
+    baseUrl: "https://dino.celebrarte.com.co",
+    gradiente: "linear-gradient(to bottom, #3a6b2a, #1a3a10)",
+    textColor: "#c8f0a0",
+    features: FEATURES_BABY_SHOWER,
+    precioDefault: { cop: 70000, usd: 20 },
+  },
+  {
+    id: "02-stork",
+    nombre: "Cigüeña",
+    nombreDisplay: "Cigüeña Dulce",
+    descripcion: "Baby shower de cigüeña y nubes, intro animada",
+    emoji: "🦢",
+    categoria: "Baby Shower",
+    baseUrl: "https://stork.celebrarte.com.co",
+    gradiente: "linear-gradient(to bottom, #7ec8e3, #b8dff0)",
+    textColor: "#1a4a6b",
+    features: FEATURES_BABY_SHOWER,
+    precioDefault: { cop: 60000, usd: 18 },
+  },
+  {
+    id: "03-space",
+    nombre: "Espacio",
+    nombreDisplay: "Aventura Espacial",
+    descripcion: "Baby shower espacial, cohete y estrellas",
+    emoji: "🚀",
+    categoria: "Baby Shower",
+    baseUrl: "https://space.celebrarte.com.co",
+    gradiente: "linear-gradient(to bottom, #0d1b3e, #000000)",
+    textColor: "#e0e8ff",
+    esEspacio: true,
+    features: FEATURES_BABY_SHOWER,
+    precioDefault: { cop: 70000, usd: 20 },
+  },
+  {
+    id: "04-Moderna",
+    nombre: "Boda Moderna",
+    nombreDisplay: "Boda Moderna",
+    descripcion: "Invitación de bodas elegante, sobre animado y música",
+    emoji: "💍",
+    categoria: "Boda",
+    baseUrl: "https://boda-moderna.celebrarte.com.co",
+    gradiente: "linear-gradient(to bottom, #3A1140, #5A1B5E)",
+    textColor: "#f0d9a0",
+    features: [
+      { emoji: "✉️", label: "Sobre animado interactivo" },
+      { emoji: "🎵", label: "Música de fondo personalizada" },
+      { emoji: "✅", label: "Confirmación de asistencia (RSVP)" },
+      { emoji: "⏱️", label: "Cuenta regresiva a la boda" },
+      { emoji: "🗺️", label: "Mapa de ceremonia y recepción" },
+      { emoji: "💬", label: "Muro de deseos / libro de firmas" },
+    ],
+    precioDefault: { cop: 80000, usd: 22 },
+  },
 ];
 
 export const DEV_PORT_POR_TEMPLATE: Record<string, number> = {

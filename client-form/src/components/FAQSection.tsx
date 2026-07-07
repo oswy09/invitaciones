@@ -24,7 +24,7 @@ const FAQS = [
   {
     pregunta: "¿Cuánto tiempo está activo el link?",
     respuesta:
-      "El link permanece activo durante 30 días después de la fecha del evento.",
+      "El link permanece activo durante 90 días después de la fecha del evento.",
   },
   {
     pregunta: "¿Cómo pago?",

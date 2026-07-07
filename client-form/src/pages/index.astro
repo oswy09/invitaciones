@@ -3,79 +3,14 @@ import Base from '../layouts/Base.astro';
 import DiferenciadorSection from '../components/DiferenciadorSection.astro';
 import TestimoniosSection from '../components/TestimoniosSection.astro';
 import FAQSection from '../components/FAQSection';
+import { CATALOGO } from '../types';
 
 const WHATSAPP_CONTACTO = "573057502790";
 const WHATSAPP_MENSAJE   = encodeURIComponent("¡Hola! Quiero saber más sobre las invitaciones digitales de Celebrarte.");
-// TODO: reemplazar mensaje del CTA final si se desea personalizar
 const WHATSAPP_CTA       = encodeURIComponent("Hola, quiero crear mi invitación digital con Celebrarte");
 
-const PLANTILLAS = [
-  {
-    id: "01-dino",
-    nombre: "Baby Shower Dino",
-    categoria: "Baby Shower",
-    gradiente: "linear-gradient(to bottom, #3a6b2a, #1a3a10)",
-    textColor: "#c8f0a0",
-    features: [
-      { emoji: "✉️", label: "Sobre animado interactivo" },
-      { emoji: "💬", label: "Muro de deseos en tiempo real" },
-      { emoji: "✅", label: "Confirmación de asistencia (RSVP)" },
-      { emoji: "⏱️", label: "Cuenta regresiva al evento" },
-      { emoji: "🗺️", label: "Mapa interactivo del lugar" },
-    ],
-    // TODO: reemplazar con precio real
-    precio: "$70.000 COP",
-  },
-  {
-    id: "02-stork",
-    nombre: "Cigüeña Dulce",
-    categoria: "Baby Shower",
-    gradiente: "linear-gradient(to bottom, #7ec8e3, #b8dff0)",
-    textColor: "#1a4a6b",
-    features: [
-      { emoji: "✉️", label: "Sobre animado interactivo" },
-      { emoji: "💬", label: "Muro de deseos en tiempo real" },
-      { emoji: "✅", label: "Confirmación de asistencia (RSVP)" },
-      { emoji: "⏱️", label: "Cuenta regresiva al evento" },
-      { emoji: "🗺️", label: "Mapa interactivo del lugar" },
-    ],
-    // TODO: reemplazar con precio real
-    precio: "$60.000 COP",
-  },
-  {
-    id: "03-space",
-    nombre: "Aventura Espacial",
-    categoria: "Baby Shower",
-    gradiente: "linear-gradient(to bottom, #0d1b3e, #000000)",
-    textColor: "#e0e8ff",
-    esEspacio: true,
-    features: [
-      { emoji: "✉️", label: "Sobre animado interactivo" },
-      { emoji: "💬", label: "Muro de deseos en tiempo real" },
-      { emoji: "✅", label: "Confirmación de asistencia (RSVP)" },
-      { emoji: "⏱️", label: "Cuenta regresiva al evento" },
-      { emoji: "🗺️", label: "Mapa interactivo del lugar" },
-    ],
-    // TODO: reemplazar con precio real
-    precio: "$70.000 COP",
-  },
-  {
-    id: "04-Moderna",
-    nombre: "Boda Moderna",
-    categoria: "Boda",
-    gradiente: "linear-gradient(to bottom, #3A1140, #5A1B5E)",
-    textColor: "#f0d9a0",
-    features: [
-      { emoji: "✉️", label: "Sobre animado interactivo" },
-      { emoji: "🎵", label: "Música de fondo personalizada" },
-      { emoji: "✅", label: "Confirmación de asistencia (RSVP)" },
-      { emoji: "⏱️", label: "Cuenta regresiva a la boda" },
-      { emoji: "🗺️", label: "Mapa de ceremonia y recepción" },
-    ],
-    // TODO: reemplazar con precio real
-    precio: "$80.000 COP",
-  },
-];
+// TODO: reemplazar +XX y X.X con valores reales
+const CREDIBILIDAD = "+50 celebraciones · ⭐ 4.8 en Google · 📲 Link listo en menos de 24 h";
 
 const PASOS = [
   { num: "01", titulo: "Elige tu plantilla",  desc: "Explora nuestras invitaciones y elige la que mejor se adapte a tu celebración." },
@@ -115,7 +50,11 @@ const GOLD_TEXT = "#7A5C10";
   <div class="min-h-screen" style="background-color: #F8F5F0; color: #2B2B2B; font-family: 'Poppins', sans-serif;">
 
     <!-- 1. NAV -->
-    <nav aria-label="Navegación principal" class="flex items-center justify-between px-6 py-4 max-w-5xl mx-auto">
+    <nav
+      aria-label="Navegación principal"
+      class="flex items-center justify-between px-6 py-4 max-w-5xl mx-auto sticky top-0 z-50"
+      style="background-color: white; border-bottom: 1px solid #F0E0E8; box-shadow: 0 1px 4px rgba(90,27,94,0.07);"
+    >
       <img
         src="https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png"
         alt="Celebrarte"
@@ -168,8 +107,7 @@ const GOLD_TEXT = "#7A5C10";
 
         <!-- Barra de credibilidad -->
         <p class="text-xs font-medium" style="color: #8B5AA0;">
-          <!-- TODO: reemplazar +XX y X.X con valores reales -->
-          🎉&nbsp; +50 celebraciones &nbsp;·&nbsp; ⭐ 5.0 en Google &nbsp;·&nbsp; 📲 Link listo en 24 h
+          🎉&nbsp; {CREDIBILIDAD}
         </p>
       </section>
 
@@ -190,54 +128,54 @@ const GOLD_TEXT = "#7A5C10";
           </h2>
 
           <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {PLANTILLAS.map((p) => (
+            {CATALOGO.map((t) => (
               <article
                 class="flex flex-col rounded-2xl overflow-hidden border"
                 style="border-color: #E8B4BC; background-color: white;"
               >
-                <!-- Preview 9:16 -->
+                <!-- Preview altura fija -->
                 <div
-                  class="relative w-full flex items-end justify-center pb-5"
-                  style={`aspect-ratio: 9/16; background: ${p.gradiente}; ${p.esEspacio ? 'overflow: hidden;' : ''}`}
+                  class="relative w-full flex items-end justify-center pb-4"
+                  style={`height: 160px; background: ${t.gradiente}; overflow: hidden;`}
                 >
-                  {p.esEspacio && (
+                  {t.esEspacio && (
                     <div
                       aria-hidden="true"
-                      style="position:absolute;inset:0;background-image:radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px);background-size:24px 24px;"
+                      style="position:absolute;inset:0;background-image:radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px);background-size:20px 20px;"
                     />
                   )}
                   <span
-                    class="relative text-sm font-bold tracking-wide text-center px-3"
-                    style={`font-family: 'Playfair Display', serif; color: ${p.textColor};`}
+                    class="relative text-xs font-bold tracking-wide text-center px-2"
+                    style={`font-family: 'Playfair Display', serif; color: ${t.textColor};`}
                   >
-                    {p.nombre}
+                    {t.nombreDisplay}
                   </span>
                 </div>
 
                 <!-- Info -->
-                <div class="flex flex-col gap-3 p-4 flex-1">
-                  <!-- Categoría -->
+                <div class="flex flex-col gap-2.5 p-3 sm:p-4 flex-1">
                   <span
-                    class="inline-block self-start text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
+                    class="inline-block self-start text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
                     style="background-color: #F3E8F7; color: #5A1B5E;"
                   >
-                    {p.categoria}
+                    {t.categoria}
                   </span>
 
-                  <!-- Features -->
-                  <ul class="flex flex-col gap-1.5">
-                    {p.features.map((f) => (
-                      <li class="flex items-center gap-2 text-xs" style="color: #4A4A4A;">
+                  <ul class="flex flex-col gap-1">
+                    {t.features.map((f) => (
+                      <li class="flex items-center gap-1.5 text-[11px]" style="color: #4A4A4A;">
                         <span>{f.emoji}</span>
                         <span>{f.label}</span>
                       </li>
                     ))}
                   </ul>
 
-                  <!-- Precio -->
-                  <div class="mt-auto pt-3 border-t" style="border-color: #F0E0E8;">
-                    <p class="text-[10px] font-bold uppercase tracking-wider mb-0.5" style="color: #7A5C10;">Precio</p>
-                    <p class="text-sm font-bold" style="color: #3A1140;">{p.precio}</p>
+                  <div class="mt-auto pt-2.5 border-t" style="border-color: #F0E0E8;">
+                    <p class="text-[9px] font-bold uppercase tracking-wider mb-0.5" style="color: #7A5C10;">Precio</p>
+                    <!-- TODO: reemplazar con precio real -->
+                    <p class="text-sm font-bold" style="color: #3A1140;">
+                      ${t.precioDefault.cop.toLocaleString("es-CO")} COP
+                    </p>
                   </div>
                 </div>
               </article>

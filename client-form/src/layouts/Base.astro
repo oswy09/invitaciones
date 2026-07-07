@@ -68,5 +68,20 @@ const {
   </head>
   <body>
     <slot />
+
+    <!-- Botón WhatsApp flotante fijo -->
+    <a
+      href="https://wa.me/573057502790?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20sobre%20las%20invitaciones%20digitales%20de%20Celebrarte"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Contactar por WhatsApp"
+      style="position:fixed;bottom:24px;right:24px;z-index:9999;width:56px;height:56px;border-radius:50%;background-color:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(37,211,102,0.45);transition:transform 0.2s;"
+      onmouseover="this.style.transform='scale(1.1)'"
+      onmouseout="this.style.transform='scale(1)'"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 32 32" fill="white" aria-hidden="true">
+        <path d="M16 2C8.268 2 2 8.268 2 16c0 2.492.658 4.833 1.808 6.858L2 30l7.347-1.784A13.94 13.94 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2zm0 25.6a11.56 11.56 0 0 1-5.9-1.617l-.423-.25-4.36 1.059 1.097-4.236-.276-.437A11.562 11.562 0 0 1 4.4 16C4.4 9.593 9.593 4.4 16 4.4S27.6 9.593 27.6 16 22.407 27.6 16 27.6zm6.344-8.67c-.347-.174-2.055-1.013-2.374-1.129-.318-.116-.55-.174-.781.174-.232.347-.896 1.129-1.099 1.361-.202.232-.405.26-.752.087-.347-.174-1.464-.54-2.787-1.72-1.03-.918-1.725-2.052-1.927-2.399-.202-.347-.021-.535.152-.708.156-.156.347-.405.52-.608.174-.202.232-.347.347-.578.116-.232.058-.434-.029-.608-.087-.174-.781-1.883-1.07-2.579-.282-.678-.568-.585-.781-.596l-.666-.011c-.232 0-.608.087-.927.434-.318.347-1.214 1.187-1.214 2.895s1.243 3.356 1.416 3.588c.174.232 2.447 3.734 5.929 5.238.829.358 1.476.572 1.98.732.832.265 1.589.228 2.187.138.667-.1 2.055-.84 2.346-1.651.29-.812.29-1.508.203-1.651-.086-.145-.318-.232-.666-.405z"/>
+      </svg>
+    </a>
   </body>
 </html>

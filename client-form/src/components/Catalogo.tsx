@@ -93,43 +93,65 @@ export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
 
       {/* GRID DE PLANTILLAS */}
       <div className="max-w-4xl mx-auto px-6 pb-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {CATALOGO.map((t) => {
-            const categoriaColor: Record<string, { bg: string; text: string }> = {
-              "Baby Shower": { bg: "#FDE8EE", text: "#B5476A" },
-              "Boda":        { bg: "#EDE3F5", text: "#5A1B5E" },
-              "Cumpleaños":  { bg: "#FEF3DC", text: "#A07020" },
-              "Quinceaños":  { bg: "#E8F0FE", text: "#2D5DBE" },
-            };
-            const cat = categoriaColor[t.categoria] ?? { bg: "#F0F0F0", text: "#555" };
-            return (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          {CATALOGO.map((t) => (
+            <article
+              key={t.id}
+              className="flex flex-col rounded-2xl overflow-hidden transition-all hover:shadow-md"
+              style={{ backgroundColor: "white", border: "1.5px solid #E8B4BC" }}
+            >
+              {/* Preview degradado */}
               <div
-                key={t.id}
-                className="rounded-2xl p-5 flex flex-col justify-between transition-all hover:shadow-md"
-                style={{ backgroundColor: "white", border: "1.5px solid #E8B4BC" }}
+                className="relative w-full flex items-end justify-center pb-4"
+                style={{ height: "160px", background: t.gradiente, overflow: "hidden" }}
               >
-                <div>
-                  {/* Tag categoría */}
-                  <span
-                    className="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full mb-3"
-                    style={{ backgroundColor: cat.bg, color: cat.text }}
-                  >
-                    {t.categoria}
-                  </span>
-                  <div className="text-4xl mb-3">{t.emoji}</div>
-                  <h2 className="text-sm font-bold mb-1" style={{ fontFamily: "'Playfair Display', serif", color: "#5A1B5E" }}>
-                    {t.nombre}
-                  </h2>
-                  <p className="text-xs leading-relaxed mb-4" style={{ opacity: 0.65 }}>{t.descripcion}</p>
-                  <div className="rounded-xl px-3 py-2 mb-4" style={{ backgroundColor: "#F8F5F0" }}>
-                    <span className="text-[10px] font-bold uppercase tracking-wider block mb-0.5" style={{ color: "#C49B3A" }}>Precio</span>
-                    <span className="text-sm font-bold" style={{ color: "#3A1140" }}>
-                      {isColombia
-                        ? `$${(precios[t.id]?.cop ?? 0).toLocaleString("es-CO")} COP`
-                        : `$${precios[t.id]?.usd ?? 0} USD`}
-                    </span>
-                  </div>
+                {t.esEspacio && (
+                  <div
+                    aria-hidden="true"
+                    style={{
+                      position: "absolute", inset: 0,
+                      backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
+                      backgroundSize: "20px 20px",
+                    }}
+                  />
+                )}
+                <span
+                  className="relative text-xs font-bold tracking-wide text-center px-2"
+                  style={{ fontFamily: "'Playfair Display', serif", color: t.textColor }}
+                >
+                  {t.nombreDisplay}
+                </span>
+              </div>
+
+              {/* Cuerpo */}
+              <div className="flex flex-col gap-2.5 p-3 sm:p-4 flex-1">
+                <span
+                  className="inline-block self-start text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                  style={{ backgroundColor: "#F3E8F7", color: "#5A1B5E" }}
+                >
+                  {t.categoria}
+                </span>
+
+                <ul className="flex flex-col gap-1">
+                  {t.features.map((f) => (
+                    <li key={f.label} className="flex items-center gap-1.5 text-[11px]" style={{ color: "#4A4A4A" }}>
+                      <span>{f.emoji}</span>
+                      <span>{f.label}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-auto pt-2.5 border-t" style={{ borderColor: "#F0E0E8" }}>
+                  <p className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: "#7A5C10" }}>Precio</p>
+                  <p className="text-sm font-bold" style={{ color: "#3A1140" }}>
+                    {isColombia
+                      ? `$${(precios[t.id]?.cop ?? t.precioDefault.cop).toLocaleString("es-CO")} COP`
+                      : `$${precios[t.id]?.usd ?? t.precioDefault.usd} USD`}
+                  </p>
                 </div>
+              </div>
+
+              <div className="px-3 pb-3 sm:px-4 sm:pb-4">
                 <button
                   onClick={() => onSelect(t)}
                   className="w-full font-bold text-sm py-2.5 rounded-xl cursor-pointer transition-all text-center"
@@ -138,8 +160,8 @@ export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
                   Ver plantilla →
                 </button>
               </div>
-            );
-          })}
+            </article>
+          ))}
         </div>
 
         {/* Diseño personalizado */}
