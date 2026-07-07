@@ -41,6 +41,7 @@ export interface TemplateInfo {
   nombre: string;
   descripcion: string;
   emoji: string;
+  categoria: "Baby Shower" | "Boda" | "Cumpleaños" | "Quinceaños";
   /** URL real publicada en Netlify. Vacío = todavía no está publicada. */
   baseUrl: string;
 }
@@ -48,10 +49,10 @@ export interface TemplateInfo {
 export const WHATSAPP_CONTACTO = "573057502790";
 
 export const CATALOGO: TemplateInfo[] = [
-  { id: "01-dino", nombre: "Dino", descripcion: "Baby shower de dinosaurios, con sobre interactivo", emoji: "🦖", baseUrl: "https://celebrarte-dino.netlify.app" },
-  { id: "02-stork", nombre: "Cigüeña", descripcion: "Baby shower de cigüeña y nubes, intro animada", emoji: "🦢", baseUrl: "" },
-  { id: "03-space", nombre: "Espacio", descripcion: "Baby shower espacial, cohete y estrellas", emoji: "🚀", baseUrl: "" },
-  { id: "04-Moderna", nombre: "Boda Moderna", descripcion: "Invitación de bodas elegante, sobre animado y música", emoji: "💍", baseUrl: "" },
+  { id: "01-dino", nombre: "Dino", descripcion: "Baby shower de dinosaurios, con sobre interactivo", emoji: "🦖", categoria: "Baby Shower", baseUrl: "https://celebrarte-dino.netlify.app" },
+  { id: "02-stork", nombre: "Cigüeña", descripcion: "Baby shower de cigüeña y nubes, intro animada", emoji: "🦢", categoria: "Baby Shower", baseUrl: "" },
+  { id: "03-space", nombre: "Espacio", descripcion: "Baby shower espacial, cohete y estrellas", emoji: "🚀", categoria: "Baby Shower", baseUrl: "" },
+  { id: "04-Moderna", nombre: "Boda Moderna", descripcion: "Invitación de bodas elegante, sobre animado y música", emoji: "💍", categoria: "Boda", baseUrl: "" },
 ];
 
 const DIAS_SEMANA = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];

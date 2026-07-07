@@ -15,6 +15,7 @@ export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
     "01-dino": { cop: 70000, usd: 20 },
     "02-stork": { cop: 60000, usd: 18 },
     "03-space": { cop: 70000, usd: 20 },
+    "04-Moderna": { cop: 80000, usd: 22 },
   });
 
   useEffect(() => {
@@ -46,7 +47,7 @@ export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
           .maybeSingle();
 
         if (data && data.datos && data.datos.precios) {
-          setPrecios(data.datos.precios);
+          setPrecios(prev => ({ ...prev, ...data.datos.precios }));
         }
       } catch (err) {
         console.error("Error al cargar precios:", err);
@@ -92,29 +93,43 @@ export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
 
       {/* GRID DE PLANTILLAS */}
       <div className="max-w-4xl mx-auto px-6 pb-16">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-          {CATALOGO.map((t) => (
-            <div
-              key={t.id}
-              className="rounded-2xl p-6 flex flex-col justify-between transition-all"
-              style={{ backgroundColor: "white", border: "1.5px solid #E8B4BC" }}
-            >
-              <div>
-                <div className="text-5xl mb-4">{t.emoji}</div>
-                <h2 className="text-base font-bold mb-1" style={{ fontFamily: "'Playfair Display', serif", color: "#5A1B5E" }}>
-                  {t.nombre}
-                </h2>
-                <p className="text-xs leading-relaxed mb-4" style={{ opacity: 0.65 }}>{t.descripcion}</p>
-                <div className="rounded-xl px-3 py-2 mb-5" style={{ backgroundColor: "#F8F5F0" }}>
-                  <span className="text-[10px] font-bold uppercase tracking-wider block mb-0.5" style={{ color: "#C49B3A" }}>Precio</span>
-                  <span className="text-base font-bold" style={{ color: "#3A1140" }}>
-                    {isColombia
-                      ? `$${(precios[t.id]?.cop ?? 0).toLocaleString("es-CO")} COP`
-                      : `$${precios[t.id]?.usd ?? 0} USD`}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {CATALOGO.map((t) => {
+            const categoriaColor: Record<string, { bg: string; text: string }> = {
+              "Baby Shower": { bg: "#FDE8EE", text: "#B5476A" },
+              "Boda":        { bg: "#EDE3F5", text: "#5A1B5E" },
+              "Cumpleaños":  { bg: "#FEF3DC", text: "#A07020" },
+              "Quinceaños":  { bg: "#E8F0FE", text: "#2D5DBE" },
+            };
+            const cat = categoriaColor[t.categoria] ?? { bg: "#F0F0F0", text: "#555" };
+            return (
+              <div
+                key={t.id}
+                className="rounded-2xl p-5 flex flex-col justify-between transition-all hover:shadow-md"
+                style={{ backgroundColor: "white", border: "1.5px solid #E8B4BC" }}
+              >
+                <div>
+                  {/* Tag categoría */}
+                  <span
+                    className="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full mb-3"
+                    style={{ backgroundColor: cat.bg, color: cat.text }}
+                  >
+                    {t.categoria}
                   </span>
+                  <div className="text-4xl mb-3">{t.emoji}</div>
+                  <h2 className="text-sm font-bold mb-1" style={{ fontFamily: "'Playfair Display', serif", color: "#5A1B5E" }}>
+                    {t.nombre}
+                  </h2>
+                  <p className="text-xs leading-relaxed mb-4" style={{ opacity: 0.65 }}>{t.descripcion}</p>
+                  <div className="rounded-xl px-3 py-2 mb-4" style={{ backgroundColor: "#F8F5F0" }}>
+                    <span className="text-[10px] font-bold uppercase tracking-wider block mb-0.5" style={{ color: "#C49B3A" }}>Precio</span>
+                    <span className="text-sm font-bold" style={{ color: "#3A1140" }}>
+                      {isColombia
+                        ? `$${(precios[t.id]?.cop ?? 0).toLocaleString("es-CO")} COP`
+                        : `$${precios[t.id]?.usd ?? 0} USD`}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              {t.baseUrl ? (
                 <button
                   onClick={() => onSelect(t)}
                   className="w-full font-bold text-sm py-2.5 rounded-xl cursor-pointer transition-all text-center"
@@ -122,17 +137,9 @@ export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
                 >
                   Ver plantilla →
                 </button>
-              ) : (
-                <button
-                  disabled
-                  className="w-full font-bold text-sm py-2.5 rounded-xl cursor-not-allowed text-center"
-                  style={{ backgroundColor: "#F8F5F0", color: "#C49B3A", border: "1px solid #C49B3A" }}
-                >
-                  Próximamente
-                </button>
-              )}
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
 
         {/* Diseño personalizado */}
