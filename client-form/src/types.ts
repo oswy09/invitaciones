@@ -55,6 +55,13 @@ export const CATALOGO: TemplateInfo[] = [
   { id: "04-Moderna", nombre: "Boda Moderna", descripcion: "Invitación de bodas elegante, sobre animado y música", emoji: "💍", categoria: "Boda", baseUrl: "" },
 ];
 
+export const DEV_PORT_POR_TEMPLATE: Record<string, number> = {
+  "01-dino":    3101,
+  "02-stork":   3102,
+  "03-space":   3103,
+  "04-Moderna": 3104,
+};
+
 const DIAS_SEMANA = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 const MESES = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",

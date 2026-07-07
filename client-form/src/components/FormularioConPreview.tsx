@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { InvitationData, TemplateInfo, datosEjemplo, WHATSAPP_CONTACTO } from "../types";
+import { InvitationData, TemplateInfo, datosEjemplo, WHATSAPP_CONTACTO, DEV_PORT_POR_TEMPLATE } from "../types";
 import { supabase } from "../lib/supabase";
 import BuscadorCancion, { CancionSeleccionada } from "./BuscadorCancion";
 
@@ -25,7 +25,8 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
   const [error, setError] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const previewUrl = `${template.baseUrl}/?preview=1`;
+  const templateBaseUrl = template.baseUrl || `http://localhost:${DEV_PORT_POR_TEMPLATE[template.id] ?? 3101}`;
+  const previewUrl = `${templateBaseUrl}/?preview=1`;
 
   function sendDraftToPreview() {
     iframeRef.current?.contentWindow?.postMessage(
@@ -116,7 +117,7 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
       return;
     }
 
-    setResultUrl(`${template.baseUrl}/${eventoId}`);
+    setResultUrl(`${templateBaseUrl}/${eventoId}`);
   }
 
   if (resultUrl) {
