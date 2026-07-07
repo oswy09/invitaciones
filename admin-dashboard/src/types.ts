@@ -52,10 +52,10 @@ export interface RsvpRow {
 
 /** URL real publicada en Netlify por plantilla. Vacío = todavía no está publicada (usa localhost de desarrollo). */
 export const BASE_URL_POR_TEMPLATE: Record<string, string> = {
-  "01-dino": "https://celebrarte-dino.netlify.app",
-  "02-stork": "",
-  "03-space": "",
-  "04-Moderna": "",
+  "01-dino": "https://dino.celebrarte.com.co",
+  "02-stork": "https://stork.celebrarte.com.co",
+  "03-space": "https://space.celebrarte.com.co",
+  "04-Moderna": "https://boda-moderna.celebrarte.com.co",
 };
 
 /** Puertos de dev server local, usados como fallback mientras una plantilla no esté publicada. */
