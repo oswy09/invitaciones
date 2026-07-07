@@ -18,6 +18,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "templates/03-space", "--", "--port", "3103"],
       "port": 3103
+    },
+    {
+      "name": "moderna",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "templates/04-Moderna"],
+      "port": 3000
     }
   ]
 }

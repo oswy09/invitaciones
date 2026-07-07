@@ -55,6 +55,7 @@ export const BASE_URL_POR_TEMPLATE: Record<string, string> = {
   "01-dino": "https://celebrarte-dino.netlify.app",
   "02-stork": "",
   "03-space": "",
+  "04-Moderna": "",
 };
 
 /** Puertos de dev server local, usados como fallback mientras una plantilla no esté publicada. */
@@ -62,4 +63,5 @@ export const DEV_PORT_POR_TEMPLATE: Record<string, number> = {
   "01-dino": 3101,
   "02-stork": 3102,
   "03-space": 3103,
+  "04-Moderna": 3104,
 };

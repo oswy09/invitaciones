@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Cinzel:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-wedding-script: "Pinyon Script", cursive;
+  --font-wedding-heading: "Cinzel", serif;
+  --font-wedding-serif: "Playfair Display", serif;
+  --font-wedding-sans: "Montserrat", sans-serif;
+  --font-georgia: "Georgia", serif;
+  --font-helvetica: "Helvetica Neue", "Arial", sans-serif;
+}
+
+/* Custom transitions and scrollbar styling for a luxurious feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(197, 168, 128, 0.3);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(197, 168, 128, 0.6);
+}
+
+/* Floating gold dust particles animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.gold-dust {
+  position: absolute;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(184,134,11,1) 0%, rgba(140,102,45,0.7) 60%, rgba(92,64,21,0) 100%);
+  border-radius: 50%;
+  animation: float 8s infinite linear;
+}
+
+/* Marble Texture Background Overlays */
+.marble-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cpath d='M0 400 C150 350, 200 300, 250 200 C280 140, 220 100, 300 40 C350 10, 380 50, 400 0' fill='none' stroke='rgba(141, 110, 71, 0.28)' stroke-width='1.5'/%3E%3Cpath d='M400 400 C250 350, 200 380, 150 250 C120 180, 180 120, 100 80 C50 50, 20 80, 0 100' fill='none' stroke='rgba(90, 75, 60, 0.15)' stroke-width='1.2'/%3E%3Cpath d='M50 0 C120 80, 80 150, 180 180 C240 200, 280 140, 320 300' fill='none' stroke='rgba(141, 110, 71, 0.2)' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+/* Animated heartbeat for countdown or hearts */
+@keyframes pulse-custom {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.pulse-custom {
+  animation: pulse-custom 2.5s infinite ease-in-out;
+}

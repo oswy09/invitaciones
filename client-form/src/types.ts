@@ -51,6 +51,7 @@ export const CATALOGO: TemplateInfo[] = [
   { id: "01-dino", nombre: "Dino", descripcion: "Baby shower de dinosaurios, con sobre interactivo", emoji: "🦖", baseUrl: "https://celebrarte-dino.netlify.app" },
   { id: "02-stork", nombre: "Cigüeña", descripcion: "Baby shower de cigüeña y nubes, intro animada", emoji: "🦢", baseUrl: "" },
   { id: "03-space", nombre: "Espacio", descripcion: "Baby shower espacial, cohete y estrellas", emoji: "🚀", baseUrl: "" },
+  { id: "04-Moderna", nombre: "Boda Moderna", descripcion: "Invitación de bodas elegante, sobre animado y música", emoji: "💍", baseUrl: "" },
 ];
 
 const DIAS_SEMANA = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
