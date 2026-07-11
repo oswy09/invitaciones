@@ -8,3 +8,13 @@ body {
   font-family: var(--font-sans);
   background-color: #f8f7f4;
 }
+
+@keyframes gradientFlow {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 0% 100%; }
+}
+
+@keyframes seeMoreIn {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}

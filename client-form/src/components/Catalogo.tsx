@@ -13,6 +13,9 @@ interface Precios {
   [id: string]: { cop: number; usd: number };
 }
 
+const GRADIENT_BORDER =
+  "linear-gradient(to bottom, #C49B3A, #5A1B5E, #E8B4BC, #7A2E8A, #C49B3A)";
+
 function TemplateCard({
   t,
   onSelect,
@@ -33,196 +36,125 @@ function TemplateCard({
       onMouseLeave={() => setHovered(false)}
       style={{
         backgroundColor: "white",
-        border: hovered ? "2px solid #5A1B5E" : "2px solid #E8B4BC",
-        borderRadius: "1.25rem",
+        borderRadius: "1rem",
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
         cursor: "pointer",
-        transform: hovered ? "translateY(-10px)" : "translateY(0)",
+        transform: hovered ? "translateY(-8px)" : "translateY(0)",
         boxShadow: hovered
-          ? "0 24px 56px rgba(90,27,94,0.22), 0 4px 12px rgba(90,27,94,0.1)"
-          : "0 2px 8px rgba(90,27,94,0.06)",
-        transition: "all 0.32s cubic-bezier(0.4, 0, 0.2, 1)",
+          ? "0 20px 48px rgba(90,27,94,0.18), 0 4px 12px rgba(90,27,94,0.08)"
+          : "0 2px 8px rgba(90,27,94,0.07)",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        border: "1px solid #EDD5E8",
       }}
     >
-      {/* Preview con degradado */}
+      {/* ── PREVIEW ── */}
       <div
         style={{
-          height: "200px",
+          height: "240px",
           background: t.gradiente,
-          overflow: "hidden",
           position: "relative",
-          display: "flex",
-          alignItems: "flex-end",
-          justifyContent: "center",
-          paddingBottom: "1.25rem",
+          overflow: "hidden",
+          flexShrink: 0,
         }}
       >
-        {/* Estrellas para espacio */}
         {t.esEspacio && (
           <div
             aria-hidden="true"
             style={{
-              position: "absolute",
-              inset: 0,
-              backgroundImage:
-                "radial-gradient(circle, rgba(255,255,255,0.85) 1px, transparent 1px)",
+              position: "absolute", inset: 0,
+              backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
               backgroundSize: "20px 20px",
             }}
           />
         )}
 
-        {/* Shimmer sweep on hover */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "linear-gradient(135deg, transparent 20%, rgba(255,255,255,0.18) 50%, transparent 80%)",
-            opacity: hovered ? 1 : 0,
-            transition: "opacity 0.4s ease",
-            pointerEvents: "none",
-          }}
-        />
+        {/* Overlay oscuro en hover */}
+        <div style={{
+          position: "absolute", inset: 0,
+          backgroundColor: "rgba(30,10,40,0.38)",
+          opacity: hovered ? 1 : 0,
+          transition: "opacity 0.3s ease",
+          pointerEvents: "none",
+        }} />
 
-        {/* Overlay claro suave */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundColor: "white",
-            opacity: hovered ? 0.07 : 0,
-            transition: "opacity 0.3s ease",
-            pointerEvents: "none",
-          }}
-        />
-
-        <span
-          style={{
-            position: "relative",
-            zIndex: 1,
-            fontFamily: "'Playfair Display', serif",
-            color: t.textColor,
-            fontSize: "0.9rem",
-            fontWeight: 700,
-            textAlign: "center",
-            padding: "0 0.75rem",
-            transform: hovered ? "scale(1.08)" : "scale(1)",
-            transition: "transform 0.3s ease",
-            display: "block",
-            textShadow: "0 1px 4px rgba(0,0,0,0.3)",
-          }}
-        >
-          {t.nombreDisplay}
-        </span>
-      </div>
-
-      {/* Cuerpo */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "0.6rem",
-          padding: "1rem",
-          flex: 1,
-        }}
-      >
-        <span
-          style={{
-            display: "inline-block",
-            alignSelf: "flex-start",
-            fontSize: "0.6rem",
-            fontWeight: 700,
-            textTransform: "uppercase",
-            letterSpacing: "0.08em",
-            padding: "3px 10px",
-            borderRadius: "9999px",
-            backgroundColor: hovered ? "#EAD5F5" : "#F3E8F7",
-            color: "#5A1B5E",
-            transition: "background-color 0.2s ease",
-          }}
-        >
+        {/* Tag categoría — esquina superior derecha */}
+        <span style={{
+          position: "absolute", top: 12, right: 12,
+          fontSize: "0.6rem", fontWeight: 800,
+          textTransform: "uppercase", letterSpacing: "0.1em",
+          padding: "4px 10px", borderRadius: "4px",
+          backgroundColor: "rgba(0,0,0,0.55)",
+          color: "white",
+          backdropFilter: "blur(4px)",
+        }}>
           {t.categoria}
         </span>
 
-        <ul
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.3rem",
-            margin: 0,
-            padding: 0,
-            listStyle: "none",
-          }}
-        >
-          {t.features.map((f) => (
-            <li
-              key={f.label}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.4rem",
-                fontSize: "0.7rem",
-                color: "#4A4A4A",
-              }}
-            >
-              <span style={{ fontSize: "0.8rem" }}>{f.emoji}</span>
-              <span>{f.label}</span>
-            </li>
-          ))}
-        </ul>
-
-        <div
-          style={{
-            marginTop: "auto",
-            paddingTop: "0.6rem",
-            borderTop: "1px solid #F0E0E8",
-          }}
-        >
-          <p
-            style={{
-              fontSize: "0.6rem",
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.1em",
-              marginBottom: "2px",
-              color: "#7A5C10",
-            }}
-          >
-            Precio
-          </p>
-          <p
-            style={{
-              fontSize: "0.95rem",
-              fontWeight: 800,
-              color: "#3A1140",
-            }}
-          >
-            {isColombia
-              ? `$${(precios[t.id]?.cop ?? t.precioDefault.cop).toLocaleString("es-CO")} COP`
-              : `$${precios[t.id]?.usd ?? t.precioDefault.usd} USD`}
-          </p>
+        {/* Círculo "Ver más" — aparece en hover, centrado */}
+        <div style={{
+          position: "absolute", inset: 0,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          pointerEvents: "none",
+        }}>
+          <div style={{
+            width: 84, height: 84, borderRadius: "50%",
+            backgroundColor: "white",
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center", gap: 2,
+            boxShadow: "0 4px 24px rgba(0,0,0,0.25)",
+            opacity: hovered ? 1 : 0,
+            transform: hovered ? "scale(1)" : "scale(0.55)",
+            transition: "opacity 0.28s ease, transform 0.28s cubic-bezier(0.34,1.56,0.64,1)",
+          }}>
+            <span style={{ fontSize: "1.1rem", color: "#3A1140", lineHeight: 1 }}>↗</span>
+            <span style={{
+              fontSize: "0.6rem", fontWeight: 800,
+              color: "#3A1140", textAlign: "center",
+              textTransform: "uppercase", letterSpacing: "0.04em",
+              lineHeight: 1.3,
+            }}>Ver más</span>
+          </div>
         </div>
       </div>
 
-      {/* Botón */}
-      <div style={{ padding: "0 1rem 1rem" }}>
-        <div
-          style={{
-            width: "100%",
-            fontWeight: 700,
-            fontSize: "0.875rem",
-            padding: "0.7rem 0",
-            borderRadius: "0.875rem",
-            textAlign: "center",
-            backgroundColor: hovered ? "#3A1140" : "#5A1B5E",
-            color: "#F8F5F0",
-            transition: "background-color 0.22s ease",
-            letterSpacing: "0.01em",
-          }}
-        >
-          Ver plantilla →
+      {/* ── CUERPO con borde izquierdo animado ── */}
+      <div style={{ display: "flex", flex: 1, padding: "1rem" }}>
+        {/* Borde gradient animado */}
+        <div style={{
+          width: 3, borderRadius: 3, flexShrink: 0, marginRight: "0.85rem",
+          background: GRADIENT_BORDER,
+          backgroundSize: "100% 300%",
+          animation: "gradientFlow 2.8s ease infinite alternate",
+        }} />
+
+        {/* Contenido */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+          <p style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: "1rem", fontWeight: 700, color: "#3A1140", margin: 0,
+          }}>
+            {t.nombreDisplay}
+          </p>
+
+          <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.22rem" }}>
+            {t.features.map((f) => (
+              <li key={f.label} style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontSize: "0.68rem", color: "#555" }}>
+                <span style={{ fontSize: "0.75rem" }}>{f.emoji}</span>
+                <span>{f.label}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div style={{ marginTop: "auto", paddingTop: "0.5rem", borderTop: "1px solid #F0E0E8" }}>
+            <p style={{ fontSize: "0.55rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#7A5C10", marginBottom: 2 }}>Precio</p>
+            <p style={{ fontSize: "0.95rem", fontWeight: 800, color: "#3A1140", margin: 0 }}>
+              {isColombia
+                ? `$${(precios[t.id]?.cop ?? t.precioDefault.cop).toLocaleString("es-CO")} COP`
+                : `$${precios[t.id]?.usd ?? t.precioDefault.usd} USD`}
+            </p>
+          </div>
         </div>
       </div>
     </article>
