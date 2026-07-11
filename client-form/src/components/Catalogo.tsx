@@ -92,25 +92,24 @@ function TemplateCard({
           {t.categoria}
         </span>
 
-        {/* Círculo "Ver más" — aparece en hover, centrado */}
+        {/* Círculo "Ver más" — siempre visible, flota en hover */}
         <div style={{
           position: "absolute", inset: 0,
           display: "flex", alignItems: "center", justifyContent: "center",
           pointerEvents: "none",
         }}>
           <div style={{
-            width: 84, height: 84, borderRadius: "50%",
+            width: 80, height: 80, borderRadius: "50%",
             backgroundColor: "white",
             display: "flex", flexDirection: "column",
             alignItems: "center", justifyContent: "center", gap: 2,
-            boxShadow: "0 4px 24px rgba(0,0,0,0.25)",
-            opacity: hovered ? 1 : 0,
-            transform: hovered ? "scale(1)" : "scale(0.55)",
-            transition: "opacity 0.28s ease, transform 0.28s cubic-bezier(0.34,1.56,0.64,1)",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+            animation: hovered ? "floatAround 3.5s ease-in-out infinite" : "none",
+            transition: "box-shadow 0.3s ease",
           }}>
             <span style={{ fontSize: "1.1rem", color: "#3A1140", lineHeight: 1 }}>↗</span>
             <span style={{
-              fontSize: "0.6rem", fontWeight: 800,
+              fontSize: "0.58rem", fontWeight: 800,
               color: "#3A1140", textAlign: "center",
               textTransform: "uppercase", letterSpacing: "0.04em",
               lineHeight: 1.3,
@@ -155,6 +154,20 @@ function TemplateCard({
                 : `$${precios[t.id]?.usd ?? t.precioDefault.usd} USD`}
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* Botón Ver plantilla */}
+      <div style={{ padding: "0 1rem 1rem" }}>
+        <div style={{
+          width: "100%", fontWeight: 700, fontSize: "0.875rem",
+          padding: "0.7rem 0", borderRadius: "0.875rem", textAlign: "center",
+          backgroundColor: hovered ? "#3A1140" : "#5A1B5E",
+          color: "#F8F5F0",
+          transition: "background-color 0.22s ease",
+          letterSpacing: "0.01em",
+        }}>
+          Ver plantilla →
         </div>
       </div>
     </article>
