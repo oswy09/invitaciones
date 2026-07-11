@@ -128,35 +128,71 @@ const GOLD_TEXT = "#7A5C10";
             Nuestras plantillas
           </h2>
 
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+          <style>
+            .template-card {
+              transition: all 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+              border: 2px solid #E8B4BC;
+              box-shadow: 0 2px 8px rgba(90,27,94,0.06);
+            }
+            .template-card:hover {
+              transform: translateY(-10px);
+              border-color: #5A1B5E;
+              box-shadow: 0 24px 56px rgba(90,27,94,0.22), 0 4px 12px rgba(90,27,94,0.1);
+            }
+            .template-card .card-preview-shimmer {
+              opacity: 0;
+              transition: opacity 0.4s ease;
+            }
+            .template-card:hover .card-preview-shimmer { opacity: 1; }
+            .template-card .card-title {
+              transition: transform 0.3s ease;
+            }
+            .template-card:hover .card-title { transform: scale(1.08); }
+            .template-card .card-badge {
+              transition: background-color 0.2s ease;
+            }
+            .template-card:hover .card-badge { background-color: #EAD5F5; }
+            .template-card .card-btn {
+              transition: background-color 0.22s ease;
+            }
+            .template-card:hover .card-btn { background-color: #3A1140 !important; }
+          </style>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {CATALOGO.map((t) => (
-              <article
-                class="flex flex-col rounded-2xl overflow-hidden border"
-                style="border-color: #E8B4BC; background-color: white;"
+              <a
+                href="/plantillas"
+                class="template-card flex flex-col rounded-2xl overflow-hidden no-underline"
+                style="background-color: white; text-decoration: none;"
               >
-                <!-- Preview altura fija -->
+                <!-- Preview con shimmer -->
                 <div
-                  class="relative w-full flex items-end justify-center pb-4"
-                  style={`height: 160px; background: ${t.gradiente}; overflow: hidden;`}
+                  class="relative w-full flex items-end justify-center pb-5"
+                  style={`height: 200px; background: ${t.gradiente}; overflow: hidden;`}
                 >
                   {t.esEspacio && (
                     <div
                       aria-hidden="true"
-                      style="position:absolute;inset:0;background-image:radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px);background-size:20px 20px;"
+                      style="position:absolute;inset:0;background-image:radial-gradient(circle, rgba(255,255,255,0.85) 1px, transparent 1px);background-size:20px 20px;"
                     />
                   )}
+                  <!-- Shimmer sweep -->
+                  <div
+                    class="card-preview-shimmer"
+                    style="position:absolute;inset:0;background:linear-gradient(135deg,transparent 20%,rgba(255,255,255,0.18) 50%,transparent 80%);pointer-events:none;"
+                  />
                   <span
-                    class="relative text-xs font-bold tracking-wide text-center px-2"
-                    style={`font-family: 'Playfair Display', serif; color: ${t.textColor};`}
+                    class="card-title relative z-10 text-sm font-bold tracking-wide text-center px-3"
+                    style={`font-family:'Playfair Display',serif; color:${t.textColor}; text-shadow:0 1px 4px rgba(0,0,0,0.3); display:block;`}
                   >
                     {t.nombreDisplay}
                   </span>
                 </div>
 
                 <!-- Info -->
-                <div class="flex flex-col gap-2.5 p-3 sm:p-4 flex-1">
+                <div class="flex flex-col gap-2.5 p-4 flex-1">
                   <span
-                    class="inline-block self-start text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                    class="card-badge inline-block self-start text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
                     style="background-color: #F3E8F7; color: #5A1B5E;"
                   >
                     {t.categoria}
@@ -179,7 +215,17 @@ const GOLD_TEXT = "#7A5C10";
                     </p>
                   </div>
                 </div>
-              </article>
+
+                <!-- Botón -->
+                <div class="px-4 pb-4">
+                  <div
+                    class="card-btn w-full text-sm font-bold py-3 rounded-xl text-center"
+                    style="background-color: #5A1B5E; color: #F8F5F0;"
+                  >
+                    Ver plantilla →
+                  </div>
+                </div>
+              </a>
             ))}
           </div>
 
