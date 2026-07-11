@@ -93,7 +93,7 @@ export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
 
       {/* GRID DE PLANTILLAS */}
       <div className="max-w-4xl mx-auto px-6 pb-16">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
           {CATALOGO.map((t) => (
             <article
               key={t.id}

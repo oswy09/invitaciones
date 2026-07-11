@@ -50,10 +50,10 @@ const GOLD_TEXT = "#7A5C10";
   <div class="min-h-screen" style="background-color: #F8F5F0; color: #2B2B2B; font-family: 'Poppins', sans-serif;">
 
     <!-- 1. NAV -->
+    <header class="sticky top-0 z-50 w-full" style="background-color: white; border-bottom: 1px solid #F0E0E8; box-shadow: 0 1px 4px rgba(90,27,94,0.07);">
     <nav
       aria-label="Navegación principal"
-      class="flex items-center justify-between px-6 py-4 max-w-5xl mx-auto sticky top-0 z-50"
-      style="background-color: white; border-bottom: 1px solid #F0E0E8; box-shadow: 0 1px 4px rgba(90,27,94,0.07);"
+      class="flex items-center justify-between px-6 py-4 max-w-5xl mx-auto"
     >
       <img
         src="https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png"
@@ -68,6 +68,7 @@ const GOLD_TEXT = "#7A5C10";
         Ver plantillas
       </a>
     </nav>
+    </header>
 
     <main>
 
@@ -127,7 +128,7 @@ const GOLD_TEXT = "#7A5C10";
             Nuestras plantillas
           </h2>
 
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             {CATALOGO.map((t) => (
               <article
                 class="flex flex-col rounded-2xl overflow-hidden border"

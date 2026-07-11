@@ -24,6 +24,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "templates/04-Moderna"],
       "port": 3000
+    },
+    {
+      "name": "client-form",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "client-form"],
+      "port": 3200
     }
   ]
 }
