@@ -34,6 +34,7 @@ function TemplateCard({
       onClick={() => onSelect(t)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      className="js-card"
       style={{
         backgroundColor: "white",
         borderRadius: "1rem",
@@ -92,30 +93,6 @@ function TemplateCard({
           {t.categoria}
         </span>
 
-        {/* Círculo "Ver más" — siempre visible, flota en hover */}
-        <div style={{
-          position: "absolute", inset: 0,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          pointerEvents: "none",
-        }}>
-          <div style={{
-            width: 80, height: 80, borderRadius: "50%",
-            backgroundColor: "white",
-            display: "flex", flexDirection: "column",
-            alignItems: "center", justifyContent: "center", gap: 2,
-            boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
-            animation: hovered ? "floatAround 3.5s ease-in-out infinite" : "none",
-            transition: "box-shadow 0.3s ease",
-          }}>
-            <span style={{ fontSize: "1.1rem", color: "#3A1140", lineHeight: 1 }}>↗</span>
-            <span style={{
-              fontSize: "0.58rem", fontWeight: 800,
-              color: "#3A1140", textAlign: "center",
-              textTransform: "uppercase", letterSpacing: "0.04em",
-              lineHeight: 1.3,
-            }}>Ver más</span>
-          </div>
-        </div>
       </div>
 
       {/* ── CUERPO con borde izquierdo animado ── */}

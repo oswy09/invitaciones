@@ -69,6 +69,53 @@ const {
   <body>
     <slot />
 
+    <!-- Cursor "Ver más" global: sigue al mouse sobre cualquier card -->
+    <div
+      id="cursor-vermas"
+      aria-hidden="true"
+      style="position:fixed;top:0;left:0;pointer-events:none;z-index:9998;opacity:0;will-change:transform;"
+    >
+      <div style="width:80px;height:80px;border-radius:50%;background:white;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;box-shadow:0 4px 28px rgba(0,0,0,0.28);transform:translate(-50%,-50%);">
+        <span style="font-size:1.1rem;color:#3A1140;line-height:1;">↗</span>
+        <span style="font-size:0.58rem;font-weight:800;color:#3A1140;text-align:center;text-transform:uppercase;letter-spacing:0.05em;line-height:1.3;">Ver más</span>
+      </div>
+    </div>
+
+    <script>
+      (() => {
+        const el = document.getElementById('cursor-vermas');
+        if (!el) return;
+
+        let cx = 0, cy = 0;
+        let tx = 0, ty = 0;
+        let visible = false;
+
+        function isOverCard(x, y) {
+          const target = document.elementFromPoint(x, y);
+          return !!(target && target.closest('.tcard, .js-card'));
+        }
+
+        document.addEventListener('mousemove', (e) => {
+          tx = e.clientX;
+          ty = e.clientY;
+          const over = isOverCard(tx, ty);
+          if (over !== visible) {
+            visible = over;
+            el.style.opacity = over ? '1' : '0';
+            el.style.transition = 'opacity 0.2s ease';
+          }
+        });
+
+        function loop() {
+          cx += (tx - cx) * 0.13;
+          cy += (ty - cy) * 0.13;
+          el.style.transform = `translate(${cx}px, ${cy}px)`;
+          raf = requestAnimationFrame(loop);
+        }
+        loop();
+      })();
+    </script>
+
     <!-- Botón WhatsApp flotante fijo -->
     <a
       href="https://wa.me/573057502790?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20sobre%20las%20invitaciones%20digitales%20de%20Celebrarte"
