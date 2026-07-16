@@ -50,7 +50,7 @@ function TemplateCard({
         border: "1px solid #EDD5E8",
       }}
     >
-      {/* ── PREVIEW ── */}
+      {/* ── PREVIEW: imagen estática o iframe ── */}
       <div
         style={{
           height: "240px",
@@ -60,13 +60,31 @@ function TemplateCard({
           flexShrink: 0,
         }}
       >
-        {t.esEspacio && (
-          <div
-            aria-hidden="true"
+        {t.previewImg ? (
+          <img
+            src={t.previewImg}
+            alt={`Preview ${t.nombreDisplay}`}
             style={{
-              position: "absolute", inset: 0,
-              backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
-              backgroundSize: "20px 20px",
+              width: "100%", height: "100%",
+              objectFit: "cover", objectPosition: "center top",
+              display: "block", pointerEvents: "none",
+            }}
+          />
+        ) : (
+          <iframe
+            src={t.baseUrl}
+            title={`Preview ${t.nombreDisplay}`}
+            scrolling="no"
+            loading="eager"
+            allow="autoplay 'none'"
+            style={{
+              width: "390px", height: "844px",
+              border: "none",
+              transform: "scale(0.64)",
+              transformOrigin: "top center",
+              pointerEvents: "none",
+              display: "block",
+              position: "absolute", top: 0, left: "50%", marginLeft: "-249px",
             }}
           />
         )}
@@ -78,11 +96,12 @@ function TemplateCard({
           opacity: hovered ? 1 : 0,
           transition: "opacity 0.3s ease",
           pointerEvents: "none",
+          zIndex: 1,
         }} />
 
         {/* Tag categoría — esquina superior derecha */}
         <span style={{
-          position: "absolute", top: 12, right: 12,
+          position: "absolute", top: 12, right: 12, zIndex: 2,
           fontSize: "0.6rem", fontWeight: 800,
           textTransform: "uppercase", letterSpacing: "0.1em",
           padding: "4px 10px", borderRadius: "4px",
@@ -92,7 +111,6 @@ function TemplateCard({
         }}>
           {t.categoria}
         </span>
-
       </div>
 
       {/* ── CUERPO con borde izquierdo animado ── */}

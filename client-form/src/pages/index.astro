@@ -73,56 +73,255 @@ const GOLD_TEXT = "#7A5C10";
     <main>
 
       <!-- 2. HERO -->
-      <section aria-label="Propuesta de valor" class="text-center px-6 pt-16 pb-20 max-w-3xl mx-auto">
-        <p class="text-sm font-semibold tracking-widest uppercase mb-4" style={`color: ${GOLD_TEXT};`}>
-          Invitaciones digitales
-        </p>
-        <h1
-          class="text-4xl md:text-5xl font-bold leading-tight mb-6"
-          style="font-family: 'Playfair Display', serif; color: #5A1B5E;"
-        >
-          Tu celebración merece una primera impresión memorable
-        </h1>
-        <p class="text-base md:text-lg leading-relaxed mb-10" style="color: #4A4A4A;">
-          Diseñamos invitaciones digitales animadas para baby showers, bodas y cumpleaños,
-          listas para compartir por WhatsApp en segundos.
-        </p>
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
-          <a
-            href="/plantillas"
-            class="w-full sm:w-auto text-base font-semibold px-8 py-3.5 rounded-full transition-all shadow-lg text-center"
-            style="background-color: #5A1B5E; color: #F8F5F0;"
-          >
-            Explorar plantillas
-          </a>
-          <a
-            href={`https://wa.me/${WHATSAPP_CONTACTO}?text=${WHATSAPP_MENSAJE}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="w-full sm:w-auto text-base font-semibold px-8 py-3.5 rounded-full border-2 transition-all text-center"
-            style="border-color: #5A1B5E; color: #5A1B5E;"
-          >
-            Preguntar por WhatsApp
-          </a>
-        </div>
+      <section aria-label="Propuesta de valor" class="px-6 pt-14 pb-20 max-w-5xl mx-auto">
+        <div class="flex flex-col md:flex-row items-center gap-10 md:gap-16">
 
-        <!-- Barra de credibilidad -->
-        <p class="text-xs font-medium" style="color: #8B5AA0;">
-          🎉&nbsp; {CREDIBILIDAD}
-        </p>
+          <!-- Texto con heading animado estilo Notion -->
+          <div id="hero-text" class="flex-1 text-center md:text-left">
+            <p class="text-sm font-semibold tracking-widest uppercase mb-5" style={`color: ${GOLD_TEXT};`}>
+              Celebrarte · Invitaciones digitales
+            </p>
+
+            <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6" style="font-family:'Playfair Display',serif; color:#5A1B5E;">
+              Diseñamos invitaciones para
+              <span style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap;">
+                <span id="word-dot" style="width:10px;height:10px;border-radius:50%;background:#4CAF50;display:inline-block;flex-shrink:0;transition:background 0.3s ease;"></span>
+                <span id="word-pill" style="display:inline-block;padding:2px 14px 4px;border-radius:100px;background:#EDF7ED;color:#2E7D32;font-style:normal;transition:background 0.3s ease,color 0.3s ease;">Baby Showers</span>
+              </span>
+              <br/>que nadie olvidará
+            </h1>
+
+            <p class="text-base md:text-lg leading-relaxed mb-10" style="color: #4A4A4A;">
+              Animadas, interactivas y listas para compartir por WhatsApp en segundos.
+              Un link que se abre como un regalo.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3 mb-6">
+              <a
+                href="/plantillas"
+                class="w-full sm:w-auto text-base font-semibold px-8 py-3.5 rounded-full transition-all shadow-lg text-center"
+                style="background-color: #5A1B5E; color: #F8F5F0;"
+              >
+                Explorar plantillas
+              </a>
+              <a
+                href={`https://wa.me/${WHATSAPP_CONTACTO}?text=${WHATSAPP_MENSAJE}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-full sm:w-auto text-base font-semibold px-8 py-3.5 rounded-full border-2 transition-all text-center"
+                style="border-color: #5A1B5E; color: #5A1B5E;"
+              >
+                Preguntar por WhatsApp
+              </a>
+            </div>
+            <!-- Barra de credibilidad -->
+            <p class="text-xs font-medium" style="color: #8B5AA0;">
+              🎉&nbsp; {CREDIBILIDAD}
+            </p>
+          </div>
+
+          <!-- Phone mockup BLANCO con template Dino -->
+          <div class="flex-shrink-0 flex justify-center" style="perspective: 1200px;">
+            <div
+              class="phone-mockup"
+              style="
+                width: 248px;
+                height: 520px;
+                border-radius: 40px;
+                background: #f0f0f0;
+                padding: 9px;
+                box-shadow:
+                  0 0 0 1px #d8d8d8,
+                  0 2px 0 2px #e8e8e8,
+                  0 32px 80px rgba(90,27,94,0.22),
+                  0 10px 30px rgba(0,0,0,0.12);
+                position: relative;
+              "
+            >
+              <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);width:52px;height:10px;background:#1a1a1a;border-radius:10px;z-index:10;"></div>
+              <div style="position:absolute;top:100px;right:-3px;width:3px;height:44px;background:#c8c8c8;border-radius:0 2px 2px 0;"></div>
+              <div style="position:absolute;top:80px;left:-3px;width:3px;height:30px;background:#c8c8c8;border-radius:2px 0 0 2px;"></div>
+              <div style="position:absolute;top:120px;left:-3px;width:3px;height:30px;background:#c8c8c8;border-radius:2px 0 0 2px;"></div>
+              <div style="width:100%;height:100%;border-radius:32px;overflow:hidden;background:#a8c8d8;">
+                <iframe
+                  src="https://dino.celebrarte.com.co"
+                  title="Preview Baby Shower Dino"
+                  scrolling="no"
+                  allow="autoplay 'none'"
+                  style="width:390px;height:844px;border:none;transform:scale(0.597);transform-origin:top left;pointer-events:none;display:block;"
+                />
+              </div>
+            </div>
+          </div>
+
+        </div>
       </section>
+
+      <style>
+        @keyframes phoneFloat {
+          0%, 100% { transform: translateY(0px) rotateY(-6deg) rotateX(2deg); }
+          50%       { transform: translateY(-12px) rotateY(-6deg) rotateX(2deg); }
+        }
+        .phone-mockup { animation: phoneFloat 5s ease-in-out infinite; }
+
+        @keyframes wordOut {
+          from { opacity:1; transform:translateY(0);     }
+          to   { opacity:0; transform:translateY(-14px); }
+        }
+        @keyframes wordIn {
+          from { opacity:0; transform:translateY(14px); }
+          to   { opacity:1; transform:translateY(0);    }
+        }
+        .word-out { animation: wordOut 0.28s ease forwards; }
+        .word-in  { animation: wordIn  0.35s ease forwards; }
+
+        /* gs-fade: GSAP controla la visibilidad, no el CSS */
+        .gs-left   { opacity: 0; transform: translateX(-40px); }
+        .gs-up     { opacity: 0; transform: translateY(40px); }
+      </style>
+
+      <script>
+        import { gsap } from 'gsap';
+        import { ScrollTrigger } from 'gsap/ScrollTrigger';
+        gsap.registerPlugin(ScrollTrigger);
+
+        /* ── Palabra ciclada estilo Notion ── */
+        (() => {
+          const pill = document.getElementById('word-pill');
+          const dot  = document.getElementById('word-dot');
+          if (!pill || !dot) return;
+          const WORDS = [
+            { text:'Baby Showers', bg:'#EDF7ED', color:'#2E7D32', dotColor:'#4CAF50' },
+            { text:'Bodas',        bg:'#F3E5F5', color:'#6A1B9A', dotColor:'#9C27B0' },
+            { text:'Cumpleaños',   bg:'#FFF3E0', color:'#E65100', dotColor:'#FF9800' },
+            { text:'Quinceaños',   bg:'#FCE4EC', color:'#C2185B', dotColor:'#E91E63' },
+          ];
+          let idx = 0;
+          function next() {
+            idx = (idx + 1) % WORDS.length;
+            const w = WORDS[idx];
+            pill.classList.add('word-out');
+            setTimeout(() => {
+              pill.textContent      = w.text;
+              pill.style.background = w.bg;
+              pill.style.color      = w.color;
+              dot.style.background  = w.dotColor;
+              pill.classList.remove('word-out');
+              pill.classList.add('word-in');
+              setTimeout(() => pill.classList.remove('word-in'), 400);
+            }, 280);
+          }
+          setInterval(next, 2600);
+        })();
+
+        /* ── GSAP: animaciones de entrada del hero ── */
+        gsap.from('#hero-text > *', {
+          y: 40, opacity: 0, duration: 0.9, stagger: 0.18, ease: 'power3.out', delay: 0.15,
+        });
+        gsap.from('.phone-mockup', {
+          x: 80, opacity: 0, rotation: 4, duration: 1.1, ease: 'power3.out', delay: 0.2,
+        });
+
+        /* ── Helper: anima al entrar en viewport (reemplaza gsap.from con ScrollTrigger inestable) ── */
+        function animateOnEnter(selector, vars, staggerDelay) {
+          const els = document.querySelectorAll(selector);
+          if (!els.length) return;
+          const io = new IntersectionObserver(function(entries) {
+            var triggered = false;
+            entries.forEach(function(entry) {
+              if (entry.isIntersecting && !triggered) {
+                triggered = true;
+                io.disconnect();
+                gsap.from(els, Object.assign({ ease: 'power2.out', duration: 0.7, opacity: 0, y: 36 }, vars, { stagger: staggerDelay || 0 }));
+              }
+            });
+          }, { threshold: 0.1 });
+          io.observe(els[0]);
+        }
+
+        // Cards de plantillas
+        {
+          const cards = document.querySelectorAll('.tcard');
+          const io = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+              if (entry.isIntersecting) {
+                var el = entry.target;
+                var i = Array.from(cards).indexOf(el);
+                setTimeout(function() {
+                  el.style.opacity = '1';
+                  el.style.transform = 'translateY(0)';
+                }, i * 120);
+                io.unobserve(el);
+              }
+            });
+          }, { threshold: 0.05 });
+          cards.forEach(function(c) {
+            c.style.opacity = '0';
+            c.style.transform = 'translateY(40px)';
+            c.style.transition = 'opacity 0.65s ease, transform 0.65s cubic-bezier(0.4,0,0.2,1)';
+            io.observe(c);
+          });
+        }
+
+        // Headings con gs-fade
+        document.querySelectorAll('.gs-fade').forEach(function(el) {
+          var elIo = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting) {
+              gsap.from(el, { y: 28, opacity: 0, duration: 0.8, ease: 'power3.out' });
+              elIo.disconnect();
+            }
+          }, { threshold: 0.15 });
+          elIo.observe(el);
+        });
+
+        // Diferenciador: iconos salen con escala + fade
+        animateOnEnter('.dif-item', { y: 50, scale: 0.85, duration: 0.8, ease: 'back.out(1.6)' }, 0.2);
+
+        // Encabezados diferenciador y pasos
+        animateOnEnter('.dif-head', { y: 24, duration: 0.7 }, 0.15);
+        animateOnEnter('.paso-head', { y: 24, duration: 0.7 }, 0.15);
+
+        // Pasos con bounce
+        animateOnEnter('.paso-item', { y: 50, scale: 0.9, duration: 0.7, ease: 'back.out(1.4)' }, 0.2);
+
+        // Testimonios
+        animateOnEnter('.testimonio-item', { y: 36, duration: 0.65 }, 0.15);
+
+        // Flechas de pasos
+        animateOnEnter('.paso-arrow', { opacity: 0, x: -20, duration: 0.5 }, 0.2);
+
+        /* ── Fondo sección intermedia con color ciclado suave ── */
+        const colorSection = document.getElementById('color-cycle-section');
+        if (colorSection) {
+          const bgColors = ['#F8F5F0','#F2EDF8','#F5F0E8','#EDF4F8','#F0F8F2'];
+          let bi = 0;
+          (function cycleBg() {
+            bi = (bi + 1) % bgColors.length;
+            gsap.to(colorSection, {
+              backgroundColor: bgColors[bi],
+              duration: 4,
+              ease: 'sine.inOut',
+              onComplete: cycleBg,
+            });
+          })();
+        }
+      </script>
 
       <!-- 3. DIFERENCIADOR -->
       <DiferenciadorSection />
 
-      <!-- 4. PLANTILLAS PREVIEW -->
-      <section aria-label="Nuestras plantillas" class="px-6 py-20" style="background-color: #ffffff;">
+      <!-- 4. PLANTILLAS PREVIEW (fondo cambiante) -->
+      <section
+        id="color-cycle-section"
+        aria-label="Nuestras plantillas"
+        class="px-6 py-20"
+        style="background-color: #F8F5F0; transition: background-color 4s ease;"
+      >
         <div class="max-w-5xl mx-auto">
           <p class="text-sm font-semibold tracking-widest uppercase mb-3 text-center" style={`color: ${GOLD_TEXT};`}>
             Diseños disponibles
           </p>
           <h2
-            class="text-center text-2xl md:text-3xl font-bold mb-14"
+            class="gs-fade text-center text-2xl md:text-3xl font-bold mb-14"
             style="font-family: 'Playfair Display', serif; color: #5A1B5E;"
           >
             Nuestras plantillas
@@ -172,18 +371,30 @@ const GOLD_TEXT = "#7A5C10";
             {CATALOGO.map((t) => (
               <a href="/plantillas" class="tcard">
 
-                <!-- Preview -->
-                <div class="relative" style={`height:240px; background:${t.gradiente}; overflow:hidden; flex-shrink:0;`}>
-                  {t.esEspacio && (
-                    <div aria-hidden="true" style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.8) 1px,transparent 1px);background-size:20px 20px;" />
+                <!-- Preview: imagen estática o iframe -->
+                <div class="relative tcard-preview-wrap" style={`height:240px; background:${t.gradiente}; overflow:hidden; flex-shrink:0;`}>
+                  {t.previewImg ? (
+                    <img
+                      src={t.previewImg}
+                      alt={`Preview ${t.nombreDisplay}`}
+                      style="width:100%;height:100%;object-fit:cover;object-position:center 15%;display:block;pointer-events:none;"
+                    />
+                  ) : (
+                    <iframe
+                      src={t.baseUrl}
+                      title={`Preview ${t.nombreDisplay}`}
+                      scrolling="no"
+                      loading="eager"
+                      allow="autoplay 'none'"
+                      style="width:390px;height:844px;border:none;transform:scale(0.64);transform-origin:top center;pointer-events:none;display:block;position:absolute;top:0;left:50%;margin-left:-249px;"
+                    />
                   )}
                   <div class="tcard-overlay" />
 
                   <!-- Tag categoría esquina superior derecha -->
-                  <span style="position:absolute;top:12px;right:12px;font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;padding:4px 10px;border-radius:4px;background:rgba(0,0,0,0.55);color:white;backdrop-filter:blur(4px);">
+                  <span style="position:absolute;top:12px;right:12px;font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;padding:4px 10px;border-radius:4px;background:rgba(0,0,0,0.55);color:white;backdrop-filter:blur(4px);z-index:2;">
                     {t.categoria}
                   </span>
-
                 </div>
 
                 <!-- Cuerpo con borde izquierdo animado -->
@@ -234,20 +445,58 @@ const GOLD_TEXT = "#7A5C10";
       </section>
 
       <!-- 5. CÓMO FUNCIONA -->
-      <section aria-label="Cómo funciona" class="px-6 py-20" style="background-color: #5A1B5E;">
-        <div class="max-w-4xl mx-auto">
+      <section aria-label="Cómo funciona" class="px-6 py-20" style="background-color: #F8F5F0;">
+        <div class="max-w-5xl mx-auto">
+          <p class="paso-head text-sm font-semibold tracking-widest uppercase mb-3 text-center" style="color:#7A5C10;">
+            Simple y rápido
+          </p>
           <h2
-            class="text-center text-2xl font-bold mb-12"
-            style="font-family: 'Playfair Display', serif; color: #F8F5F0;"
+            class="paso-head text-center text-2xl md:text-3xl font-bold mb-16"
+            style="font-family: 'Playfair Display', serif; color: #5A1B5E;"
           >
             ¿Cómo funciona?
           </h2>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
-            {PASOS.map((p) => (
-              <div class="text-center">
-                <p class="text-4xl font-bold mb-3" style="color: #C49B3A; font-family: 'Playfair Display', serif;">{p.num}</p>
-                <p class="font-semibold text-base mb-2" style="color: #F8F5F0;">{p.titulo}</p>
-                <p class="text-sm leading-relaxed" style="color: #E8B4BC;">{p.desc}</p>
+
+          <!-- Steps row -->
+          <div class="flex flex-col md:flex-row items-start justify-center gap-0">
+            {PASOS.map((p, i) => (
+              <div class="paso-item flex flex-col md:flex-row items-center flex-1">
+                <!-- Step card -->
+                <div class="flex flex-col items-center text-center px-6 flex-1">
+                  <!-- Número en círculo -->
+                  <div style="
+                    width: 72px; height: 72px;
+                    border-radius: 50%;
+                    border: 2px solid #C49B3A;
+                    display: flex; align-items: center; justify-content: center;
+                    margin-bottom: 1.25rem;
+                    position: relative;
+                    background: white;
+                    box-shadow: 0 4px 18px rgba(90,27,94,0.12);
+                  ">
+                    <!-- arco decorativo arriba-derecha -->
+                    <svg style="position:absolute;top:-2px;left:-2px;width:76px;height:76px;" viewBox="0 0 76 76" fill="none">
+                      <path d="M 38 2 A 36 36 0 0 1 74 38" stroke="#5A1B5E" stroke-width="4" stroke-linecap="round"/>
+                    </svg>
+                    <span style="font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:800;color:#C49B3A;">
+                      {p.num}
+                    </span>
+                  </div>
+                  <h3 class="font-bold text-base mb-2" style="color:#3A1140;font-family:'Playfair Display',serif;">{p.titulo}</h3>
+                  <p class="text-sm leading-relaxed" style="color:#4A4A4A;max-width:200px;">{p.desc}</p>
+                </div>
+
+                <!-- Flecha entre pasos -->
+                {i < PASOS.length - 1 && (
+                  <div class="paso-arrow flex items-center justify-center" style="padding: 1rem 0; opacity: 0.5;">
+                    <svg class="md:hidden" width="24" height="32" viewBox="0 0 24 32" fill="none">
+                      <path d="M12 2 L12 26 M4 18 L12 26 L20 18" stroke="#5A1B5E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <svg class="hidden md:block" width="48" height="24" viewBox="0 0 48 24" fill="none">
+                      <path d="M2 12 L44 12 M32 4 L44 12 L32 20" stroke="#5A1B5E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -266,7 +515,7 @@ const GOLD_TEXT = "#7A5C10";
           class="text-2xl md:text-3xl font-bold mb-4"
           style="font-family: 'Playfair Display', serif; color: #5A1B5E;"
         >
-          ¿Lista para sorprender a tus invitados?
+          ¿Listo/a para sorprender a tus invitados?
         </h2>
         <p class="text-sm mb-8" style="color: #4A4A4A;">
           Personaliza tu invitación en minutos y compártela al instante.
@@ -286,8 +535,31 @@ const GOLD_TEXT = "#7A5C10";
     </main>
 
     <!-- 9. FOOTER -->
-    <footer class="px-6 py-8 border-t text-center text-xs" style="border-color: #E8B4BC; color: #5A5A5A;">
-      © 2026 Celebrarte · Invitaciones digitales · Hecho con amor ✨
+    <footer class="px-6 py-10 text-center text-sm" style="background-color: #1A0A20;">
+      <!-- Logo en blanco -->
+      <img
+        src="https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png"
+        alt="Celebrarte"
+        class="h-8 w-auto mx-auto mb-5"
+        style="filter: brightness(0) invert(1); opacity: 0.9;"
+      />
+      <!-- Contraste AA: #E8DCEF sobre #1A0A20 → ~11:1 -->
+      <p class="mb-2" style="color: #E8DCEF;">
+        © 2026 Celebrarte · Invitaciones digitales animadas para Colombia y el mundo
+      </p>
+      <!-- Contraste AA: #C8B8D8 sobre #1A0A20 → ~8:1 -->
+      <p style="color: #C8B8D8; font-size: 0.8rem;">
+        Creado por&nbsp;
+        <a
+          href="https://oswal.com.co"
+          target="_blank"
+          rel="noopener noreferrer"
+          style="color: #E8C46A; text-decoration: underline; text-underline-offset: 3px; font-weight: 600;"
+        >
+          Oswal
+        </a>
+        &nbsp;· Hecho con amor ✨
+      </p>
     </footer>
 
   </div>

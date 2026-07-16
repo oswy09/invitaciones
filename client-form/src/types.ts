@@ -50,6 +50,8 @@ export interface TemplateInfo {
   categoria: "Baby Shower" | "Boda" | "Cumpleaños" | "Quinceaños";
   /** URL real publicada en Netlify. Vacío = todavía no está publicada. */
   baseUrl: string;
+  /** Imagen estática de preview para el card (reemplaza el iframe). */
+  previewImg?: string;
   gradiente: string;
   textColor: string;
   esEspacio?: boolean;
@@ -77,6 +79,7 @@ export const CATALOGO: TemplateInfo[] = [
     emoji: "🦖",
     categoria: "Baby Shower",
     baseUrl: "https://dino.celebrarte.com.co",
+    previewImg: "https://res.cloudinary.com/ddqbnr9vo/image/upload/v1780436162/Share_Redes_a2ow9q.png",
     gradiente: "linear-gradient(to bottom, #3a6b2a, #1a3a10)",
     textColor: "#c8f0a0",
     features: FEATURES_BABY_SHOWER,

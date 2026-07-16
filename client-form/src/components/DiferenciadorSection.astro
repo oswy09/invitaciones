@@ -1,19 +1,38 @@
 ---
 const ITEMS = [
   {
-    emoji: "🎁",
     titulo: "Se abre como un regalo",
-    desc: "Un sobre animado que el invitado abre con un toque — no una imagen que scrollea. Una experiencia que se recuerda.",
+    desc: "Un sobre animado que el invitado abre con un toque — no una imagen. Una experiencia que se recuerda.",
+    /* Envelope: cuerpo + flap V + lazo superior — todos <path> */
+    svg: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" width="52" height="52" aria-hidden="true">
+      <path d="M6 20 Q6 15 11 15 L53 15 Q58 15 58 20 L58 50 Q58 55 53 55 L11 55 Q6 55 6 50 Z"/>
+      <path d="M6 21 L32 37 L58 21"/>
+      <path d="M32 15 L32 5 M32 5 C28 5 24 8 24 12 C24 16 32 15 32 15 C32 15 40 16 40 12 C40 8 36 5 32 5"/>
+    </svg>`,
   },
   {
-    emoji: "🔗",
     titulo: "Todo en un solo link",
-    desc: "Fecha, lugar, mapa, RSVP y muro de deseos. Sin PDFs, sin capturas de pantalla, sin confusiones.",
+    desc: "Fecha, lugar, mapa, RSVP y muro de deseos. Sin PDFs, sin capturas, sin confusiones.",
+    /* Phone: contorno + líneas de pantalla + indicador home — todos <path> */
+    svg: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" width="52" height="52" aria-hidden="true">
+      <path d="M20 4 Q16 4 16 8 L16 56 Q16 60 20 60 L44 60 Q48 60 48 56 L48 8 Q48 4 44 4 Z"/>
+      <path d="M24 16 L40 16"/>
+      <path d="M24 26 L40 26"/>
+      <path d="M24 34 L40 34"/>
+      <path d="M24 42 L34 42"/>
+      <path d="M29 52 Q32 55 35 52"/>
+    </svg>`,
   },
   {
-    emoji: "⚡",
-    titulo: "Lista en minutos",
+    titulo: "Listo en minutos",
     desc: "Rellenas el formulario, previsualizas en tiempo real y recibes el link listo el mismo día.",
+    /* Clock: círculo (2 semiarcos) + manecillas + flecha de carga — todos <path> */
+    svg: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" width="52" height="52" aria-hidden="true">
+      <path d="M56 32 A24 24 0 0 1 8 32 A24 24 0 0 1 56 32"/>
+      <path d="M32 18 L32 32 L43 40"/>
+      <path d="M16 10 C20 6 26 4 32 4"/>
+      <path d="M15 10 L12 4 L19 7"/>
+    </svg>`,
   },
 ];
 ---
@@ -24,37 +43,52 @@ const ITEMS = [
 >
   <div style="max-width: 56rem; margin: 0 auto; text-align: center;">
     <p
-      class="text-sm font-semibold tracking-widest uppercase mb-3"
+      class="dif-head text-sm font-semibold tracking-widest uppercase mb-3"
       style="color: #7A5C10;"
     >
       ¿Por qué digital y animada?
     </p>
     <h2
-      class="text-2xl md:text-3xl font-bold mb-4"
+      class="dif-head text-2xl md:text-3xl font-bold mb-4"
       style="font-family: 'Playfair Display', serif; color: #5A1B5E;"
     >
       Más que una imagen, una experiencia
     </h2>
-    <p class="text-sm mb-14" style="color: #4A4A4A; max-width: 38rem; margin: 0 auto 3.5rem;">
+    <p class="dif-head text-sm mb-16" style="color: #4A4A4A; max-width: 38rem; margin: 0 auto 4rem;">
       Una invitación de WhatsApp se ignora. La tuya se va a recordar.
     </p>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
-      {ITEMS.map((item) => (
-        <div class="flex flex-col items-center gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-10">
+      {ITEMS.map((item, idx) => (
+        <div class="dif-item flex flex-col items-center gap-4">
+
+          <!--
+            .dif-svg-icon — contenedor del SVG con stroke-dashoffset animation.
+            Clases CSS:
+              .dif-svg-icon        → paths invisibles (stroke-dashoffset = dasharray)
+              .dif-svg-icon.drawn  → paths se "dibujan" (stroke-dashoffset → 0)
+            Control de delay por ícono via data-delay (ms).
+          -->
           <div
-            class="w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-sm"
-            style="background-color: #F3E8F7;"
+            class="dif-svg-icon"
+            data-delay={String(idx * 280)}
+            style="
+              width: 96px; height: 96px;
+              border-radius: 50%;
+              background: #F3E8F7;
+              display: flex; align-items: center; justify-content: center;
+              flex-shrink: 0;
+            "
           >
-            {item.emoji}
+            <Fragment set:html={item.svg} />
           </div>
-          <h3
-            class="text-base font-bold"
-            style="color: #5A1B5E; font-family: 'Playfair Display', serif;"
-          >
+
+          <div style="width:48px;height:2px;background:linear-gradient(to right,transparent,#C49B3A,transparent);border-radius:1px;"></div>
+
+          <h3 class="text-base font-bold" style="color:#5A1B5E;font-family:'Playfair Display',serif;">
             {item.titulo}
           </h3>
-          <p class="text-sm leading-relaxed" style="color: #4A4A4A;">
+          <p class="text-sm leading-relaxed" style="color:#4A4A4A;">
             {item.desc}
           </p>
         </div>
@@ -62,3 +96,54 @@ const ITEMS = [
     </div>
   </div>
 </section>
+
+<style is:global>
+  /* ── Stroke-draw animation ──────────────────────────────────────────
+     Todos los <path> dentro de .dif-svg-icon comienzan "sin dibujar".
+     Al añadir .drawn (via JS IntersectionObserver), se animan a 0
+     creando el efecto de trazo a mano alzada.
+     Usar is:global para que el CSS llegue a los paths del Fragment.
+     ────────────────────────────────────────────────────────────────── */
+
+  /* Estado inicial: paths invisibles */
+  .dif-svg-icon svg path {
+    fill: none;
+    stroke: #5A1B5E;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 300;
+    stroke-dashoffset: 300;
+    transition: stroke-dashoffset 0s;
+  }
+
+  /* Acento dorado en el último path de cada ícono */
+  .dif-svg-icon svg path:last-child {
+    stroke: #C49B3A;
+  }
+
+  /* Estado final: paths se dibujan */
+  .dif-svg-icon.drawn svg path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 2.8s ease-in-out;
+  }
+  .dif-svg-icon.drawn svg path:nth-child(2) { transition-delay: 0.5s;  }
+  .dif-svg-icon.drawn svg path:nth-child(3) { transition-delay: 1.0s;  }
+  .dif-svg-icon.drawn svg path:nth-child(4) { transition-delay: 1.4s;  }
+</style>
+
+<script>
+  /* Dispara .drawn cuando el ícono entra en viewport */
+  var icons = document.querySelectorAll('.dif-svg-icon');
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var el = entry.target;
+        var delay = parseInt(el.getAttribute('data-delay') || '0', 10);
+        setTimeout(function() { el.classList.add('drawn'); }, delay);
+        io.unobserve(el);
+      }
+    });
+  }, { threshold: 0.4 });
+  icons.forEach(function(icon) { io.observe(icon); });
+</script>
