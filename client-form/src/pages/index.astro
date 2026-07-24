@@ -3,7 +3,15 @@ import Base from '../layouts/Base.astro';
 import DiferenciadorSection from '../components/DiferenciadorSection.astro';
 import TestimoniosSection from '../components/TestimoniosSection.astro';
 import FAQSection from '../components/FAQSection';
-import { CATALOGO } from '../types';
+import { CATALOGO, DEV_PORT_POR_TEMPLATE } from '../types';
+
+const isDev = import.meta.env.DEV;
+function previewUrlFor(t: typeof CATALOGO[0]): string {
+  if (isDev && DEV_PORT_POR_TEMPLATE[t.id]) {
+    return `http://localhost:${DEV_PORT_POR_TEMPLATE[t.id]}`;
+  }
+  return t.baseUrl;
+}
 
 const WHATSAPP_CONTACTO = "573057502790";
 const WHATSAPP_MENSAJE   = encodeURIComponent("¡Hola! Quiero saber más sobre las invitaciones digitales de Celebrarte.");
@@ -369,7 +377,7 @@ const GOLD_TEXT = "#7A5C10";
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {CATALOGO.map((t) => (
-              <a href="/plantillas" class="tcard">
+              <a href={`/plantillas?open=${t.id}`} class="tcard">
 
                 <!-- Preview: imagen estática o iframe -->
                 <div class="relative tcard-preview-wrap" style={`height:240px; background:${t.gradiente}; overflow:hidden; flex-shrink:0;`}>
@@ -381,7 +389,7 @@ const GOLD_TEXT = "#7A5C10";
                     />
                   ) : (
                     <iframe
-                      src={t.baseUrl}
+                      src={t.esFree ? `${previewUrlFor(t)}?titulo=%C2%A1Lleg%C3%B3+el+momento%0Ade+festejar%21&fecha=23+de+Julio&hora=6%3A00+PM&lugar=Casa+de+Mar%C3%ADa%2C+Bogot%C3%A1&bg=fce7f3` : previewUrlFor(t)}
                       title={`Preview ${t.nombreDisplay}`}
                       scrolling="no"
                       loading="eager"

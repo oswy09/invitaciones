@@ -1,6 +1,18 @@
 import { useEffect, useState } from "react";
-import { CATALOGO, TemplateInfo, WHATSAPP_CONTACTO } from "../types";
+import type { TemplateInfo } from "../types";
+import { CATALOGO, WHATSAPP_CONTACTO, DEV_PORT_POR_TEMPLATE } from "../types";
 import { supabase } from "../lib/supabase";
+
+function previewSrc(t: TemplateInfo): string {
+  if (import.meta.env.DEV && DEV_PORT_POR_TEMPLATE[t.id]) {
+    const base = `http://localhost:${DEV_PORT_POR_TEMPLATE[t.id]}`;
+    if (t.esFree) {
+      return `${base}?titulo=%C2%A1Lleg%C3%B3+el+momento%0Ade+festejar%21&fecha=23+de+Julio&hora=6%3A00+PM&lugar=Calle+116+%2314-00%2C+Bogot%C3%A1&bg=fce7f3`;
+    }
+    return base;
+  }
+  return t.baseUrl;
+}
 
 const WHATSAPP_MENSAJE = "¡Hola! Tengo una duda sobre las invitaciones digitales antes de hacer mi pedido.";
 
@@ -72,7 +84,7 @@ function TemplateCard({
           />
         ) : (
           <iframe
-            src={t.baseUrl}
+            src={previewSrc(t)}
             title={`Preview ${t.nombreDisplay}`}
             scrolling="no"
             loading="eager"

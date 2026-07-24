@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { InvitationData, CATALOGO, TemplateInfo, WHATSAPP_CONTACTO } from "../types";
+import type { InvitationData, TemplateInfo } from "../types";
+import { CATALOGO, WHATSAPP_CONTACTO } from "../types";
 import { supabase } from "../lib/supabase";
-import BuscadorCancion, { CancionSeleccionada } from "./BuscadorCancion";
+import BuscadorCancion from "./BuscadorCancion";
+import type { CancionSeleccionada } from "./BuscadorCancion";
 
 interface FormularioAsistidoProps {
   onBack?: () => void;

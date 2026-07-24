@@ -3,7 +3,8 @@ import Landing from "./components/Landing";
 import Catalogo from "./components/Catalogo";
 import FormularioConPreview from "./components/FormularioConPreview";
 import FormularioAsistido from "./components/FormularioAsistido";
-import { TemplateInfo } from "./types";
+import FormularioFree from "./components/FormularioFree";
+import type { TemplateInfo } from "./types";
 
 function getPath() {
   return window.location.pathname.replace(/\/$/, "") || "/";
@@ -28,6 +29,14 @@ export default function App() {
   if (isWhatsappMode) return <FormularioAsistido />;
 
   if (selected) {
+    if (selected.esFree) {
+      return (
+        <FormularioFree
+          template={selected}
+          onBack={() => { setSelected(null); navigate("/plantillas"); }}
+        />
+      );
+    }
     return (
       <FormularioConPreview
         template={selected}

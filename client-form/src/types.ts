@@ -55,6 +55,8 @@ export interface TemplateInfo {
   gradiente: string;
   textColor: string;
   esEspacio?: boolean;
+  /** Si true, el flujo es gratuito: genera link con params sin pago ni Supabase. */
+  esFree?: boolean;
   features: TemplateFeature[];
   precioDefault: { cop: number; usd: number };
 }
@@ -132,13 +134,32 @@ export const CATALOGO: TemplateInfo[] = [
     ],
     precioDefault: { cop: 80000, usd: 22 },
   },
+  {
+    id: "free-01-cumple",
+    nombre: "Cumple Free",
+    nombreDisplay: "Cumpleaños Festivo",
+    descripcion: "Invitación de cumpleaños gratuita, lista en segundos",
+    emoji: "🎂",
+    categoria: "Cumpleaños",
+    baseUrl: "https://cumple.celebrarte.com.co",
+    gradiente: "linear-gradient(to bottom, #f472b6, #fb923c)",
+    textColor: "#fff",
+    esFree: true,
+    features: [
+      { emoji: "🎈", label: "Animaciones festivas incluidas" },
+      { emoji: "🔗", label: "Link listo al instante, sin pago" },
+      { emoji: "📅", label: "Fecha, hora y lugar personalizados" },
+    ],
+    precioDefault: { cop: 0, usd: 0 },
+  },
 ];
 
 export const DEV_PORT_POR_TEMPLATE: Record<string, number> = {
-  "01-dino":    3101,
-  "02-stork":   3102,
-  "03-space":   3103,
-  "04-Moderna": 3104,
+  "01-dino":        3101,
+  "02-stork":       3102,
+  "03-space":       3103,
+  "04-Moderna":     3104,
+  "free-01-cumple": 3105,
 };
 
 const DIAS_SEMANA = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];

@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { InvitationData, TemplateInfo, datosEjemplo, WHATSAPP_CONTACTO, DEV_PORT_POR_TEMPLATE } from "../types";
+import type { InvitationData, TemplateInfo } from "../types";
+import { datosEjemplo, WHATSAPP_CONTACTO, DEV_PORT_POR_TEMPLATE } from "../types";
 import { supabase } from "../lib/supabase";
-import BuscadorCancion, { CancionSeleccionada } from "./BuscadorCancion";
+import BuscadorCancion from "./BuscadorCancion";
+import type { CancionSeleccionada } from "./BuscadorCancion";
 
 interface FormularioConPreviewProps {
   template: TemplateInfo;
@@ -138,21 +140,21 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
             href={resultUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-xl transition-colors shadow-sm"
+            style={{ background: "#5A1B5E", color: "#fff", fontWeight: 800, fontSize: 15, padding: "13px 0", borderRadius: 12, textAlign: "center", textDecoration: "none", display: "block" }}
           >
-            Ver Vista Previa ➔
+            Ver mi invitación
           </a>
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3 rounded-xl transition-colors shadow-sm"
+            style={{ border: "2px solid #25D366", color: "#25D366", fontWeight: 700, fontSize: 14, padding: "11px 0", borderRadius: 12, textAlign: "center", textDecoration: "none", display: "block" }}
           >
-            💬 Activar Invitación por WhatsApp
+            Activar por WhatsApp
           </a>
           <button
             onClick={onBack}
-            className="text-slate-500 hover:text-slate-700 font-semibold px-6 py-3 cursor-pointer text-sm"
+            style={{ background: "none", border: "none", color: "#9b8aa8", fontWeight: 600, fontSize: 13, cursor: "pointer", padding: "8px 0" }}
           >
             ← Volver al inicio
           </button>
@@ -162,48 +164,32 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
   }
 
   return (
-    <div className="w-full h-screen relative overflow-hidden bg-slate-900">
-      {/* Barra superior flotante */}
-      <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-2.5 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm flex-wrap gap-2">
-        <button onClick={onBack} className="text-sm text-slate-500 hover:text-slate-700 cursor-pointer font-medium">
-          ← Catálogo
-        </button>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setPanelAbierto((v) => !v)}
-            className={`text-xs sm:text-sm font-bold px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl cursor-pointer transition-colors ${
-              panelAbierto ? "bg-slate-800 text-white" : "bg-sky-500 text-white hover:bg-sky-600 shadow-sm"
-            }`}
-          >
-            {panelAbierto ? "✕ Cerrar Panel" : "✏️ Personalizar"}
-          </button>
-          {!panelAbierto && (
-            <a
-              href={`https://wa.me/${WHATSAPP_CONTACTO}?text=${encodeURIComponent(
-                `¡Hola! Estoy interesado en la plantilla ${template.nombre} y me gustaría que me ayudaran a crear mi invitación.`
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs sm:text-sm font-bold px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white cursor-pointer transition-colors shadow-sm flex items-center gap-1.5 decoration-none"
-            >
-              💬 Contactar WhatsApp
-            </a>
-          )}
-        </div>
+    <div style={{ display: "flex", height: "100vh", overflow: "hidden", fontFamily: "inherit" }}>
+
+      {/* ── Preview iframe ── */}
+      <div style={{ flex: 1, background: "#1A0A20" }}>
+        <iframe ref={iframeRef} src={previewUrl} style={{ width: "100%", height: "100%", border: "none" }} title="Invitación" />
       </div>
 
-      {/* La invitación real, a pantalla completa, con su flujo normal (intro incluida) */}
-      <iframe ref={iframeRef} src={previewUrl} className="w-full h-full pt-[52px]" title="Invitación" />
+      {/* ── Panel lateral ── */}
+      <div style={{ width: 360, flexShrink: 0, background: "#fff", borderLeft: "1px solid #f0eaf5", display: "flex", flexDirection: "column", overflowY: "auto" }}>
 
-      {/* Panel de personalización, se desliza encima sin recargar el preview */}
-      <div
-        className={`absolute top-[52px] right-0 bottom-0 w-full sm:w-[420px] bg-white border-l border-slate-200 shadow-2xl z-20 overflow-y-auto transition-transform duration-300 ${
-          panelAbierto ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
+        {/* Header */}
+        <div style={{ padding: "20px 24px 16px", borderBottom: "1px solid #f0eaf5" }}>
+          <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", color: "#5A1B5E", fontWeight: 600, fontSize: 13, marginBottom: 12, display: "flex", alignItems: "center", gap: 4 }}>
+            ← Volver
+          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 28 }}>{template.emoji}</span>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: 16, color: "#1A0A20" }}>{template.nombreDisplay}</div>
+              <div style={{ fontSize: 11, color: "#9b8aa8", marginTop: 2 }}>Los cambios se ven al instante</div>
+            </div>
+          </div>
+        </div>
+
         <div className="p-5 space-y-4">
-          <h2 className="text-lg font-bold text-slate-800">Personaliza tu invitación</h2>
-          <p className="text-xs text-slate-400">Los cambios se reflejan al instante en la invitación de fondo.</p>
+          <p className="text-xs text-slate-400" style={{ display: "none" }}></p>
 
           <Campo label="Título del evento">
             <input
@@ -378,14 +364,33 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
           <button
             onClick={handleSubmit}
             disabled={submitting}
-            className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-bold py-3 rounded-xl cursor-pointer"
+            style={{
+              width: "100%", padding: "13px 0", borderRadius: 12, border: "none",
+              background: submitting ? "#a89ab2" : "#5A1B5E",
+              color: "#fff", fontWeight: 800, fontSize: 15, cursor: submitting ? "not-allowed" : "pointer",
+              marginBottom: 10,
+            }}
           >
-            {submitting ? "Enviando..." : "Enviar y generar mi invitación"}
+            {submitting ? "Enviando..." : "Enviar y crear mi invitación"}
           </button>
+
+          <a
+            href={`https://wa.me/${WHATSAPP_CONTACTO}?text=${encodeURIComponent("¡Hola! Me gustaría que me ayudaran a crear mi invitación digital.")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "block", width: "100%", padding: "11px 0", borderRadius: 12,
+              border: "2px solid #25D366", background: "transparent",
+              color: "#25D366", fontWeight: 700, fontSize: 14,
+              textAlign: "center", textDecoration: "none",
+            }}
+          >
+            Contactar por WhatsApp
+          </a>
         </div>
       </div>
 
-      <style>{`.input { width: 100%; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 0.6rem 0.9rem; font-size: 0.95rem; }`}</style>
+      <style>{`.input { width: 100%; border: 1.5px solid #e8dcef; border-radius: 9px; padding: 0.55rem 0.85rem; font-size: 0.9rem; background: #faf8ff; color: #1A0A20; }`}</style>
     </div>
   );
 }

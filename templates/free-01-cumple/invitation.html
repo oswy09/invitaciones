@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f6d365" />
+  <title>Estás invitado! Fiesta de Cumpleaños</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #fdf3d8;
+      --ink: #6b4a2b;
+      --party-pink: #e84c9c;
+      --party-orange: #f2a13c;
+      --party-green: #8fce4c;
+      --party-teal: #9fded0;
+      --red: #e0533b;
+      --pink-soft: #f4a0c8;
+      --teal-soft: #a9e3d8;
+      --font-sans: 'Fredoka', ui-sans-serif, system-ui, sans-serif;
+      --font-mono: 'Space Mono', ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { background: var(--cream); }
+
+    body {
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 20% 10%, #fbe6b8 0%, transparent 45%),
+        radial-gradient(circle at 85% 90%, #ffe0ee 0%, transparent 45%),
+        var(--cream);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- Card ---------- */
+    .card {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      overflow: hidden;
+      border-radius: 28px;
+      background: var(--cream);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
+      animation: card-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .blob {
+      pointer-events: none;
+      position: absolute;
+      left: 50%;
+      top: 96px;
+      height: 75%;
+      width: 88%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.45);
+    }
+
+    /* ---------- Confetti ---------- */
+    .confetti {
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    .confetti span {
+      position: absolute;
+      top: 0;
+      display: block;
+      animation: confetti-fall linear infinite;
+    }
+
+    /* ---------- Stars ---------- */
+    .star {
+      pointer-events: none;
+      position: absolute;
+      animation: twinkle 2.6s ease-in-out infinite;
+    }
+
+    /* ---------- Bunting ---------- */
+    .bunting {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 64px;
+      width: 100%;
+    }
+
+    /* ---------- Balloons ---------- */
+    .balloons {
+      pointer-events: none;
+      position: absolute;
+      right: -16px;
+      top: 24px;
+      height: 256px;
+      width: 208px;
+    }
+    .balloons svg, .cake-wrap svg { overflow: visible; height: 100%; width: 100%; }
+
+    /* ---------- Text ---------- */
+    .content {
+      position: relative;
+      padding: 96px 32px 16px;
+    }
+    .join {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--party-orange);
+    }
+    .invited {
+      margin-top: 8px;
+      max-width: 62%;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1.6;
+      letter-spacing: 0.18em;
+      color: var(--ink);
+    }
+    .title {
+      margin-top: 12px;
+      font-size: 3.75rem;
+      font-weight: 700;
+      line-height: 0.9;
+      color: var(--party-pink);
+    }
+    .when {
+      margin-top: 24px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1.7;
+      letter-spacing: 0.14em;
+      color: var(--party-orange);
+    }
+    .where {
+      margin-top: 16px;
+      max-width: 55%;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      font-style: normal;
+      text-transform: uppercase;
+      line-height: 1.7;
+      letter-spacing: 0.14em;
+      color: var(--ink);
+    }
+
+    .pop { animation: pop-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+    /* ---------- Cake ---------- */
+    .cake-wrap {
+      pointer-events: none;
+      position: relative;
+      margin: -32px 4px 0 auto;
+      height: 208px;
+      width: 78%;
+      max-width: 320px;
+    }
+
+    /* ---------- Keyframes ---------- */
+    @keyframes float-balloon {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-14px) rotate(2deg); }
+    }
+    @keyframes sway-bunting {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(2px) rotate(1deg); }
+    }
+    @keyframes flame-flicker {
+      0%, 100% { transform: scaleY(1) scaleX(1) translateY(0); opacity: 1; }
+      40% { transform: scaleY(1.25) scaleX(0.85) translateY(-1px); opacity: 0.9; }
+      70% { transform: scaleY(0.9) scaleX(1.1) translateY(0.5px); opacity: 1; }
+    }
+    @keyframes twinkle {
+      0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.4; }
+      50% { transform: scale(1.4) rotate(45deg); opacity: 1; }
+    }
+    @keyframes confetti-fall {
+      0% { transform: translateY(-10%) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(700px) rotate(540deg); opacity: 0; }
+    }
+    @keyframes pop-in {
+      0% { transform: scale(0.6) translateY(30px); opacity: 0; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    @keyframes card-in {
+      0% { transform: scale(0.92) rotate(-1deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .anim-float { animation: float-balloon 5s ease-in-out infinite; }
+    .anim-sway { animation: sway-bunting 4s ease-in-out infinite; transform-origin: top center; transform-box: fill-box; }
+    .anim-flame { animation: flame-flicker 0.5s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom center; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card, .confetti span, .star, .anim-float, .anim-sway, .anim-flame, .pop {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="card" aria-label="Invitación de cumpleaños">
+    <div class="blob"></div>
+
+    <!-- Confetti (generado por JS) -->
+    <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+    <!-- Estrellas (generadas por JS) -->
+    <div id="stars" aria-hidden="true"></div>
+
+    <!-- Bunting -->
+    <svg class="bunting" viewBox="0 0 100 22" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 3 Q 50 12 100 3" fill="none" stroke="var(--ink)" stroke-width="0.6" opacity="0.55" />
+      <g id="flags"></g>
+    </svg>
+
+    <!-- Globos -->
+    <div class="balloons">
+      <svg viewBox="0 0 260 320" aria-hidden="true" id="balloons"></svg>
+    </div>
+
+    <!-- Texto -->
+    <div class="content">
+      <p class="join pop" style="animation-delay:.15s">Join Us</p>
+      <p class="invited pop" style="animation-delay:.25s">You are invited to my:</p>
+      <h1 class="title pop" style="animation-delay:.35s">Birthday<br />Party</h1>
+      <div class="when pop" style="animation-delay:.5s">
+        <p>6 - 8 PM</p>
+        <p>August 15, 2020</p>
+      </div>
+      <address class="where pop" style="animation-delay:.6s">
+        At my house<br />Lorem Ipsum, USA<br />131313
+      </address>
+    </div>
+
+    <!-- Pastel -->
+    <div class="cake-wrap">
+      <svg viewBox="0 0 300 260" aria-hidden="true" id="cake"></svg>
+    </div>
+  </main>
+
+  <script>
+    // ---------- Confetti ----------
+    (function () {
+      const COLORS = ['var(--party-pink)', 'var(--party-orange)', 'var(--party-green)', 'var(--party-teal)'];
+      const wrap = document.getElementById('confetti');
+      for (let i = 0; i < 24; i++) {
+        const seed = (i * 9301 + 49297) % 233280;
+        const rnd = seed / 233280;
+        const rnd2 = ((i * 4099 + 12345) % 233280) / 233280;
+        const size = 6 + Math.round(rnd2 * 8);
+        const round = i % 3 === 0;
+        const s = document.createElement('span');
+        s.style.left = Math.round(rnd * 100) + '%';
+        s.style.width = size + 'px';
+        s.style.height = (round ? size : size * 0.5) + 'px';
+        s.style.backgroundColor = COLORS[i % COLORS.length];
+        s.style.borderRadius = round ? '9999px' : '2px';
+        s.style.animationDelay = (rnd2 * 6).toFixed(2) + 's';
+        s.style.animationDuration = (5 + rnd * 5).toFixed(2) + 's';
+        wrap.appendChild(s);
+      }
+    })();
+
+    // ---------- Stars ----------
+    (function () {
+      const STARS = [
+        { top: '18%', left: '42%', size: 16, delay: 0 },
+        { top: '30%', left: '12%', size: 12, delay: 0.8 },
+        { top: '52%', left: '8%', size: 14, delay: 1.4 },
+        { top: '44%', left: '60%', size: 10, delay: 0.4 },
+        { top: '66%', left: '50%', size: 12, delay: 1.1 },
+      ];
+      const host = document.getElementById('stars');
+      STARS.forEach((st) => {
+        const span = document.createElement('span');
+        span.className = 'star';
+        span.style.top = st.top;
+        span.style.left = st.left;
+        span.style.animationDelay = st.delay + 's';
+        span.innerHTML =
+          '<svg viewBox="0 0 24 24" width="' + st.size + '" height="' + st.size + '">' +
+          '<path d="M12 0 L15 9 L24 12 L15 15 L12 24 L9 15 L0 12 L9 9 Z" fill="var(--party-teal)"/></svg>';
+        host.appendChild(span);
+      });
+    })();
+
+    // ---------- Bunting flags ----------
+    (function () {
+      const FLAGS = [
+        'var(--party-green)', 'var(--party-orange)', 'var(--cream)', 'var(--party-teal)',
+        'var(--party-green)', 'var(--party-orange)', 'var(--cream)', 'var(--party-green)',
+      ];
+      const g = document.getElementById('flags');
+      const step = 100 / FLAGS.length;
+      FLAGS.forEach((color, i) => {
+        const x = i * step + step / 2;
+        const t = x / 100;
+        const y = 3 + 9 * (4 * t * (1 - t));
+        const flag = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        flag.setAttribute('class', 'anim-sway');
+        flag.style.animationDelay = (i * 0.15) + 's';
+        flag.innerHTML =
+          '<path d="M ' + (x - step / 2 + 0.6) + ' ' + y + ' L ' + (x + step / 2 - 0.6) + ' ' + y +
+          ' L ' + x + ' ' + (y + 8) + ' Z" fill="' + color +
+          '" stroke="var(--ink)" stroke-opacity="0.15" stroke-width="0.3" />';
+        g.appendChild(flag);
+      });
+    })();
+
+    // ---------- Balloons ----------
+    (function () {
+      const svg = document.getElementById('balloons');
+      const NS = 'http://www.w3.org/2000/svg';
+
+      function balloon({ x, y, rx, ry, fill, pattern, patternColor = 'var(--cream)', delay = 0 }) {
+        const clipId = 'clip-' + x + '-' + y;
+        const g = document.createElementNS(NS, 'g');
+        g.setAttribute('class', 'anim-float');
+        g.style.animationDelay = delay + 's';
+        g.style.transformOrigin = x + 'px ' + y + 'px';
+
+        let html = '';
+        // string
+        html += '<path d="M ' + x + ' ' + (y + ry) + ' C ' + (x - 6) + ' ' + (y + ry + 40) +
+          ', ' + (x + 8) + ' ' + (y + ry + 80) + ', ' + x + ' ' + (y + ry + 130) +
+          '" fill="none" stroke="var(--ink)" stroke-width="1.2" opacity="0.5" />';
+        // body
+        html += '<ellipse cx="' + x + '" cy="' + y + '" rx="' + rx + '" ry="' + ry + '" fill="' + fill + '" />';
+        // knot
+        html += '<path d="M ' + (x - 4) + ' ' + (y + ry) + ' L ' + (x + 4) + ' ' + (y + ry) +
+          ' L ' + x + ' ' + (y + ry + 7) + ' Z" fill="' + fill + '" />';
+        // highlight
+        html += '<ellipse cx="' + (x - rx * 0.35) + '" cy="' + (y - ry * 0.4) + '" rx="' + (rx * 0.18) +
+          '" ry="' + (ry * 0.26) + '" fill="white" opacity="0.35" />';
+
+        let inner = '';
+        if (pattern === 'stripes') {
+          [-2, -1, 0, 1, 2].forEach((k) => {
+            inner += '<path d="M ' + (x - rx) + ' ' + (y + k * ry * 0.42) + ' Q ' + x + ' ' +
+              (y + k * ry * 0.42 - 8) + ' ' + (x + rx) + ' ' + (y + k * ry * 0.42) +
+              '" stroke="' + patternColor + '" stroke-width="' + (ry * 0.16) + '" fill="none" opacity="0.85" />';
+          });
+        } else if (pattern === 'dots') {
+          for (let r = 0; r < 5; r++) {
+            for (let c = 0; c < 4; c++) {
+              inner += '<circle cx="' + (x - rx + 8 + c * (rx / 2.1)) + '" cy="' + (y - ry + 10 + r * (ry / 2.4)) +
+                '" r="' + (ry * 0.07) + '" fill="' + patternColor + '" opacity="0.85" />';
+            }
+          }
+        } else if (pattern === 'swirl') {
+          [-1.6, -0.8, 0, 0.8, 1.6].forEach((k) => {
+            inner += '<path d="M ' + (x - rx) + ' ' + (y + k * ry * 0.5) + ' Q ' + (x - rx * 0.3) + ' ' +
+              (y + k * ry * 0.5 - 14) + ' ' + (x + rx * 0.4) + ' ' + (y + k * ry * 0.5) + ' T ' + (x + rx) + ' ' +
+              (y + k * ry * 0.5) + '" stroke="' + patternColor + '" stroke-width="' + (ry * 0.12) + '" fill="none" opacity="0.8" />';
+          });
+        }
+        if (inner) {
+          html += '<g clip-path="url(#' + clipId + ')">' + inner + '</g>';
+        }
+        html += '<defs><clipPath id="' + clipId + '"><ellipse cx="' + x + '" cy="' + y + '" rx="' + rx + '" ry="' + ry + '" /></clipPath></defs>';
+
+        g.innerHTML = html;
+        svg.appendChild(g);
+      }
+
+      balloon({ x: 150, y: 70, rx: 46, ry: 54, fill: 'var(--party-green)', pattern: 'swirl', delay: 0 });
+      balloon({ x: 95, y: 120, rx: 40, ry: 48, fill: 'var(--party-orange)', delay: 0.6 });
+      balloon({ x: 185, y: 150, rx: 42, ry: 50, fill: 'var(--party-pink)', pattern: 'dots', patternColor: 'var(--party-orange)', delay: 1.1 });
+      balloon({ x: 120, y: 185, rx: 38, ry: 46, fill: 'var(--red)', pattern: 'stripes', delay: 0.35 });
+    })();
+
+    // ---------- Cake ----------
+    (function () {
+      const svg = document.getElementById('cake');
+
+      function candle(x, base, color, delay) {
+        let h = '';
+        h += '<rect x="' + (x - 3) + '" y="' + (base - 34) + '" width="6" height="34" rx="2" fill="' + color + '" />';
+        h += '<rect x="' + (x - 3) + '" y="' + (base - 34) + '" width="6" height="34" rx="2" fill="var(--cream)" opacity="0.25" />';
+        for (let i = 0; i < 3; i++) {
+          h += '<rect x="' + (x - 3) + '" y="' + (base - 30 + i * 11) + '" width="6" height="4" fill="var(--cream)" opacity="0.6" />';
+        }
+        h += '<rect x="' + (x - 0.6) + '" y="' + (base - 40) + '" width="1.2" height="6" fill="var(--ink)" />';
+        h += '<g class="anim-flame" style="animation-delay:' + delay + 's;transform-origin:' + x + 'px ' + (base - 40) + 'px">' +
+          '<ellipse cx="' + x + '" cy="' + (base - 45) + '" rx="4" ry="8" fill="var(--party-orange)" />' +
+          '<ellipse cx="' + x + '" cy="' + (base - 44) + '" rx="2.2" ry="5" fill="#ffe27a" /></g>';
+        return h;
+      }
+
+      let s = '';
+      // candles on tall cake
+      s += candle(150, 92, 'var(--party-orange)', 0);
+      s += candle(180, 92, 'var(--party-pink)', 0.18);
+      s += candle(210, 92, 'var(--party-teal)', 0.32);
+      s += candle(240, 92, 'var(--red)', 0.1);
+
+      // tall pink cake
+      s += '<rect x="122" y="92" width="150" height="140" rx="10" fill="var(--party-pink)" />';
+      s += '<path d="M122 104 q12 -20 25 0 q12 -20 25 0 q12 -20 25 0 q12 -20 25 0 q12 -20 25 0 v-14 h-125 z" fill="var(--pink-soft)" />';
+      for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 5; c++) {
+          s += '<circle cx="' + (138 + c * 28) + '" cy="' + (128 + r * 34) + '" r="3.4" fill="var(--cream)" opacity="0.85" />';
+        }
+      }
+      s += '<path d="M122 196 q18 -14 37 0 q18 14 37 0 q18 -14 37 0 q18 14 39 0 v22 h-150 z" fill="var(--pink-soft)" />';
+      s += '<path d="M122 210 h150" stroke="var(--cream)" stroke-width="3" opacity="0.7" stroke-linecap="round" />';
+      // cherries
+      s += '<circle cx="140" cy="86" r="7" fill="var(--red)" />';
+      s += '<circle cx="168" cy="88" r="7" fill="var(--red)" />';
+      s += '<circle cx="196" cy="86" r="7" fill="var(--red)" />';
+
+      // short teal cake
+      s += '<rect x="40" y="158" width="104" height="74" rx="10" fill="var(--party-teal)" />';
+      s += '<path d="M40 170 q11 -16 22 0 q11 -16 22 0 q11 -16 22 0 q11 -16 22 0 v-12 h-88 z" fill="var(--teal-soft)" />';
+      s += '<path d="M40 208 h104" stroke="var(--cream)" stroke-width="3" opacity="0.7" stroke-linecap="round" />';
+      s += candle(64, 158, 'var(--party-pink)', 0.24);
+      // orange slice
+      s += '<g transform="translate(96 150)">' +
+        '<path d="M0 0 A22 22 0 0 1 44 0 Z" fill="var(--party-orange)" />' +
+        '<path d="M4 -1 A18 18 0 0 1 40 -1 Z" fill="#ffd08a" />' +
+        '<path d="M22 -1 L10 -14" stroke="var(--party-orange)" stroke-width="1.5" />' +
+        '<path d="M22 -1 L22 -14" stroke="var(--party-orange)" stroke-width="1.5" />' +
+        '<path d="M22 -1 L34 -14" stroke="var(--party-orange)" stroke-width="1.5" /></g>';
+
+      // plate
+      s += '<ellipse cx="150" cy="234" rx="140" ry="12" fill="var(--ink)" opacity="0.08" />';
+
+      svg.innerHTML = s;
+    })();
+  </script>
+</body>
+</html>
