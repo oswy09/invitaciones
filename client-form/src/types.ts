@@ -141,7 +141,7 @@ export const CATALOGO: TemplateInfo[] = [
     descripcion: "Invitación de cumpleaños gratuita, lista en segundos",
     emoji: "🎂",
     categoria: "Cumpleaños",
-    baseUrl: "https://cumple.celebrarte.com.co",
+    baseUrl: "https://free-01.celebrarte.com.co",
     gradiente: "linear-gradient(to bottom, #f472b6, #fb923c)",
     textColor: "#fff",
     esFree: true,
