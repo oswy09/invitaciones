@@ -167,18 +167,36 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
     <div style={{ display: "flex", height: "100vh", overflow: "hidden", fontFamily: "inherit" }}>
 
       {/* ── Preview iframe ── */}
-      <div style={{ flex: 1, background: "#1A0A20" }}>
+      <div style={{ flex: 1, background: "#1A0A20", position: "relative" }}>
         <iframe ref={iframeRef} src={previewUrl} style={{ width: "100%", height: "100%", border: "none" }} title="Invitación" />
+        <button
+          onClick={() => setPanelAbierto(true)}
+          style={{
+            display: "none",
+            position: "absolute", bottom: 24, left: "50%", transform: "translateX(-50%)",
+            background: "#5A1B5E", color: "#fff", fontWeight: 800, fontSize: 15,
+            padding: "14px 32px", borderRadius: 99, border: "none", cursor: "pointer",
+            boxShadow: "0 4px 24px rgba(90,27,94,0.35)", whiteSpace: "nowrap",
+          }}
+          className="mobile-cta-btn"
+        >
+          Personalizar mi invitación →
+        </button>
       </div>
 
       {/* ── Panel lateral ── */}
-      <div style={{ width: 360, flexShrink: 0, background: "#fff", borderLeft: "1px solid #f0eaf5", display: "flex", flexDirection: "column", overflowY: "auto" }}>
+      <div style={{ width: 360, flexShrink: 0, background: "#fff", borderLeft: "1px solid #f0eaf5", display: "flex", flexDirection: "column", overflowY: "auto" }} className={panelAbierto ? "panel-open" : ""}>
 
         {/* Header */}
         <div style={{ padding: "20px 24px 16px", borderBottom: "1px solid #f0eaf5" }}>
-          <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", color: "#5A1B5E", fontWeight: 600, fontSize: 13, marginBottom: 12, display: "flex", alignItems: "center", gap: 4 }}>
-            ← Volver
-          </button>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", color: "#5A1B5E", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", gap: 4 }}>
+              ← Volver
+            </button>
+            <button onClick={() => setPanelAbierto(false)} className="mobile-close-btn" style={{ display: "none", background: "none", border: "none", cursor: "pointer", color: "#9b8aa8", fontSize: 20, lineHeight: 1 }}>
+              ✕
+            </button>
+          </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <span style={{ fontSize: 28 }}>{template.emoji}</span>
             <div>
@@ -390,7 +408,15 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
         </div>
       </div>
 
-      <style>{`.input { width: 100%; border: 1.5px solid #e8dcef; border-radius: 9px; padding: 0.55rem 0.85rem; font-size: 0.9rem; background: #faf8ff; color: #1A0A20; }`}</style>
+      <style>{`
+        .input { width: 100%; border: 1.5px solid #e8dcef; border-radius: 9px; padding: 0.55rem 0.85rem; font-size: 0.9rem; background: #faf8ff; color: #1A0A20; }
+        @media (max-width: 767px) {
+          .mobile-cta-btn { display: block !important; }
+          .mobile-close-btn { display: block !important; }
+          .panel-open { position: fixed !important; inset: 0 !important; width: 100% !important; z-index: 100; }
+          #cursor-vermas { display: none !important; }
+        }
+      `}</style>
     </div>
   );
 }
