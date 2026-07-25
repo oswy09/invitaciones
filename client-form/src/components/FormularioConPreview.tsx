@@ -185,7 +185,7 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
       </div>
 
       {/* ── Panel lateral ── */}
-      <div style={{ width: 360, flexShrink: 0, background: "#fff", borderLeft: "1px solid #f0eaf5", display: "flex", flexDirection: "column", overflowY: "auto" }} className={panelAbierto ? "panel-open" : ""}>
+      <div style={{ width: 360, flexShrink: 0, background: "#fff", borderLeft: "1px solid #f0eaf5", display: "flex", flexDirection: "column", overflowY: "auto" }} className={`panel-lateral${panelAbierto ? " panel-open" : ""}`}>
 
         {/* Header */}
         <div style={{ padding: "20px 24px 16px", borderBottom: "1px solid #f0eaf5" }}>
@@ -413,7 +413,8 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
         @media (max-width: 767px) {
           .mobile-cta-btn { display: block !important; }
           .mobile-close-btn { display: block !important; }
-          .panel-open { position: fixed !important; inset: 0 !important; width: 100% !important; z-index: 100; }
+          .panel-lateral { display: none !important; }
+          .panel-lateral.panel-open { display: flex !important; position: fixed !important; inset: 0 !important; width: 100% !important; z-index: 100; overflow-y: auto; }
           #cursor-vermas { display: none !important; }
         }
       `}</style>
