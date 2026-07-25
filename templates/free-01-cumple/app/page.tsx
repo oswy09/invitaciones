@@ -1,22 +1,30 @@
+"use client"
+
+import { useSearchParams } from "next/navigation"
+import { Suspense } from "react"
 import { InvitationCard } from "@/components/invitation-card"
 
-interface PageProps {
-  searchParams: Promise<{ [key: string]: string | undefined }>
+function CardFromParams() {
+  const params = useSearchParams()
+  return (
+    <InvitationCard
+      saludo={params.get("saludo") ?? undefined}
+      titulo={params.get("titulo") ?? undefined}
+      frase={params.get("frase") ?? undefined}
+      fecha={params.get("fecha") ?? undefined}
+      hora={params.get("hora") ?? undefined}
+      lugar={params.get("lugar") ?? undefined}
+      bg={params.get("bg") ?? undefined}
+    />
+  )
 }
 
-export default async function Page({ searchParams }: PageProps) {
-  const params = await searchParams
+export default function Page() {
   return (
     <main className="min-h-dvh">
-      <InvitationCard
-        saludo={params.saludo}
-        titulo={params.titulo}
-        frase={params.frase}
-        fecha={params.fecha}
-        hora={params.hora}
-        lugar={params.lugar}
-        bg={params.bg}
-      />
+      <Suspense fallback={<div className="min-h-dvh" style={{ backgroundColor: "#fef3c7" }} />}>
+        <CardFromParams />
+      </Suspense>
     </main>
   )
 }
