@@ -1,5 +1,5 @@
 // FormularioAsistido — campos dinámicos según categoría de plantilla
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { InvitationData, TemplateInfo } from "../types";
 import { CATALOGO, WHATSAPP_CONTACTO } from "../types";
 import { supabase } from "../lib/supabase";
@@ -59,6 +59,22 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
   const [submitted, setSubmitted] = useState(false);
   const [createdId, setCreatedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [precios, setPrecios] = useState<Record<string, { cop: number; usd: number }>>({});
+
+  useEffect(() => {
+    supabase
+      .from("eventos")
+      .select("datos")
+      .eq("id", "config-precios")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.datos?.precios) setPrecios(data.datos.precios);
+      });
+  }, []);
+
+  function getPrecio(t: TemplateInfo) {
+    return precios[t.id] ?? t.precioDefault;
+  }
 
   const cat: Cat | null = selectedTemplate ? getCat(selectedTemplate) : null;
 
@@ -177,7 +193,7 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
               <option value="">— Elige un diseño —</option>
               {PLANTILLAS_ASISTIDO.map((t) => (
                 <option key={t.id} value={t.id}>
-                  {t.emoji} {t.nombre} — ${t.precioDefault.cop.toLocaleString("es-CO")} COP
+                  {t.emoji} {t.nombre} — ${getPrecio(t).cop.toLocaleString("es-CO")} COP
                 </option>
               ))}
             </select>
@@ -192,7 +208,7 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
                 <div>
                   <p className="font-bold text-sm text-slate-800">{selectedTemplate.emoji} {selectedTemplate.nombre}</p>
                   <p className="text-[11px] text-slate-500 leading-snug mt-0.5">{selectedTemplate.descripcion}</p>
-                  <p className="text-[12px] font-bold text-violet-600 mt-1.5">${selectedTemplate.precioDefault.cop.toLocaleString("es-CO")} COP · USD ${selectedTemplate.precioDefault.usd}</p>
+                  <p className="text-[12px] font-bold text-violet-600 mt-1.5">${getPrecio(selectedTemplate).cop.toLocaleString("es-CO")} COP · USD ${getPrecio(selectedTemplate).usd}</p>
                 </div>
               </div>
             )}
