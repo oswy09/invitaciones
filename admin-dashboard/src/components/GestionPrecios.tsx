@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { api } from "../lib/api";
 import { IconDollar, IconRefresh, IconCheckCircle, IconWarning } from "./Icons";
 
+const TRM = 4200; // tasa de cambio COP → USD
+
 export default function GestionPrecios() {
   const [precios, setPrecios] = useState<Record<string, { cop: number; usd: number }>>({
     "01-dino": { cop: 70000, usd: 20 },
@@ -9,6 +11,8 @@ export default function GestionPrecios() {
     "03-space": { cop: 70000, usd: 20 },
     "04-Moderna": { cop: 80000, usd: 22 },
   });
+  // Valores crudos de los inputs (string para no perder el cursor al teclear)
+  const [rawCop, setRawCop] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -26,15 +30,17 @@ export default function GestionPrecios() {
       });
   }, []);
 
-  function handlePriceChange(templateId: string, currency: "cop" | "usd", value: string) {
-    const numericValue = parseInt(value.replace(/[^0-9]/g, "")) || 0;
-    setPrecios((prev) => ({
-      ...prev,
-      [templateId]: {
-        ...prev[templateId],
-        [currency]: numericValue,
-      },
-    }));
+  function handleCopChange(templateId: string, value: string) {
+    // Guardar string crudo para que el input no salte mientras el usuario escribe
+    setRawCop((prev) => ({ ...prev, [templateId]: value }));
+    const cop = parseInt(value.replace(/[^0-9]/g, "")) || 0;
+    const usd = Math.round(cop / TRM);
+    setPrecios((prev) => ({ ...prev, [templateId]: { cop, usd } }));
+  }
+
+  function handleCopBlur(templateId: string) {
+    // Al perder foco, limpia el raw para que se muestre el valor formateado
+    setRawCop((prev) => { const n = { ...prev }; delete n[templateId]; return n; });
   }
 
   async function handleSave(e: React.FormEvent) {
@@ -102,32 +108,36 @@ export default function GestionPrecios() {
                 <div className="grid grid-cols-2 gap-4 font-inter">
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">
-                      Precio COP ($)
+                      Precio COP
                     </label>
                     <div className="relative">
                       <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-stone-400 font-medium">$</span>
                       <input
                         type="text"
-                        value={priceInfo.cop.toLocaleString("es-CO")}
-                        onChange={(e) => handlePriceChange(t.id, "cop", e.target.value)}
+                        inputMode="numeric"
+                        value={rawCop[t.id] ?? priceInfo.cop.toLocaleString("es-CO")}
+                        onChange={(e) => handleCopChange(t.id, e.target.value)}
+                        onFocus={() => setRawCop((prev) => ({ ...prev, [t.id]: String(priceInfo.cop) }))}
+                        onBlur={() => handleCopBlur(t.id)}
                         className="w-full border border-stone-200 rounded-xl pl-8 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-stone-50/30 transition-all font-semibold text-stone-800"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">
-                      Precio USD ($)
+                    <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block flex items-center gap-1">
+                      USD <span className="text-violet-400 font-normal normal-case tracking-normal">(auto)</span>
                     </label>
                     <div className="relative">
                       <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-stone-400 font-medium">$</span>
                       <input
                         type="text"
-                        value={priceInfo.usd.toLocaleString("en-US")}
-                        onChange={(e) => handlePriceChange(t.id, "usd", e.target.value)}
-                        className="w-full border border-stone-200 rounded-xl pl-8 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-stone-50/30 transition-all font-semibold text-stone-800"
+                        readOnly
+                        value={`${priceInfo.usd} USD`}
+                        className="w-full border border-stone-100 rounded-xl pl-8 pr-4 py-2 text-sm bg-stone-50 text-stone-500 font-semibold cursor-default"
                       />
                     </div>
+                    <p className="text-[10px] text-stone-400 font-inter">TRM ~$4.200</p>
                   </div>
                 </div>
               </div>
