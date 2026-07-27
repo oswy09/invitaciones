@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Invitación - Happy Birthday</title>
+<style>
+  :root {
+    --cream: #fdfbe4;
+    --purple: #9b3fb0;
+    --purple-dark: #7d2a91;
+    --pink: #e79ac1;
+    --pink-light: #f3c1da;
+    --lavender: #b3a7e0;
+    --lavender-blue: #9db2e0;
+    --yellow: #f5b942;
+    --plum: #7a4a86;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+    background: #efe7f2;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .card {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    background: var(--cream);
+    border: 10px solid #fff;
+    border-radius: 6px;
+    box-shadow: 0 20px 50px rgba(122, 42, 134, 0.3);
+    padding: 90px 28px 40px;
+    overflow: hidden;
+  }
+
+  /* top & bottom pink strips */
+  .card::before, .card::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    height: 12px;
+    background: var(--pink);
+  }
+  .card::before { top: 0; }
+  .card::after { bottom: 0; }
+
+  /* confetti dots */
+  .dots { position: absolute; inset: 0; pointer-events: none; }
+  .dot {
+    position: absolute;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    opacity: .8;
+  }
+
+  /* bunting flags */
+  .bunting {
+    position: absolute;
+    top: 18px;
+    display: flex;
+    gap: 2px;
+    z-index: 3;
+  }
+  .bunting.left { left: 10px; transform: rotate(-4deg); }
+  .bunting.right { right: 10px; transform: rotate(4deg); }
+  .flag {
+    width: 0; height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 20px solid var(--purple);
+  }
+  .flag:nth-child(2n) { border-top-color: var(--yellow); }
+  .flag:nth-child(3n) { border-top-color: var(--pink); }
+
+  /* photo circle */
+  .photo-wrap {
+    position: relative;
+    width: 190px; height: 190px;
+    margin: 0 auto;
+    z-index: 2;
+  }
+  .photo {
+    position: relative;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #fff;
+    box-shadow: 0 6px 16px rgba(0,0,0,.12);
+    z-index: 2;
+  }
+
+  /* balloons - placed AROUND the photo circle, behind it */
+  .balloon {
+    position: absolute;
+    width: 56px; height: 70px;
+    border-radius: 50% 50% 48% 48%;
+    z-index: 1;
+    box-shadow: inset -6px -8px 0 rgba(0,0,0,.06);
+  }
+  .balloon::after {
+    content: "";
+    position: absolute;
+    bottom: -7px; left: 50%;
+    transform: translateX(-50%);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 9px solid currentColor;
+    color: inherit;
+  }
+  /* left side cluster */
+  .b1 { top: -6px;  left: -58px; background: var(--purple); color: var(--purple); }
+  .b2 { top: 66px;  left: -74px; background: var(--pink-light); color: var(--pink-light); width: 50px; height: 62px; }
+  .b3 { top: 128px; left: -40px; background: var(--lavender-blue); color: var(--lavender-blue); width: 46px; height: 58px; }
+  /* right side cluster */
+  .b4 { top: -6px;  right: -58px; background: var(--yellow); color: var(--yellow); }
+  .b5 { top: 66px;  right: -74px; background: var(--lavender); color: var(--lavender); width: 50px; height: 62px; }
+  .b6 { top: 128px; right: -40px; background: var(--purple); color: var(--purple); width: 46px; height: 58px; opacity:.9; }
+
+  /* text block */
+  .content { text-align: center; margin-top: 22px; position: relative; z-index: 4; }
+  .invited {
+    color: var(--pink);
+    letter-spacing: 3px;
+    font-size: 15px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  .title {
+    color: var(--purple);
+    font-size: 52px;
+    line-height: .95;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 6px 0 10px;
+    text-shadow: 2px 2px 0 rgba(155,63,176,.15);
+  }
+  .party-name {
+    color: var(--pink);
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .date-pill {
+    display: inline-block;
+    background: var(--purple);
+    color: #fff;
+    padding: 9px 26px;
+    border-radius: 22px;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .time {
+    display: block;
+    margin-top: 14px;
+    color: var(--plum);
+    font-size: 15px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+
+  /* bottom party hats */
+  .hats { position: absolute; bottom: 20px; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 26px; z-index: 3; }
+  .hat { width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-bottom: 30px solid var(--yellow); position: relative; }
+  .hat.pink { border-bottom-color: var(--pink); }
+  .hat::before { content:""; position:absolute; top:-6px; left:-3px; width:6px; height:6px; border-radius:50%; background: var(--purple); }
+
+  .rsvp {
+    display: block;
+    margin: 26px auto 0;
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 24px;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform .15s ease, background .2s ease;
+    z-index: 4;
+    position: relative;
+  }
+  .rsvp:hover { background: var(--purple-dark); transform: translateY(-2px); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="dots" id="dots"></div>
+
+    <div class="bunting left">
+      <span class="flag"></span><span class="flag"></span><span class="flag"></span><span class="flag"></span>
+    </div>
+    <div class="bunting right">
+      <span class="flag"></span><span class="flag"></span><span class="flag"></span><span class="flag"></span>
+    </div>
+
+    <div class="photo-wrap">
+      <span class="balloon b1"></span>
+      <span class="balloon b2"></span>
+      <span class="balloon b3"></span>
+      <span class="balloon b4"></span>
+      <span class="balloon b5"></span>
+      <span class="balloon b6"></span>
+      <img class="photo" src="/party-portrait.png" alt="Invitada con gorro de fiesta sosteniendo un pastel de cumpleaños" />
+    </div>
+
+    <div class="content">
+      <p class="invited">You're invited to</p>
+      <h1 class="title">Happy<br />Birthday</h1>
+      <p class="party-name" id="partyName">Anna's Party</p>
+      <span class="date-pill" id="datePill">26 December</span>
+      <span class="time" id="timeText">Start 4:00 PM</span>
+      <button class="rsvp" id="rsvpBtn">Confirmar asistencia</button>
+    </div>
+
+    <div class="hats">
+      <span class="hat pink"></span>
+      <span class="hat"></span>
+    </div>
+  </div>
+
+<script>
+  // Generar puntos de confeti aleatorios
+  (function () {
+    const colors = ['#9b3fb0', '#e79ac1', '#f5b942', '#b3a7e0', '#9db2e0'];
+    const container = document.getElementById('dots');
+    for (let i = 0; i < 40; i++) {
+      const d = document.createElement('span');
+      d.className = 'dot';
+      d.style.top = Math.random() * 100 + '%';
+      d.style.left = Math.random() * 100 + '%';
+      d.style.background = colors[Math.floor(Math.random() * colors.length)];
+      container.appendChild(d);
+    }
+  })();
+
+  // Botón RSVP
+  const btn = document.getElementById('rsvpBtn');
+  let confirmed = false;
+  btn.addEventListener('click', function () {
+    confirmed = !confirmed;
+    if (confirmed) {
+      btn.textContent = '¡Asistencia confirmada! 🎉';
+      btn.style.background = '#f5b942';
+      btn.style.color = '#7d2a91';
+    } else {
+      btn.textContent = 'Confirmar asistencia';
+      btn.style.background = '';
+      btn.style.color = '';
+    }
+  });
+</script>
+</body>
+</html>

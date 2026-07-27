@@ -80,6 +80,15 @@ export const api = {
     return { ok: true };
   },
 
+  async listarLinksFree(): Promise<any[]> {
+    const { data, error } = await sb
+      .from("links_free")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) raise(error.message);
+    return data ?? [];
+  },
+
   async eliminarPedido(eventoId: string): Promise<{ ok: true }> {
     await sb.from("confirmaciones_rsvp").delete().eq("evento_id", eventoId);
     await sb.from("muro_deseos").delete().eq("evento_id", eventoId);

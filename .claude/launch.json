@@ -30,6 +30,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "client-form"],
       "port": 3200
+    },
+    {
+      "name": "free-cumple",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--dir", "templates/free-01-cumple", "run", "dev", "--", "-p", "3105"],
+      "port": 3105
     }
   ]
 }

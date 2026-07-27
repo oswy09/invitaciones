@@ -73,26 +73,11 @@ export default function ListaPedidos({ pedidos, seleccionadoId, onSelect }: List
           />
         </div>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-thin">
-          <FilterChip active={filtro === "todos"} label="Todos" onClick={() => setFiltro("todos")} count={pedidos.length} />
-          <FilterChip
-            active={filtro === "pendientes_aprobacion"}
-            label="Por aprobar"
-            onClick={() => setFiltro("pendientes_aprobacion")}
-            count={pedidos.filter((p) => !p.aprobado).length}
-          />
-          <FilterChip
-            active={filtro === "sin_pagar"}
-            label="Sin pagar"
-            onClick={() => setFiltro("sin_pagar")}
-            count={pedidos.filter((p) => !p.pagado).length}
-          />
-          <FilterChip
-            active={filtro === "pagados"}
-            label="Pagados"
-            onClick={() => setFiltro("pagados")}
-            count={pedidos.filter((p) => p.pagado).length}
-          />
+        <div className="grid grid-cols-2 gap-1.5">
+          <FilterChip active={filtro === "todos"} label="Todos" onClick={() => setFiltro("todos")} count={pedidos.length} color="violet" />
+          <FilterChip active={filtro === "pagados"} label="Pagados" onClick={() => setFiltro("pagados")} count={pedidos.filter((p) => p.pagado).length} color="emerald" />
+          <FilterChip active={filtro === "pendientes_aprobacion"} label="Por aprobar" onClick={() => setFiltro("pendientes_aprobacion")} count={pedidos.filter((p) => !p.aprobado).length} color="amber" />
+          <FilterChip active={filtro === "sin_pagar"} label="Sin pagar" onClick={() => setFiltro("sin_pagar")} count={pedidos.filter((p) => !p.pagado).length} color="rose" />
         </div>
       </div>
 
@@ -148,16 +133,24 @@ export default function ListaPedidos({ pedidos, seleccionadoId, onSelect }: List
   );
 }
 
-function FilterChip({ active, label, count, onClick }: { active: boolean; label: string; count: number; onClick: () => void }) {
+const CHIP_COLORS = {
+  violet: { active: "bg-violet-600 text-white border-violet-600", inactive: "bg-white text-stone-600 border-stone-200 hover:border-violet-300 hover:text-violet-600", badge: "bg-violet-500 text-white", badgeInactive: "bg-stone-100 text-stone-500" },
+  emerald: { active: "bg-emerald-500 text-white border-emerald-500", inactive: "bg-white text-stone-600 border-stone-200 hover:border-emerald-300 hover:text-emerald-600", badge: "bg-emerald-400 text-white", badgeInactive: "bg-emerald-50 text-emerald-600" },
+  amber: { active: "bg-amber-500 text-white border-amber-500", inactive: "bg-white text-stone-600 border-stone-200 hover:border-amber-300 hover:text-amber-600", badge: "bg-amber-400 text-white", badgeInactive: "bg-amber-50 text-amber-600" },
+  rose: { active: "bg-rose-500 text-white border-rose-500", inactive: "bg-white text-stone-600 border-stone-200 hover:border-rose-300 hover:text-rose-600", badge: "bg-rose-400 text-white", badgeInactive: "bg-rose-50 text-rose-600" },
+} as const;
+
+function FilterChip({ active, label, count, onClick, color }: { active: boolean; label: string; count: number; onClick: () => void; color: keyof typeof CHIP_COLORS }) {
+  const c = CHIP_COLORS[color];
   return (
     <button
       onClick={onClick}
-      className={`px-2.5 py-1 text-[11.5px] font-semibold rounded-full font-inter shrink-0 cursor-pointer transition-all flex items-center gap-1.5 ${
-        active ? "bg-stone-900 text-white" : "bg-stone-100 text-stone-500 hover:bg-stone-200"
-      }`}
+      className={`flex items-center justify-between px-3 py-2 rounded-xl border text-[12px] font-semibold font-inter cursor-pointer transition-all ${active ? c.active : c.inactive}`}
     >
       <span>{label}</span>
-      {count > 0 && <span className={active ? "text-stone-300" : "text-stone-400"}>{count}</span>}
+      <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded-md ml-2 ${active ? c.badge : c.badgeInactive}`}>
+        {count}
+      </span>
     </button>
   );
 }

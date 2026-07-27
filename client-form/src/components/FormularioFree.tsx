@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { TemplateInfo } from "../types";
 import { DEV_PORT_POR_TEMPLATE } from "../types";
+import { supabase } from "../lib/supabase";
 
 interface Props {
   template: TemplateInfo;
@@ -45,9 +46,15 @@ export default function FormularioFree({ template, onBack }: Props) {
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       setCampos(prev => ({ ...prev, [k]: e.target.value }));
 
-  function generar() {
+  async function generar() {
     setLinkGenerado(previewUrl);
     setCopiado(false);
+    // Registrar link generado (sin await para no bloquear la UX)
+    supabase.from("links_free").insert({
+      template_id: template.id,
+      params: campos,
+      url: previewUrl,
+    }).then(() => {});
   }
 
   function copiar() {

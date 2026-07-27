@@ -6,6 +6,7 @@ import { Pedido } from "./types";
 import ListaPedidos from "./components/ListaPedidos";
 import DetallePedido from "./components/DetallePedido";
 import GestionPrecios from "./components/GestionPrecios";
+import LinksFreeLista from "./components/LinksFreeLista";
 import Login from "./components/Login";
 import { IconDollar, IconRefresh, IconTrendingUp, IconUser, IconCheckCircle, IconWarning, IconCalendar, IconTag } from "./components/Icons";
 
@@ -29,7 +30,7 @@ export default function App() {
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [seleccionadoId, setSeleccionadoId] = useState<string | null>(null);
-  const [vista, setVista] = useState<"pedidos" | "precios">("pedidos");
+  const [vista, setVista] = useState<"pedidos" | "precios" | "free">("pedidos");
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -125,6 +126,16 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           >
             Precios
           </button>
+          <button
+            onClick={() => setVista("free")}
+            className={`text-[13px] font-semibold px-4 py-1.5 rounded-full transition-all cursor-pointer ${
+              vista === "free"
+                ? "bg-white text-stone-900 shadow-sm"
+                : "text-stone-500 hover:text-stone-700"
+            }`}
+          >
+            Links Free
+          </button>
         </div>
 
         <div className="flex items-center gap-1">
@@ -152,7 +163,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       {/* Cuerpo Principal */}
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar con lista — no aplica en la vista de Precios, que es ajena a un pedido puntual */}
-        {vista === "pedidos" && (
+        {vista === "pedidos" && vista !== "free" && (
           <aside className="w-[360px] border-r border-stone-200 bg-white flex flex-col shrink-0 overflow-hidden">
             {loading ? (
               <div className="flex-1 flex flex-col items-center justify-center p-8 space-y-3">
@@ -182,6 +193,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           {vista === "precios" ? (
             <div className="h-full overflow-y-auto">
               <GestionPrecios />
+            </div>
+          ) : vista === "free" ? (
+            <div className="h-full overflow-y-auto">
+              <LinksFreeLista />
             </div>
           ) : seleccionado ? (
             <DetallePedido
