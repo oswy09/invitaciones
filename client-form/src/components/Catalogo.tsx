@@ -31,13 +31,11 @@ const GRADIENT_BORDER =
 function TemplateCard({
   t,
   onSelect,
-  isColombia,
-  precios,
+  precioLabel,
 }: {
   t: TemplateInfo;
   onSelect: (t: TemplateInfo) => void;
-  isColombia: boolean;
-  precios: Precios;
+  precioLabel: string;
 }) {
   const [hovered, setHovered] = useState(false);
 
@@ -156,9 +154,7 @@ function TemplateCard({
           <div style={{ marginTop: "auto", paddingTop: "0.5rem", borderTop: "1px solid #F0E0E8" }}>
             <p style={{ fontSize: "0.55rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#7A5C10", marginBottom: 2 }}>Precio</p>
             <p style={{ fontSize: "0.95rem", fontWeight: 800, color: "#3A1140", margin: 0 }}>
-              {isColombia
-                ? `$${(precios[t.id]?.cop ?? t.precioDefault.cop).toLocaleString("es-CO")} COP`
-                : `$${precios[t.id]?.usd ?? t.precioDefault.usd} USD`}
+              {precioLabel}
             </p>
           </div>
         </div>
@@ -182,7 +178,8 @@ function TemplateCard({
 }
 
 export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
-  const [isColombia, setIsColombia] = useState(true);
+  const [moneda, setMoneda] = useState<"cop" | "usd">("cop");
+  const [tasaCambio, setTasaCambio] = useState<number | null>(null);
   const [precios, setPrecios] = useState<Precios>({
     "01-dino": { cop: 70000, usd: 20 },
     "02-stork": { cop: 60000, usd: 18 },
@@ -191,23 +188,6 @@ export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
   });
 
   useEffect(() => {
-    async function geolocalizar() {
-      try {
-        const res = await fetch("https://ipapi.co/json/");
-        const json = await res.json();
-        setIsColombia(json.country_code === "CO");
-      } catch {
-        try {
-          const res = await fetch("https://ip-api.com/json");
-          const json = await res.json();
-          setIsColombia(json.countryCode === "CO");
-        } catch {
-          setIsColombia(true);
-        }
-      }
-    }
-    geolocalizar();
-
     async function cargarPrecios() {
       try {
         const { data } = await supabase
@@ -223,7 +203,20 @@ export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
       }
     }
     cargarPrecios();
+
+    // Tasa de cambio USD real del día
+    fetch("https://open.er-api.com/v6/latest/USD")
+      .then((r) => r.json())
+      .then((data) => { if (data?.rates?.COP) setTasaCambio(data.rates.COP); })
+      .catch(() => {});
   }, []);
+
+  function precioEnMoneda(t: TemplateInfo): string {
+    const cop = precios[t.id]?.cop ?? t.precioDefault.cop;
+    if (moneda === "cop") return `$${cop.toLocaleString("es-CO")} COP`;
+    if (!tasaCambio) return "...";
+    return `$${(cop / tasaCambio).toFixed(2)} USD`;
+  }
 
   return (
     <div
@@ -290,10 +283,46 @@ export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
         >
           Elige tu diseño
         </h1>
-        <p className="text-sm leading-relaxed" style={{ opacity: 0.7 }}>
+        <p className="text-sm leading-relaxed mb-5" style={{ opacity: 0.7 }}>
           Selecciona una plantilla, personalízala con tus datos y compártela al
           instante por WhatsApp.
         </p>
+
+        {/* Toggle COP / USD */}
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 4, backgroundColor: "#F0E0E8", borderRadius: 12, padding: 4 }}>
+          <button
+            type="button"
+            onClick={() => setMoneda("cop")}
+            style={{
+              display: "flex", alignItems: "center", gap: 6,
+              fontSize: "0.75rem", fontWeight: 700,
+              padding: "6px 14px", borderRadius: 9,
+              border: "none", cursor: "pointer",
+              backgroundColor: moneda === "cop" ? "white" : "transparent",
+              color: moneda === "cop" ? "#5A1B5E" : "#9B6B9B",
+              boxShadow: moneda === "cop" ? "0 1px 4px rgba(90,27,94,0.15)" : "none",
+              transition: "all 0.2s",
+            }}
+          >
+            🇨🇴 COP
+          </button>
+          <button
+            type="button"
+            onClick={() => setMoneda("usd")}
+            style={{
+              display: "flex", alignItems: "center", gap: 6,
+              fontSize: "0.75rem", fontWeight: 700,
+              padding: "6px 14px", borderRadius: 9,
+              border: "none", cursor: "pointer",
+              backgroundColor: moneda === "usd" ? "white" : "transparent",
+              color: moneda === "usd" ? "#5A1B5E" : "#9B6B9B",
+              boxShadow: moneda === "usd" ? "0 1px 4px rgba(90,27,94,0.15)" : "none",
+              transition: "all 0.2s",
+            }}
+          >
+            🇺🇸 USD
+          </button>
+        </div>
       </div>
 
       {/* GRID */}
@@ -304,8 +333,7 @@ export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
               key={t.id}
               t={t}
               onSelect={onSelect}
-              isColombia={isColombia}
-              precios={precios}
+              precioLabel={precioEnMoneda(t)}
             />
           ))}
         </div>
