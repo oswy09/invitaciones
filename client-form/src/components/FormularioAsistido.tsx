@@ -60,6 +60,7 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
   const [createdId, setCreatedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [precios, setPrecios] = useState<Record<string, { cop: number; usd: number }>>({});
+  const [moneda, setMoneda] = useState<"cop" | "usd">("cop");
 
   useEffect(() => {
     supabase
@@ -141,7 +142,6 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
     const titulo = cat === "Boda" ? boda.tituloEvento : baby.tituloEvento;
     const msg = `¡Hola! Acabo de completar el formulario para mi invitación "${titulo}" (Diseño: ${selectedTemplate?.nombre}).\nCódigo de pedido: ${createdId}\nQuedo pendiente para las instrucciones de pago.`;
     const waUrl = `https://wa.me/${WHATSAPP_CONTACTO}?text=${encodeURIComponent(msg)}`;
-    const previewUrl = selectedTemplate && createdId ? `${selectedTemplate.baseUrl}/${createdId}` : null;
     return (
       <div className="max-w-xl mx-auto py-16 px-4 text-center font-sans">
         <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-xl space-y-6">
@@ -165,42 +165,12 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
             <p className="text-sm font-semibold text-slate-700">Código: <span className="font-mono text-xs font-normal text-slate-500">{createdId}</span></p>
           </div>
 
-          {/* Preview no pagado */}
-          {previewUrl && (
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 text-left space-y-2">
-              <p className="text-xs font-bold text-amber-700 uppercase tracking-wider">Vista previa disponible</p>
-              <p className="text-xs text-amber-600 leading-relaxed">Puedes ver cómo quedará tu invitación. Hasta que se confirme el pago aparecerá con marca de agua.</p>
-              <a
-                href={previewUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 hover:text-amber-900 underline underline-offset-2"
-              >
-                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-                Ver mi invitación (vista previa)
-              </a>
-            </div>
-          )}
-
           {/* Acciones */}
           <div className="flex flex-col gap-3 max-w-xs mx-auto pt-1">
             <a href={waUrl} target="_blank" rel="noopener noreferrer"
               className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm">
               💬 Notificar por WhatsApp
             </a>
-            {previewUrl && (
-              <a href={previewUrl} target="_blank" rel="noopener noreferrer"
-                className="border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold px-6 py-3 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm">
-                <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-                Ver preview (sin pago aún)
-              </a>
-            )}
             <a href="/" className="text-slate-400 hover:text-slate-600 font-semibold text-sm py-2 text-center">
               ← Volver al inicio
             </a>
@@ -224,7 +194,26 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
 
           {/* PASO 1: Plantilla */}
           <Section num={1} title="Selecciona el diseño de tu invitación *">
-            <p className="text-xs text-slate-400 mb-3">El precio y las funciones dependen del diseño elegido.</p>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs text-slate-400">El precio y las funciones dependen del diseño elegido.</p>
+              {/* Toggle moneda */}
+              <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
+                <button
+                  type="button"
+                  onClick={() => setMoneda("cop")}
+                  className={`flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-md transition-all cursor-pointer ${moneda === "cop" ? "bg-white text-slate-800 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+                >
+                  🇨🇴 COP
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMoneda("usd")}
+                  className={`flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-md transition-all cursor-pointer ${moneda === "usd" ? "bg-white text-slate-800 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+                >
+                  🇺🇸 USD
+                </button>
+              </div>
+            </div>
 
             {/* Dropdown de selección */}
             <select
@@ -236,11 +225,17 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
               className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30 font-semibold text-slate-700 cursor-pointer"
             >
               <option value="">— Elige un diseño —</option>
-              {PLANTILLAS_ASISTIDO.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.emoji} {t.nombre} — ${getPrecio(t).cop.toLocaleString("es-CO")} COP
-                </option>
-              ))}
+              {PLANTILLAS_ASISTIDO.map((t) => {
+                const p = getPrecio(t);
+                const precioLabel = moneda === "cop"
+                  ? `$${p.cop.toLocaleString("es-CO")} COP`
+                  : `USD $${p.usd}`;
+                return (
+                  <option key={t.id} value={t.id}>
+                    {t.emoji} {t.nombre} — {precioLabel}
+                  </option>
+                );
+              })}
             </select>
 
             {/* Preview del template seleccionado */}
@@ -253,7 +248,10 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
                 <div>
                   <p className="font-bold text-sm text-slate-800">{selectedTemplate.emoji} {selectedTemplate.nombre}</p>
                   <p className="text-[11px] text-slate-500 leading-snug mt-0.5">{selectedTemplate.descripcion}</p>
-                  <p className="text-[12px] font-bold text-violet-600 mt-1.5">${getPrecio(selectedTemplate).cop.toLocaleString("es-CO")} COP · USD ${getPrecio(selectedTemplate).usd}</p>
+                  {moneda === "cop"
+                    ? <p className="text-[13px] font-bold text-violet-600 mt-1.5">🇨🇴 ${getPrecio(selectedTemplate).cop.toLocaleString("es-CO")} COP</p>
+                    : <p className="text-[13px] font-bold text-violet-600 mt-1.5">🇺🇸 USD ${getPrecio(selectedTemplate).usd}</p>
+                  }
                 </div>
               </div>
             )}
