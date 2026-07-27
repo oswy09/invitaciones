@@ -60,9 +60,6 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
   const [createdId, setCreatedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [precios, setPrecios] = useState<Record<string, { cop: number; usd: number }>>({});
-  const [moneda, setMoneda] = useState<"cop" | "usd">("cop");
-  const [tasaCambio, setTasaCambio] = useState<number | null>(null);
-
   useEffect(() => {
     supabase
       .from("eventos")
@@ -72,23 +69,10 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
       .then(({ data }) => {
         if (data?.datos?.precios) setPrecios(data.datos.precios);
       });
-
-    // Tasa de cambio COP → USD en tiempo real
-    fetch("https://open.er-api.com/v6/latest/USD")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data?.rates?.COP) setTasaCambio(data.rates.COP);
-      })
-      .catch(() => {});
   }, []);
 
   function getPrecio(t: TemplateInfo) {
     return precios[t.id] ?? t.precioDefault;
-  }
-
-  function copToUsd(cop: number): string {
-    if (!tasaCambio) return "...";
-    return (cop / tasaCambio).toFixed(2);
   }
 
   const cat: Cat | null = selectedTemplate ? getCat(selectedTemplate) : null;
@@ -208,26 +192,7 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
 
           {/* PASO 1: Plantilla */}
           <Section num={1} title="Selecciona el diseño de tu invitación *">
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-xs text-slate-400">El precio y las funciones dependen del diseño elegido.</p>
-              {/* Toggle moneda */}
-              <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
-                <button
-                  type="button"
-                  onClick={() => setMoneda("cop")}
-                  className={`flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-md transition-all cursor-pointer ${moneda === "cop" ? "bg-white text-slate-800 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
-                >
-                  🇨🇴 COP
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMoneda("usd")}
-                  className={`flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-md transition-all cursor-pointer ${moneda === "usd" ? "bg-white text-slate-800 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
-                >
-                  🇺🇸 USD
-                </button>
-              </div>
-            </div>
+            <p className="text-xs text-slate-400 mb-3">El precio y las funciones dependen del diseño elegido.</p>
 
             {/* Dropdown de selección */}
             <select
@@ -239,17 +204,11 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
               className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30 font-semibold text-slate-700 cursor-pointer"
             >
               <option value="">— Elige un diseño —</option>
-              {PLANTILLAS_ASISTIDO.map((t) => {
-                const p = getPrecio(t);
-                const precioLabel = moneda === "cop"
-                  ? `$${p.cop.toLocaleString("es-CO")} COP`
-                  : `USD $${copToUsd(p.cop)}`;
-                return (
-                  <option key={t.id} value={t.id}>
-                    {t.emoji} {t.nombre} — {precioLabel}
-                  </option>
-                );
-              })}
+              {PLANTILLAS_ASISTIDO.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.emoji} {t.nombre} — ${getPrecio(t).cop.toLocaleString("es-CO")} COP
+                </option>
+              ))}
             </select>
 
             {/* Preview del template seleccionado */}
@@ -262,10 +221,7 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
                 <div>
                   <p className="font-bold text-sm text-slate-800">{selectedTemplate.emoji} {selectedTemplate.nombre}</p>
                   <p className="text-[11px] text-slate-500 leading-snug mt-0.5">{selectedTemplate.descripcion}</p>
-                  {moneda === "cop"
-                    ? <p className="text-[13px] font-bold text-violet-600 mt-1.5">🇨🇴 ${getPrecio(selectedTemplate).cop.toLocaleString("es-CO")} COP</p>
-                    : <p className="text-[13px] font-bold text-violet-600 mt-1.5">🇺🇸 USD ${copToUsd(getPrecio(selectedTemplate).cop)}</p>
-                  }
+                  <p className="text-[13px] font-bold text-violet-600 mt-1.5">${getPrecio(selectedTemplate).cop.toLocaleString("es-CO")} COP</p>
                 </div>
               </div>
             )}
