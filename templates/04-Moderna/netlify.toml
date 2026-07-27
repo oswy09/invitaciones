@@ -13,6 +13,11 @@
     X-Frame-Options = "ALLOWALL"
 
 [[redirects]]
+  from = "/"
+  to = "/demo"
+  status = 301
+
+[[redirects]]
   from   = "/*"
   to     = "/index.html"
   status = 200
