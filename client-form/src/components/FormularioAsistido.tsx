@@ -164,25 +164,38 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
           {/* PASO 1: Plantilla */}
           <Section num={1} title="Selecciona el diseño de tu invitación *">
             <p className="text-xs text-slate-400 mb-3">El precio y las funciones dependen del diseño elegido.</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {PLANTILLAS_ASISTIDO.map((t) => {
-                const isSel = selectedTemplate?.id === t.id;
-                return (
-                  <div key={t.id} onClick={() => setSelectedTemplate(t)}
-                    className={`bg-white border rounded-2xl overflow-hidden cursor-pointer transition-all flex gap-3 items-center p-3 ${isSel ? "border-violet-600 ring-2 ring-violet-500/20 shadow-md" : "border-slate-200 hover:border-slate-300"}`}>
-                    {t.previewImg
-                      ? <img src={t.previewImg} alt={t.nombre} className="w-14 h-14 rounded-xl object-cover shrink-0" />
-                      : <div className="w-14 h-14 rounded-xl shrink-0 flex items-center justify-center text-3xl" style={{ background: "linear-gradient(135deg,#f0eaf5,#e8dcef)" }}>{t.emoji}</div>
-                    }
-                    <div>
-                      <p className="font-bold text-sm text-slate-800">{t.emoji} {t.nombre}</p>
-                      <p className="text-[11px] text-slate-400 leading-snug mt-0.5">{t.descripcion}</p>
-                      <p className="text-[11px] font-bold text-violet-600 mt-1">${t.precioDefault.cop.toLocaleString("es-CO")} COP</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+
+            {/* Dropdown de selección */}
+            <select
+              value={selectedTemplate?.id ?? ""}
+              onChange={(e) => {
+                const t = PLANTILLAS_ASISTIDO.find((p) => p.id === e.target.value) ?? null;
+                setSelectedTemplate(t);
+              }}
+              className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30 font-semibold text-slate-700 cursor-pointer"
+            >
+              <option value="">— Elige un diseño —</option>
+              {PLANTILLAS_ASISTIDO.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.emoji} {t.nombre} — ${t.precioDefault.cop.toLocaleString("es-CO")} COP
+                </option>
+              ))}
+            </select>
+
+            {/* Preview del template seleccionado */}
+            {selectedTemplate && (
+              <div className="mt-3 flex gap-4 items-center bg-slate-50 border border-slate-200 rounded-2xl p-3">
+                {selectedTemplate.previewImg
+                  ? <img src={selectedTemplate.previewImg} alt={selectedTemplate.nombre} className="w-20 h-20 rounded-xl object-cover shrink-0 shadow-sm" />
+                  : <div className="w-20 h-20 rounded-xl shrink-0 flex items-center justify-center text-4xl shadow-sm" style={{ background: selectedTemplate.gradiente }}>{selectedTemplate.emoji}</div>
+                }
+                <div>
+                  <p className="font-bold text-sm text-slate-800">{selectedTemplate.emoji} {selectedTemplate.nombre}</p>
+                  <p className="text-[11px] text-slate-500 leading-snug mt-0.5">{selectedTemplate.descripcion}</p>
+                  <p className="text-[12px] font-bold text-violet-600 mt-1.5">${selectedTemplate.precioDefault.cop.toLocaleString("es-CO")} COP · USD ${selectedTemplate.precioDefault.usd}</p>
+                </div>
+              </div>
+            )}
           </Section>
 
           {/* PASO 2: Campos dinámicos — Baby Shower */}

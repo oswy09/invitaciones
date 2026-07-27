@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CATALOGO_ADMIN, FORM_CONTACTO_URL, CATALOGO_URL } from "../lib/catalogo";
+import { api } from "../lib/api";
 
 function CopyButton({ text }: { text: string }) {
   const [copiado, setCopiado] = useState(false);
@@ -52,6 +53,16 @@ function LinkRow({ emoji, label, sublabel, url, badge, badgeColor = "bg-stone-10
 }
 
 export default function LinksDemo() {
+  const [precios, setPrecios] = useState<Record<string, { cop: number; usd: number }>>({});
+
+  useEffect(() => {
+    api.obtenerPrecios().then(setPrecios).catch(() => {});
+  }, []);
+
+  function precio(id: string, defaultVal: { cop: number; usd: number }) {
+    return precios[id] ?? defaultVal;
+  }
+
   const pagadas = CATALOGO_ADMIN.filter((t) => !t.esFree);
   const gratuitas = CATALOGO_ADMIN.filter((t) => t.esFree);
 
@@ -96,7 +107,7 @@ export default function LinksDemo() {
             label={t.nombre}
             sublabel={t.descripcion}
             url={t.baseUrl}
-            badge={`$${t.precioDefault.cop.toLocaleString("es-CO")} COP`}
+            badge={`$${precio(t.id, t.precioDefault).cop.toLocaleString("es-CO")} COP · USD $${precio(t.id, t.precioDefault).usd}`}
             badgeColor="bg-stone-100 text-stone-500"
           />
         ))}

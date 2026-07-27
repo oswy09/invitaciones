@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import FormularioAsistido from '../components/FormularioAsistido';
+---
+
+<Base
+  title="Formulario de Solicitud de Invitación · Celebrarte"
+  description="Solicita tu invitación digital personalizada para baby shower, boda o cumpleaños. Elige el diseño y completa los datos. Nosotros lo configuramos todo."
+  canonical="https://celebrarte.com.co/formulario-solicitud"
+>
+  <slot name="head" slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Formulario de Solicitud · Celebrarte",
+      "description": "Solicita tu invitación digital personalizada. Elige el diseño y nosotros lo configuramos.",
+      "url": "https://celebrarte.com.co/formulario-solicitud",
+    })} />
+  </slot>
+
+  <FormularioAsistido
+    client:load
+    onBack={() => { window.location.href = "/plantillas"; }}
+  />
+</Base>
