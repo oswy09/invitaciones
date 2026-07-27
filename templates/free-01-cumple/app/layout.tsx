@@ -16,9 +16,24 @@ const spaceMono = Space_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "You're Invited! Birthday Party",
-  description: 'A playful animated digital invitation to my birthday party.',
-  generator: 'v0.app',
+  title: 'Invitación Digital de Cumpleaños Gratis · Celebrarte',
+  description: 'Crea tu invitación digital de cumpleaños gratis en segundos. Personaliza con el nombre, fecha, lugar y color. Compártela por WhatsApp al instante. 100% gratis, sin registro.',
+  generator: 'celebrarte',
+  metadataBase: new URL('https://free-01.celebrarte.com.co'),
+  alternates: { canonical: '/demo' },
+  openGraph: {
+    type: 'website',
+    url: 'https://free-01.celebrarte.com.co/demo',
+    title: 'Invitación Digital de Cumpleaños Gratis · Celebrarte',
+    description: 'Crea tu invitación digital de cumpleaños gratis en segundos y compártela por WhatsApp.',
+    images: [{ url: 'https://res.cloudinary.com/ddqbnr9vo/image/upload/v1780436162/Share_Redes_a2ow9q.png', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Invitación Digital de Cumpleaños Gratis · Celebrarte',
+    description: 'Crea tu invitación digital de cumpleaños gratis en segundos.',
+    images: ['https://res.cloudinary.com/ddqbnr9vo/image/upload/v1780436162/Share_Redes_a2ow9q.png'],
+  },
   icons: {
     icon: [
       {
