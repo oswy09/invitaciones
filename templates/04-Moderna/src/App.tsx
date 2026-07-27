@@ -60,6 +60,28 @@ export default function App() {
 
   return (
     <div className="relative w-screen h-screen bg-[#fbf9f4] text-stone-800 flex flex-col overflow-hidden font-sans antialiased">
+
+      {/* Marca de agua + botón personalizar — solo cuando no está pagado */}
+      {!pagado && (
+        <>
+          <div className="fixed inset-0 z-[999] pointer-events-none flex items-center justify-center overflow-hidden">
+            <div className="rotate-[-30deg] flex flex-wrap gap-16 opacity-10 select-none">
+              {Array.from({ length: 20 }).map((_, i) => (
+                <span key={i} className="text-4xl font-black text-stone-600 whitespace-nowrap">
+                  VISTA PREVIA
+                </span>
+              ))}
+            </div>
+          </div>
+          <a
+            href="https://celebrarte.com.co/plantillas?open=04-Moderna"
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-2 px-5 py-3 rounded-full font-bold text-sm text-white shadow-lg"
+            style={{ background: "linear-gradient(135deg,#7B4E8E,#C49B3A)", whiteSpace: "nowrap" }}
+          >
+            ✨ Personalizar esta invitación →
+          </a>
+        </>
+      )}
       
       {/* ==================== WEDDING LOADING SCREEN ==================== */}
       <AnimatePresence>

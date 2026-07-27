@@ -30,7 +30,7 @@ export async function loadEvento(): Promise<EventoResult> {
 
   if (error || !data) {
     // Sin evento en Supabase: la plantilla sigue funcionando con sus datos por defecto.
-    return { details: null, pagado: true, aprobado: true, notFound: true };
+    return { details: null, pagado: false, aprobado: true, notFound: true };
   }
 
   const invitationData = data.datos as InvitationData;

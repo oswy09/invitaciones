@@ -31,7 +31,7 @@ export async function loadEvento(): Promise<EventoResult> {
 
   if (error || !data) {
     // Fallback a datos de ejemplo si el evento no existe o aún no hay conexión configurada.
-    return { details: DEFAULT_SHOWER_DETAILS, pagado: true, aprobado: true, notFound: true };
+    return { details: DEFAULT_SHOWER_DETAILS, pagado: false, aprobado: true, notFound: true };
   }
 
   const invitationData = data.datos as InvitationData;

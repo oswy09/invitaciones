@@ -573,15 +573,24 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
       )}
       {/* Marca de agua de preview — desaparece cuando el operador marca el evento como pagado */}
       {!pagado && (
-        <div className="fixed inset-0 z-[999] pointer-events-none flex items-center justify-center overflow-hidden">
-          <div className="rotate-[-30deg] flex flex-wrap gap-16 opacity-15 select-none">
-            {Array.from({ length: 20 }).map((_, i) => (
-              <span key={i} className="text-4xl font-black text-white whitespace-nowrap">
-                VISTA PREVIA
-              </span>
-            ))}
+        <>
+          <div className="fixed inset-0 z-[999] pointer-events-none flex items-center justify-center overflow-hidden">
+            <div className="rotate-[-30deg] flex flex-wrap gap-16 opacity-15 select-none">
+              {Array.from({ length: 20 }).map((_, i) => (
+                <span key={i} className="text-4xl font-black text-white whitespace-nowrap">
+                  VISTA PREVIA
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
+          <a
+            href="https://celebrarte.com.co/plantillas?open=03-space"
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-2 px-5 py-3 rounded-full font-bold text-sm text-white shadow-lg"
+            style={{ background: "linear-gradient(135deg,#3B2D6E,#6C5CE7)", whiteSpace: "nowrap" }}
+          >
+            ✨ Personalizar esta invitación →
+          </a>
+        </>
       )}
       <style>{`
         @keyframes twinkle {

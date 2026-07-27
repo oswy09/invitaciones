@@ -96,7 +96,7 @@ export async function loadEvento(): Promise<EventoResult> {
     .single();
 
   if (error || !data) {
-    return { data: DEFAULT_INVITATION, pagado: true, aprobado: true, notFound: true };
+    return { data: DEFAULT_INVITATION, pagado: false, aprobado: true, notFound: true };
   }
 
   return {
