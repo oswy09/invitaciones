@@ -61,6 +61,7 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
   const [error, setError] = useState<string | null>(null);
   const [precios, setPrecios] = useState<Record<string, { cop: number; usd: number }>>({});
   const [moneda, setMoneda] = useState<"cop" | "usd">("cop");
+  const [tasaCambio, setTasaCambio] = useState<number | null>(null);
 
   useEffect(() => {
     supabase
@@ -71,10 +72,23 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
       .then(({ data }) => {
         if (data?.datos?.precios) setPrecios(data.datos.precios);
       });
+
+    // Tasa de cambio COP → USD en tiempo real
+    fetch("https://open.er-api.com/v6/latest/USD")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.rates?.COP) setTasaCambio(data.rates.COP);
+      })
+      .catch(() => {});
   }, []);
 
   function getPrecio(t: TemplateInfo) {
     return precios[t.id] ?? t.precioDefault;
+  }
+
+  function copToUsd(cop: number): string {
+    if (!tasaCambio) return "...";
+    return (cop / tasaCambio).toFixed(2);
   }
 
   const cat: Cat | null = selectedTemplate ? getCat(selectedTemplate) : null;
@@ -229,7 +243,7 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
                 const p = getPrecio(t);
                 const precioLabel = moneda === "cop"
                   ? `$${p.cop.toLocaleString("es-CO")} COP`
-                  : `USD $${p.usd}`;
+                  : `USD $${copToUsd(p.cop)}`;
                 return (
                   <option key={t.id} value={t.id}>
                     {t.emoji} {t.nombre} — {precioLabel}
@@ -250,7 +264,7 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
                   <p className="text-[11px] text-slate-500 leading-snug mt-0.5">{selectedTemplate.descripcion}</p>
                   {moneda === "cop"
                     ? <p className="text-[13px] font-bold text-violet-600 mt-1.5">🇨🇴 ${getPrecio(selectedTemplate).cop.toLocaleString("es-CO")} COP</p>
-                    : <p className="text-[13px] font-bold text-violet-600 mt-1.5">🇺🇸 USD ${getPrecio(selectedTemplate).usd}</p>
+                    : <p className="text-[13px] font-bold text-violet-600 mt-1.5">🇺🇸 USD ${copToUsd(getPrecio(selectedTemplate).cop)}</p>
                   }
                 </div>
               </div>
