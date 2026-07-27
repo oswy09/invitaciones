@@ -60,6 +60,8 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
   const [createdId, setCreatedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [precios, setPrecios] = useState<Record<string, { cop: number; usd: number }>>({});
+  const [tasaCambio, setTasaCambio] = useState<number | null>(null);
+
   useEffect(() => {
     supabase
       .from("eventos")
@@ -69,10 +71,20 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
       .then(({ data }) => {
         if (data?.datos?.precios) setPrecios(data.datos.precios);
       });
+
+    fetch("https://open.er-api.com/v6/latest/USD")
+      .then((r) => r.json())
+      .then((data) => { if (data?.rates?.COP) setTasaCambio(data.rates.COP); })
+      .catch(() => {});
   }, []);
 
   function getPrecio(t: TemplateInfo) {
     return precios[t.id] ?? t.precioDefault;
+  }
+
+  function precioUsd(cop: number): string {
+    if (!tasaCambio) return "...";
+    return (cop / tasaCambio).toFixed(2);
   }
 
   const cat: Cat | null = selectedTemplate ? getCat(selectedTemplate) : null;
@@ -204,11 +216,14 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
               className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30 font-semibold text-slate-700 cursor-pointer"
             >
               <option value="">— Elige un diseño —</option>
-              {PLANTILLAS_ASISTIDO.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.emoji} {t.nombre} — ${getPrecio(t).cop.toLocaleString("es-CO")} COP
-                </option>
-              ))}
+              {PLANTILLAS_ASISTIDO.map((t) => {
+                const cop = getPrecio(t).cop;
+                return (
+                  <option key={t.id} value={t.id}>
+                    {t.emoji} {t.nombre} — ${cop.toLocaleString("es-CO")} COP · USD ${precioUsd(cop)}
+                  </option>
+                );
+              })}
             </select>
 
             {/* Preview del template seleccionado */}
@@ -221,7 +236,11 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
                 <div>
                   <p className="font-bold text-sm text-slate-800">{selectedTemplate.emoji} {selectedTemplate.nombre}</p>
                   <p className="text-[11px] text-slate-500 leading-snug mt-0.5">{selectedTemplate.descripcion}</p>
-                  <p className="text-[13px] font-bold text-violet-600 mt-1.5">${getPrecio(selectedTemplate).cop.toLocaleString("es-CO")} COP</p>
+                  <p className="text-[13px] font-bold text-violet-600 mt-1.5">
+                    🇨🇴 ${getPrecio(selectedTemplate).cop.toLocaleString("es-CO")} COP
+                    <span className="text-slate-400 font-normal mx-1">·</span>
+                    🇺🇸 USD ${precioUsd(getPrecio(selectedTemplate).cop)}
+                  </p>
                 </div>
               </div>
             )}

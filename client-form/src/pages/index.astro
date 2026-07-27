@@ -329,11 +329,27 @@ const GOLD_TEXT = "#7A5C10";
             Diseños disponibles
           </p>
           <h2
-            class="gs-fade text-center text-2xl md:text-3xl font-bold mb-14"
+            class="gs-fade text-center text-2xl md:text-3xl font-bold mb-6"
             style="font-family: 'Playfair Display', serif; color: #5A1B5E;"
           >
             Nuestras plantillas
           </h2>
+
+          <!-- Toggle COP / USD -->
+          <div class="flex justify-center mb-10">
+            <div style="display:inline-flex;align-items:center;gap:4px;background-color:#F0E0E8;border-radius:12px;padding:4px;">
+              <button
+                id="btn-cop"
+                onclick="setMonedaLanding('cop')"
+                style="display:flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:700;padding:6px 14px;border-radius:9px;border:none;cursor:pointer;background-color:white;color:#5A1B5E;box-shadow:0 1px 4px rgba(90,27,94,0.15);transition:all 0.2s;"
+              >🇨🇴 COP</button>
+              <button
+                id="btn-usd"
+                onclick="setMonedaLanding('usd')"
+                style="display:flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:700;padding:6px 14px;border-radius:9px;border:none;cursor:pointer;background-color:transparent;color:#9B6B9B;box-shadow:none;transition:all 0.2s;"
+              >🇺🇸 USD</button>
+            </div>
+          </div>
 
           <style>
             .tcard {
@@ -572,7 +588,37 @@ const GOLD_TEXT = "#7A5C10";
   </div>
 
   <script>
-    // Actualiza precios de la landing desde Supabase
+    let _preciosLanding: Record<string, { cop: number }> = {};
+    let _tasaLanding: number | null = null;
+    let _monedaLanding: "cop" | "usd" = "cop";
+
+    function renderPreciosLanding() {
+      document.querySelectorAll<HTMLElement>(".precio-landing").forEach((el) => {
+        const id = el.dataset.templateId;
+        const defaultCop = Number(el.dataset.precioDefault) || 0;
+        const cop = _preciosLanding[id!]?.cop ?? defaultCop;
+        if (_monedaLanding === "cop") {
+          el.textContent = `$${cop.toLocaleString("es-CO")} COP`;
+        } else {
+          el.textContent = _tasaLanding ? `$${(cop / _tasaLanding).toFixed(2)} USD` : "...";
+        }
+      });
+    }
+
+    (window as any).setMonedaLanding = function(m: "cop" | "usd") {
+      _monedaLanding = m;
+      const btnCop = document.getElementById("btn-cop")!;
+      const btnUsd = document.getElementById("btn-usd")!;
+      if (m === "cop") {
+        btnCop.style.cssText += ";background-color:white;color:#5A1B5E;box-shadow:0 1px 4px rgba(90,27,94,0.15);";
+        btnUsd.style.cssText += ";background-color:transparent;color:#9B6B9B;box-shadow:none;";
+      } else {
+        btnUsd.style.cssText += ";background-color:white;color:#5A1B5E;box-shadow:0 1px 4px rgba(90,27,94,0.15);";
+        btnCop.style.cssText += ";background-color:transparent;color:#9B6B9B;box-shadow:none;";
+      }
+      renderPreciosLanding();
+    };
+
     (async () => {
       try {
         const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -583,25 +629,20 @@ const GOLD_TEXT = "#7A5C10";
         );
         const rows = await res.json();
         const precios = rows?.[0]?.datos?.precios;
-        if (!precios) return;
+        if (precios) {
+          _preciosLanding = precios;
+          renderPreciosLanding();
+        }
+      } catch { /* muestra precios default */ }
 
-        // Detectar país para COP vs USD
-        let isColombia = true;
-        try {
-          const geo = await fetch("https://ipapi.co/json/");
-          const geoData = await geo.json();
-          isColombia = geoData.country_code === "CO";
-        } catch { /* usar COP por defecto */ }
-
-        document.querySelectorAll<HTMLElement>(".precio-landing").forEach((el) => {
-          const id = el.dataset.templateId;
-          if (!id || !precios[id]) return;
-          const { cop, usd } = precios[id];
-          el.textContent = isColombia
-            ? `$${cop.toLocaleString("es-CO")} COP`
-            : `$${usd} USD`;
-        });
-      } catch { /* silencioso, muestra precios default */ }
+      try {
+        const fx = await fetch("https://open.er-api.com/v6/latest/USD");
+        const fxData = await fx.json();
+        if (fxData?.rates?.COP) {
+          _tasaLanding = fxData.rates.COP;
+          renderPreciosLanding();
+        }
+      } catch { /* sin conversión USD */ }
     })();
   </script>
 </Base>
