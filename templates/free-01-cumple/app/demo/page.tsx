@@ -32,7 +32,7 @@ export default function DemoPage() {
           fontWeight: 700,
           fontSize: "0.875rem",
           color: "white",
-          background: "linear-gradient(135deg,#f59e0b,#ec4899)",
+          background: "linear-gradient(135deg,#5A1B5E,#7A2E8A)",
           boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
           whiteSpace: "nowrap",
           textDecoration: "none",
