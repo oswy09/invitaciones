@@ -74,6 +74,6 @@ export const CATALOGO_ADMIN: PlantillaAdmin[] = [
 ];
 
 // URL del formulario de pedido asistido (para compartir por WhatsApp)
-export const FORM_CONTACTO_URL = "https://celebrarte.com.co/plantillas?contacto";
+export const FORM_CONTACTO_URL = "https://celebrarte.com.co/formulario-solicitud";
 // URL del catálogo de plantillas
 export const CATALOGO_URL = "https://celebrarte.com.co/plantillas";
