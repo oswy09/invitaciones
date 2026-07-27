@@ -7,6 +7,7 @@ export default function GestionPrecios() {
     "01-dino": { cop: 70000, usd: 20 },
     "02-stork": { cop: 60000, usd: 18 },
     "03-space": { cop: 70000, usd: 20 },
+    "04-Moderna": { cop: 80000, usd: 22 },
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -66,6 +67,7 @@ export default function GestionPrecios() {
     { id: "01-dino", nombre: "🦖 Dino", desc: "Baby shower de dinosaurios", bg: "bg-emerald-50/50 border-emerald-100" },
     { id: "02-stork", nombre: "🦢 Cigüeña", desc: "Baby shower de cigüeña", bg: "bg-sky-50/50 border-sky-100" },
     { id: "03-space", nombre: "🚀 Espacio", desc: "Baby shower espacial", bg: "bg-indigo-50/50 border-indigo-100" },
+    { id: "04-Moderna", nombre: "💍 Boda Moderna", desc: "Invitación de boda elegante", bg: "bg-rose-50/50 border-rose-100" },
   ];
 
   return (

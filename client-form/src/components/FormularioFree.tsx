@@ -172,6 +172,33 @@ export default function FormularioFree({ template, onBack }: Props) {
             </div>
           </div>
 
+          {/* CTA premium */}
+          <div style={{
+            background: "#faf5ff", border: "1.5px solid #e8dcef", borderRadius: 14,
+            padding: "14px 16px", marginBottom: 16,
+          }}>
+            <p style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 700, color: "#5A1B5E" }}>
+              ¿Quieres algo más especial?
+            </p>
+            <p style={{ margin: "0 0 10px", fontSize: 11, color: "#7a6080", lineHeight: 1.5 }}>
+              Tenemos diseños animados con sobre interactivo, muro de deseos, RSVP y mucho más.
+            </p>
+            <a
+              href="/plantillas"
+              style={{ display: "inline-block", fontSize: 11, fontWeight: 700, color: "#5A1B5E", textDecoration: "none", marginRight: 12 }}
+            >
+              Ver plantillas →
+            </a>
+            <a
+              href={`https://wa.me/573057502790?text=${encodeURIComponent("¡Hola! Quiero una invitación personalizada.")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: "inline-block", fontSize: 11, fontWeight: 700, color: "#25D366", textDecoration: "none" }}
+            >
+              Contactar por WhatsApp
+            </a>
+          </div>
+
           {/* Botón generar */}
           <button
             onClick={generar}
@@ -184,21 +211,6 @@ export default function FormularioFree({ template, onBack }: Props) {
           >
             Generar mi link gratis
           </button>
-
-          {/* Botón WhatsApp alternativo */}
-          <a
-            href={`https://wa.me/573057502790?text=${encodeURIComponent("¡Hola! Me gustaría que me ayudaran a crear mi invitación de cumpleaños.")}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "block", width: "100%", padding: "11px 0", borderRadius: 12,
-              border: "2px solid #25D366", background: "transparent",
-              color: "#25D366", fontWeight: 700, fontSize: 14, cursor: "pointer",
-              marginBottom: 12, textAlign: "center", textDecoration: "none",
-            }}
-          >
-            Contactar por WhatsApp
-          </a>
 
           {/* Link generado */}
           {linkGenerado && (

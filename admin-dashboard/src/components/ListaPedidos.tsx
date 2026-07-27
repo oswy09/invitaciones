@@ -14,6 +14,7 @@ const TEMPLATE_INFO: Record<string, { emoji: string; nombre: string; color: stri
   "01-dino": { emoji: "🦖", nombre: "Dino", color: "bg-emerald-50 text-emerald-700" },
   "02-stork": { emoji: "🦢", nombre: "Cigüeña", color: "bg-sky-50 text-sky-700" },
   "03-space": { emoji: "🚀", nombre: "Espacio", color: "bg-indigo-50 text-indigo-700" },
+  "04-Moderna": { emoji: "💍", nombre: "Boda Moderna", color: "bg-rose-50 text-rose-700" },
 };
 
 function tiempoRelativo(fechaISO: string): string {

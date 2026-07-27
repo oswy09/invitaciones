@@ -86,6 +86,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   const countDino = pedidos.filter((p) => p.template_id === "01-dino").length;
   const countStork = pedidos.filter((p) => p.template_id === "02-stork").length;
   const countSpace = pedidos.filter((p) => p.template_id === "03-space").length;
+  const countModerna = pedidos.filter((p) => p.template_id === "04-Moderna").length;
 
   return (
     <div className="h-screen flex flex-col bg-stone-50 select-none overflow-hidden font-sans">
@@ -95,10 +96,11 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           onClick={() => { setVista("pedidos"); setSeleccionadoId(null); }}
           className="flex items-center gap-2.5 cursor-pointer select-none"
         >
-          <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center text-white">
-            <span className="font-bold text-sm font-inter">I</span>
-          </div>
-          <h1 className="text-[15px] font-bold text-stone-900 tracking-tight">Invitaciones</h1>
+          <img
+            src="https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png"
+            alt="Celebrarte"
+            className="h-8 w-auto"
+          />
         </div>
 
         {/* Navegación: segmented control */}
@@ -260,6 +262,12 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                       count={countSpace}
                       total={totalPedidos}
                       colorClass="bg-indigo-500"
+                    />
+                    <TemplateProgress
+                      name="💍 Boda Moderna"
+                      count={countModerna}
+                      total={totalPedidos}
+                      colorClass="bg-rose-400"
                     />
                   </div>
                 </div>
