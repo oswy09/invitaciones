@@ -38,7 +38,7 @@ export default function DemoPage() {
           textDecoration: "none",
         }}
       >
-        🎉 Crear mi invitación gratis →
+        Crear mi invitación gratis →
       </a>
     </main>
   )
