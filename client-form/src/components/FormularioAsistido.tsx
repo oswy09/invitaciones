@@ -141,24 +141,69 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
     const titulo = cat === "Boda" ? boda.tituloEvento : baby.tituloEvento;
     const msg = `¡Hola! Acabo de completar el formulario para mi invitación "${titulo}" (Diseño: ${selectedTemplate?.nombre}).\nCódigo de pedido: ${createdId}\nQuedo pendiente para las instrucciones de pago.`;
     const waUrl = `https://wa.me/${WHATSAPP_CONTACTO}?text=${encodeURIComponent(msg)}`;
+    const previewUrl = selectedTemplate && createdId ? `${selectedTemplate.baseUrl}/${createdId}` : null;
     return (
       <div className="max-w-xl mx-auto py-16 px-4 text-center font-sans">
         <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-xl space-y-6">
-          <div className="text-6xl">🎉</div>
-          <h2 className="text-2xl font-bold text-slate-800">¡Datos Recibidos!</h2>
-          <p className="text-slate-500 text-sm leading-relaxed">Hemos registrado tu solicitud. Haz clic abajo para notificarnos por WhatsApp y coordinar el pago.</p>
+          {/* Icono check */}
+          <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mx-auto">
+            <svg viewBox="0 0 24 24" className="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+          </div>
+
+          <div className="space-y-1.5">
+            <h2 className="text-2xl font-bold text-slate-800">¡Datos Recibidos!</h2>
+            <p className="text-slate-500 text-sm leading-relaxed">Hemos registrado tu solicitud. Notifícanos por WhatsApp para coordinar el pago y activar tu invitación.</p>
+          </div>
+
+          {/* Resumen */}
           <div className="bg-slate-50 rounded-2xl p-4 text-left border border-slate-100 space-y-1.5">
             <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Resumen</p>
             <p className="text-sm font-semibold text-slate-700">Evento: <span className="font-normal">{titulo}</span></p>
             <p className="text-sm font-semibold text-slate-700">Diseño: <span className="font-normal">{selectedTemplate?.nombre} {selectedTemplate?.emoji}</span></p>
             <p className="text-sm font-semibold text-slate-700">Código: <span className="font-mono text-xs font-normal text-slate-500">{createdId}</span></p>
           </div>
-          <div className="flex flex-col gap-3 max-w-xs mx-auto pt-2">
+
+          {/* Preview no pagado */}
+          {previewUrl && (
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 text-left space-y-2">
+              <p className="text-xs font-bold text-amber-700 uppercase tracking-wider">Vista previa disponible</p>
+              <p className="text-xs text-amber-600 leading-relaxed">Puedes ver cómo quedará tu invitación. Hasta que se confirme el pago aparecerá con marca de agua.</p>
+              <a
+                href={previewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 hover:text-amber-900 underline underline-offset-2"
+              >
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Ver mi invitación (vista previa)
+              </a>
+            </div>
+          )}
+
+          {/* Acciones */}
+          <div className="flex flex-col gap-3 max-w-xs mx-auto pt-1">
             <a href={waUrl} target="_blank" rel="noopener noreferrer"
               className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm">
               💬 Notificar por WhatsApp
             </a>
-            {onBack && <button onClick={onBack} className="text-slate-400 hover:text-slate-600 font-semibold text-sm py-2 cursor-pointer">← Volver al inicio</button>}
+            {previewUrl && (
+              <a href={previewUrl} target="_blank" rel="noopener noreferrer"
+                className="border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold px-6 py-3 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm">
+                <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Ver preview (sin pago aún)
+              </a>
+            )}
+            <a href="/" className="text-slate-400 hover:text-slate-600 font-semibold text-sm py-2 text-center">
+              ← Volver al inicio
+            </a>
           </div>
         </div>
       </div>
