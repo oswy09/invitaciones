@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { api } from "./lib/api";
 import { authClient } from "./lib/authClient";
+import { CATALOGO_ADMIN } from "./lib/catalogo";
 import { Pedido } from "./types";
 import ListaPedidos from "./components/ListaPedidos";
 import DetallePedido from "./components/DetallePedido";
 import GestionPrecios from "./components/GestionPrecios";
 import LinksFreeLista from "./components/LinksFreeLista";
+import LinksDemo from "./components/LinksDemo";
 import Login from "./components/Login";
-import { IconDollar, IconRefresh, IconTrendingUp, IconUser, IconCheckCircle, IconWarning, IconCalendar, IconTag } from "./components/Icons";
+import { IconDollar, IconRefresh, IconTrendingUp, IconUser, IconCheckCircle, IconWarning, IconTag } from "./components/Icons";
 
 export default function App() {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
@@ -30,7 +32,7 @@ export default function App() {
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [seleccionadoId, setSeleccionadoId] = useState<string | null>(null);
-  const [vista, setVista] = useState<"pedidos" | "precios" | "free">("pedidos");
+  const [vista, setVista] = useState<"pedidos" | "precios" | "free" | "links">("pedidos");
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -83,11 +85,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     .filter((p) => p.pagado)
     .reduce((acc, p) => acc + (precios[p.template_id]?.usd || (p.template_id === "02-stork" ? 18 : 20)), 0);
 
-  // Contadores por plantilla
-  const countDino = pedidos.filter((p) => p.template_id === "01-dino").length;
-  const countStork = pedidos.filter((p) => p.template_id === "02-stork").length;
-  const countSpace = pedidos.filter((p) => p.template_id === "03-space").length;
-  const countModerna = pedidos.filter((p) => p.template_id === "04-Moderna").length;
+  // Contadores por plantilla — dinámico desde el catálogo
+  const countsPorTemplate = Object.fromEntries(
+    CATALOGO_ADMIN.map((t) => [t.id, pedidos.filter((p) => p.template_id === t.id).length])
+  );
 
   return (
     <div className="h-screen flex flex-col bg-stone-50 select-none overflow-hidden font-sans">
@@ -136,6 +137,16 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           >
             Links Free
           </button>
+          <button
+            onClick={() => setVista("links")}
+            className={`text-[13px] font-semibold px-4 py-1.5 rounded-full transition-all cursor-pointer ${
+              vista === "links"
+                ? "bg-white text-stone-900 shadow-sm"
+                : "text-stone-500 hover:text-stone-700"
+            }`}
+          >
+            Demos
+          </button>
         </div>
 
         <div className="flex items-center gap-1">
@@ -162,8 +173,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
       {/* Cuerpo Principal */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar con lista — no aplica en la vista de Precios, que es ajena a un pedido puntual */}
-        {vista === "pedidos" && vista !== "free" && (
+        {/* Sidebar con lista — solo visible en vista de pedidos */}
+        {vista === "pedidos" && (
           <aside className="w-[360px] border-r border-stone-200 bg-white flex flex-col shrink-0 overflow-hidden">
             {loading ? (
               <div className="flex-1 flex flex-col items-center justify-center p-8 space-y-3">
@@ -197,6 +208,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           ) : vista === "free" ? (
             <div className="h-full overflow-y-auto">
               <LinksFreeLista />
+            </div>
+          ) : vista === "links" ? (
+            <div className="h-full overflow-y-auto">
+              <LinksDemo />
             </div>
           ) : seleccionado ? (
             <DetallePedido
@@ -260,30 +275,15 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                   </h3>
 
                   <div className="space-y-4 font-inter">
-                    <TemplateProgress
-                      name="🦖 Baby Dino"
-                      count={countDino}
-                      total={totalPedidos}
-                      colorClass="bg-emerald-500"
-                    />
-                    <TemplateProgress
-                      name="🦢 Cigüeña Dulce"
-                      count={countStork}
-                      total={totalPedidos}
-                      colorClass="bg-sky-500"
-                    />
-                    <TemplateProgress
-                      name="🚀 Aventura Espacial"
-                      count={countSpace}
-                      total={totalPedidos}
-                      colorClass="bg-indigo-500"
-                    />
-                    <TemplateProgress
-                      name="💍 Boda Moderna"
-                      count={countModerna}
-                      total={totalPedidos}
-                      colorClass="bg-rose-400"
-                    />
+                    {CATALOGO_ADMIN.map((t) => (
+                      <TemplateProgress
+                        key={t.id}
+                        name={`${t.emoji} ${t.nombre}`}
+                        count={countsPorTemplate[t.id] ?? 0}
+                        total={totalPedidos}
+                        colorClass={t.barColor}
+                      />
+                    ))}
                   </div>
                 </div>
 

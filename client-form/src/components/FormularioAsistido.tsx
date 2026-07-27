@@ -1,3 +1,4 @@
+// FormularioAsistido — campos dinámicos según categoría de plantilla
 import { useState } from "react";
 import type { InvitationData, TemplateInfo } from "../types";
 import { CATALOGO, WHATSAPP_CONTACTO } from "../types";
@@ -18,537 +19,343 @@ function slugify(text: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
+// Solo plantillas de pago (excluye las free)
+const PLANTILLAS_ASISTIDO = CATALOGO.filter((t) => !t.esFree);
+
+type Cat = "Baby Shower" | "Boda";
+
+function getCat(t: TemplateInfo): Cat {
+  return t.categoria === "Boda" ? "Boda" : "Baby Shower";
+}
+
+// ─── Estado separado por categoría ───────────────────────────────────────────
+
+interface CamposBaby {
+  tituloEvento: string; nombreBebe: string; anfitriones: string;
+  fecha: string; hora: string;
+  lugarNombre: string; lugarDireccion: string;
+  vestimenta: string; mensajePersonalizado: string; rsvpDeadline: string;
+  telefonoContacto: string; whatsappNumero: string; observaciones: string;
+}
+interface CamposBoda {
+  tituloEvento: string; nombreNovia: string; nombreNovio: string;
+  fecha: string; hora: string;
+  ceremoniaNombre: string; ceremoniaDireccion: string;
+  recepcionNombre: string; recepcionDireccion: string;
+  vestimenta: string; mensajePersonalizado: string; rsvpDeadline: string;
+  telefonoContacto: string; whatsappNumero: string; observaciones: string;
+}
+
+const BABY0: CamposBaby = { tituloEvento: "", nombreBebe: "", anfitriones: "", fecha: "", hora: "", lugarNombre: "", lugarDireccion: "", vestimenta: "", mensajePersonalizado: "", rsvpDeadline: "", telefonoContacto: "", whatsappNumero: "", observaciones: "" };
+const BODA0: CamposBoda = { tituloEvento: "", nombreNovia: "", nombreNovio: "", fecha: "", hora: "", ceremoniaNombre: "", ceremoniaDireccion: "", recepcionNombre: "", recepcionDireccion: "", vestimenta: "", mensajePersonalizado: "", rsvpDeadline: "", telefonoContacto: "", whatsappNumero: "", observaciones: "" };
+
 export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) {
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateInfo | null>(null);
-
-  // Campos del Formulario
-  const [tituloEvento, setTituloEvento] = useState("");
-  const [nombrePrincipal, setNombrePrincipal] = useState("");
-  const [anfitriones, setAnfitriones] = useState("");
-  const [fecha, setFecha] = useState("");
-  const [hora, setHora] = useState("");
-  
-  const [lugarNombre, setLugarNombre] = useState("");
-  const [lugarDireccion, setLugarDireccion] = useState("");
-  
-  const [vestimenta, setVestimenta] = useState("");
-  const [whatsappNumero, setWhatsappNumero] = useState("");
-  const [rsvpDeadline, setRsvpDeadline] = useState("");
-  const [mensajePersonalizado, setMensajePersonalizado] = useState("");
+  const [baby, setBaby] = useState<CamposBaby>(BABY0);
+  const [boda, setBoda] = useState<CamposBoda>(BODA0);
   const [cancion, setCancion] = useState<CancionSeleccionada | null>(null);
-  
-  const [features, setFeatures] = useState({
-    muroDeseos: true,
-    rsvp: true,
-    countdown: true,
-    mapa: true,
-    musica: false,
-  });
-
-  const [observaciones, setObservaciones] = useState("");
-  const [telefonoContacto, setTelefonoContacto] = useState("");
-
+  const [features, setFeatures] = useState({ muroDeseos: true, rsvp: true, countdown: true, mapa: true, musica: false });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [createdId, setCreatedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  function updateFeature(key: keyof typeof features, val: boolean) {
-    setFeatures((prev) => ({ ...prev, [key]: val }));
-  }
+  const cat: Cat | null = selectedTemplate ? getCat(selectedTemplate) : null;
+
+  function sb<K extends keyof CamposBaby>(k: K, v: string) { setBaby((p) => ({ ...p, [k]: v })); }
+  function sw<K extends keyof CamposBoda>(k: K, v: string) { setBoda((p) => ({ ...p, [k]: v })); }
+  function updateFeature(key: keyof typeof features, val: boolean) { setFeatures((p) => ({ ...p, [key]: val })); }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!selectedTemplate) { setError("Por favor, selecciona el diseño de tu invitación."); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
 
-    if (!selectedTemplate) {
-      setError("Por favor, selecciona el tema o diseño de tu invitación.");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
+    const tituloEvento = cat === "Boda" ? boda.tituloEvento : baby.tituloEvento;
+    const fecha = cat === "Boda" ? boda.fecha : baby.fecha;
+    const telefonoContacto = cat === "Boda" ? boda.telefonoContacto : baby.telefonoContacto;
+    const whatsappNumero = cat === "Boda" ? boda.whatsappNumero : baby.whatsappNumero;
 
-    if (!tituloEvento.trim() || !nombrePrincipal.trim() || !fecha.trim() || !telefonoContacto.trim() || !whatsappNumero.trim()) {
-      setError("Completa los campos requeridos marcados con asterisco (*). Ambos números de contacto son obligatorios.");
-      return;
+    if (!tituloEvento.trim() || !fecha.trim() || !telefonoContacto.trim() || !whatsappNumero.trim()) {
+      setError("Completa los campos obligatorios marcados con *."); return;
     }
 
     const templateId = selectedTemplate.id;
-    const eventoId = `contacto-${slugify(nombrePrincipal)}-${slugify(templateId)}-${Date.now().toString(36)}`;
+    const nombreRef = cat === "Boda" ? (boda.nombreNovia || boda.nombreNovio) : baby.nombreBebe;
+    const eventoId = `contacto-${slugify(nombreRef || tituloEvento)}-${slugify(templateId)}-${Date.now().toString(36)}`;
 
-    // Datos estructurados en InvitationData
     const datosFinal: InvitationData = {
-      eventoId,
-      templateId,
-      pagado: false,
-      tituloEvento: tituloEvento,
-      nombresPrincipales: [nombrePrincipal],
-      anfitriones: anfitriones,
-      fecha: fecha,
-      hora: hora,
+      eventoId, templateId, pagado: false, asistido: true,
+      tituloEvento,
+      nombresPrincipales: cat === "Boda" ? [boda.nombreNovia, boda.nombreNovio].filter(Boolean) : [baby.nombreBebe].filter(Boolean),
+      anfitriones: cat === "Baby Shower" ? (baby.anfitriones || undefined) : undefined,
+      fecha, hora: cat === "Boda" ? boda.hora : baby.hora,
       lugar: {
-        nombre: lugarNombre,
-        direccion: lugarDireccion,
-        mapUrl: "", // Se asigna en admin
+        nombre: cat === "Boda" ? boda.recepcionNombre : baby.lugarNombre,
+        direccion: cat === "Boda" ? boda.recepcionDireccion : baby.lugarDireccion,
+        mapUrl: "",
       },
-      vestimenta: vestimenta,
-      mensajePersonalizado: mensajePersonalizado,
-      whatsappNumero: whatsappNumero,
-      features: features,
+      vestimenta: (cat === "Boda" ? boda.vestimenta : baby.vestimenta) || undefined,
+      mensajePersonalizado: (cat === "Boda" ? boda.mensajePersonalizado : baby.mensajePersonalizado) || undefined,
+      whatsappNumero,
+      features,
       extra: {
         origen: "formulario_contacto",
-        rsvpDeadline: rsvpDeadline,
+        rsvpDeadline: cat === "Boda" ? boda.rsvpDeadline : baby.rsvpDeadline,
         cancionSeleccionada: cancion,
-        observaciones: observaciones,
-        telefonoContacto: telefonoContacto,
-      }
+        observaciones: cat === "Boda" ? boda.observaciones : baby.observaciones,
+        telefonoContacto,
+        ...(cat === "Boda" && { ceremoniaNombre: boda.ceremoniaNombre, ceremoniaDireccion: boda.ceremoniaDireccion }),
+      },
     };
 
     setSubmitting(true);
     const { error: insertError } = await supabase.from("eventos").insert({
-      id: eventoId,
-      template_id: templateId,
-      nombre_evento: tituloEvento,
-      fecha_evento: fecha,
-      datos: datosFinal,
-      pagado: false,
-      aprobado: false,
+      id: eventoId, template_id: templateId, nombre_evento: tituloEvento,
+      fecha_evento: fecha, datos: datosFinal, pagado: false, aprobado: false,
     });
     setSubmitting(false);
-
-    if (insertError) {
-      setError(`No se pudo enviar la solicitud: ${insertError.message}`);
-      return;
-    }
-
+    if (insertError) { setError(`No se pudo enviar: ${insertError.message}`); return; }
     setCreatedId(eventoId);
     setSubmitted(true);
   }
 
+  // ── Pantalla de éxito ──────────────────────────────────────────────────────
   if (submitted) {
-    const mensajeWhatsapp =
-      `¡Hola! Acabo de completar el formulario para mi invitación "${tituloEvento}" (Tema: ${selectedTemplate?.nombre}).\n` +
-      `Código de pedido: ${createdId}\n` +
-      `Quedo pendiente para las instrucciones de pago.`;
-    
-    const whatsappUrl = `https://wa.me/${WHATSAPP_CONTACTO}?text=${encodeURIComponent(mensajeWhatsapp)}`;
-
+    const titulo = cat === "Boda" ? boda.tituloEvento : baby.tituloEvento;
+    const msg = `¡Hola! Acabo de completar el formulario para mi invitación "${titulo}" (Diseño: ${selectedTemplate?.nombre}).\nCódigo de pedido: ${createdId}\nQuedo pendiente para las instrucciones de pago.`;
+    const waUrl = `https://wa.me/${WHATSAPP_CONTACTO}?text=${encodeURIComponent(msg)}`;
     return (
       <div className="max-w-xl mx-auto py-16 px-4 text-center font-sans">
         <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-xl space-y-6">
-          <div className="text-6xl animate-bounce">🎉</div>
-          <h2 className="text-2xl font-bold text-slate-800">¡Datos Recibidos Exitosamente!</h2>
-          <p className="text-slate-500 leading-relaxed text-sm">
-            Hemos registrado toda la información para tu invitación digital. Ahora, por favor haz clic en el botón de abajo para reportar tu envío por WhatsApp y coordinar el pago de activación.
-          </p>
-          
-          <div className="bg-slate-50 rounded-2xl p-4 text-left border border-slate-100 space-y-2">
-            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Resumen del registro</p>
-            <p className="text-sm font-semibold text-slate-700">Evento: <span className="font-normal">{tituloEvento}</span></p>
-            <p className="text-sm font-semibold text-slate-700">Diseño seleccionado: <span className="font-normal">{selectedTemplate?.nombre} {selectedTemplate?.emoji}</span></p>
-            <p className="text-sm font-semibold text-slate-700">Código de Pedido: <span className="font-mono text-xs font-normal text-slate-500">{createdId}</span></p>
+          <div className="text-6xl">🎉</div>
+          <h2 className="text-2xl font-bold text-slate-800">¡Datos Recibidos!</h2>
+          <p className="text-slate-500 text-sm leading-relaxed">Hemos registrado tu solicitud. Haz clic abajo para notificarnos por WhatsApp y coordinar el pago.</p>
+          <div className="bg-slate-50 rounded-2xl p-4 text-left border border-slate-100 space-y-1.5">
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Resumen</p>
+            <p className="text-sm font-semibold text-slate-700">Evento: <span className="font-normal">{titulo}</span></p>
+            <p className="text-sm font-semibold text-slate-700">Diseño: <span className="font-normal">{selectedTemplate?.nombre} {selectedTemplate?.emoji}</span></p>
+            <p className="text-sm font-semibold text-slate-700">Código: <span className="font-mono text-xs font-normal text-slate-500">{createdId}</span></p>
           </div>
-
-          <div className="flex flex-col gap-3 max-w-xs mx-auto pt-4">
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3.5 rounded-2xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer text-sm"
-            >
-              💬 Notificar Envío por WhatsApp
+          <div className="flex flex-col gap-3 max-w-xs mx-auto pt-2">
+            <a href={waUrl} target="_blank" rel="noopener noreferrer"
+              className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm">
+              💬 Notificar por WhatsApp
             </a>
-            {onBack && (
-              <button
-                onClick={onBack}
-                className="text-slate-500 hover:text-slate-700 font-semibold px-6 py-3 cursor-pointer text-sm"
-              >
-                ← Volver al inicio
-              </button>
-            )}
+            {onBack && <button onClick={onBack} className="text-slate-400 hover:text-slate-600 font-semibold text-sm py-2 cursor-pointer">← Volver al inicio</button>}
           </div>
         </div>
       </div>
     );
   }
 
+  // ── Formulario ─────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4 font-sans text-slate-755">
+    <div className="min-h-screen bg-slate-50 py-12 px-4 font-sans">
       <div className="max-w-2xl mx-auto space-y-8">
-        
-        {/* Encabezado */}
         <div className="text-center space-y-2">
-          {onBack && (
-            <button
-              onClick={onBack}
-              className="text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider cursor-pointer mb-2"
-            >
-              ← Volver al Catálogo
-            </button>
-          )}
-          <h1 className="text-3xl font-extrabold text-slate-800">Formulario de Registro</h1>
-          <p className="text-slate-500 text-sm max-w-md mx-auto leading-relaxed">
-            Completa la información que deseas incluir en tu invitación. Nosotros nos encargaremos de configurar todo en base a tus respuestas.
-          </p>
+          {onBack && <button onClick={onBack} className="text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider cursor-pointer mb-2">← Volver al Catálogo</button>}
+          <h1 className="text-3xl font-extrabold text-slate-800">Formulario de Pedido</h1>
+          <p className="text-slate-500 text-sm max-w-md mx-auto leading-relaxed">Elige el diseño y completa los datos. Nosotros configuramos todo y te contactamos para el pago.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          
-          {/* SECCIÓN 1: Selección de Tema */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
-            <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
-              <span className="bg-violet-50 text-violet-600 text-xs w-6 h-6 rounded-full inline-flex items-center justify-center font-bold">1</span>
-              <span>Selecciona la plantilla de tu invitación *</span>
-            </h2>
-            <p className="text-xs text-slate-400">Escoge el diseño base que te gustaría usar para el evento:</p>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {CATALOGO.map((t) => {
-                const isSelected = selectedTemplate?.id === t.id;
-                const imagePath = `/${t.id.replace("01-", "dino_").replace("02-", "stork_").replace("03-", "space_")}_mockup.png`;
-                
+
+          {/* PASO 1: Plantilla */}
+          <Section num={1} title="Selecciona el diseño de tu invitación *">
+            <p className="text-xs text-slate-400 mb-3">El precio y las funciones dependen del diseño elegido.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {PLANTILLAS_ASISTIDO.map((t) => {
+                const isSel = selectedTemplate?.id === t.id;
                 return (
-                  <div
-                    key={t.id}
-                    onClick={() => setSelectedTemplate(t)}
-                    className={`bg-white border rounded-2xl overflow-hidden cursor-pointer transition-all flex flex-col justify-between ${
-                      isSelected
-                        ? "border-violet-600 ring-2 ring-violet-500/20 shadow-md"
-                        : "border-slate-200 hover:border-slate-300 hover:shadow-xs"
-                    }`}
-                  >
-                    <div className="relative aspect-video sm:aspect-square bg-slate-100 overflow-hidden">
-                      <img
-                        src={imagePath}
-                        alt={`Mockup de ${t.nombre}`}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    </div>
-                    <div className="p-3 text-center">
-                      <p className="font-bold text-xs text-slate-800">{t.nombre} {t.emoji}</p>
+                  <div key={t.id} onClick={() => setSelectedTemplate(t)}
+                    className={`bg-white border rounded-2xl overflow-hidden cursor-pointer transition-all flex gap-3 items-center p-3 ${isSel ? "border-violet-600 ring-2 ring-violet-500/20 shadow-md" : "border-slate-200 hover:border-slate-300"}`}>
+                    {t.previewImg
+                      ? <img src={t.previewImg} alt={t.nombre} className="w-14 h-14 rounded-xl object-cover shrink-0" />
+                      : <div className="w-14 h-14 rounded-xl shrink-0 flex items-center justify-center text-3xl" style={{ background: "linear-gradient(135deg,#f0eaf5,#e8dcef)" }}>{t.emoji}</div>
+                    }
+                    <div>
+                      <p className="font-bold text-sm text-slate-800">{t.emoji} {t.nombre}</p>
+                      <p className="text-[11px] text-slate-400 leading-snug mt-0.5">{t.descripcion}</p>
+                      <p className="text-[11px] font-bold text-violet-600 mt-1">${t.precioDefault.cop.toLocaleString("es-CO")} COP</p>
                     </div>
                   </div>
                 );
               })}
             </div>
-          </div>
+          </Section>
 
-          {/* SECCIÓN 2: Información Básica */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
-            <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
-              <span className="bg-violet-50 text-violet-600 text-xs w-6 h-6 rounded-full inline-flex items-center justify-center font-bold">2</span>
-              <span>Información Básica del Evento</span>
-            </h2>
-            
-            <div className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                  Título del Evento *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej: Baby Shower de Martina"
-                  value={tituloEvento}
-                  onChange={(e) => setTituloEvento(e.target.value)}
-                  className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                    Nombre Principal *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ej: Martina"
-                    value={nombrePrincipal}
-                    onChange={(e) => setNombrePrincipal(e.target.value)}
-                    className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30"
-                  />
-                  <p className="text-[10px] text-slate-400">El nombre del bebé o festejado principal.</p>
+          {/* PASO 2: Campos dinámicos — Baby Shower */}
+          {cat === "Baby Shower" && (
+            <Section num={2} title="Datos del Baby Shower">
+              <div className="space-y-4">
+                <IField label="Título del Evento *" placeholder="Ej: Baby Shower de Martina" value={baby.tituloEvento} onChange={(v) => sb("tituloEvento", v)} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <IField label="Nombre del bebé *" placeholder="Ej: Martina" value={baby.nombreBebe} onChange={(v) => sb("nombreBebe", v)} hint="Nombre que aparecerá en la invitación." />
+                  <IField label="Anfitriones (Opcional)" placeholder="Ej: Sus papitos Sofía y Alejandro" value={baby.anfitriones} onChange={(v) => sb("anfitriones", v)} />
                 </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                    Anfitriones (Opcional)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: Sus papitos Sofía y Alejandro"
-                    value={anfitriones}
-                    onChange={(e) => setAnfitriones(e.target.value)}
-                    className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <IField label="Fecha *" type="date" value={baby.fecha} onChange={(v) => sb("fecha", v)} />
+                  <IField label="Hora" type="time" value={baby.hora} onChange={(v) => sb("hora", v)} />
                 </div>
+                <IField label="Lugar / Salón (Opcional)" placeholder="Ej: Salón Social del Club" value={baby.lugarNombre} onChange={(v) => sb("lugarNombre", v)} />
+                <IField label="Dirección (Opcional)" placeholder="Ej: Av. Las Américas # 24-50" value={baby.lugarDireccion} onChange={(v) => sb("lugarDireccion", v)} />
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                    Fecha *
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={fecha}
-                    onChange={(e) => setFecha(e.target.value)}
-                    className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                    Hora (Opcional)
-                  </label>
-                  <input
-                    type="time"
-                    value={hora}
-                    onChange={(e) => setHora(e.target.value)}
-                    className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* SECCIÓN 3: Lugar y Dirección */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
-            <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
-              <span className="bg-violet-50 text-violet-600 text-xs w-6 h-6 rounded-full inline-flex items-center justify-center font-bold">3</span>
-              <span>Lugar y Ubicación</span>
-            </h2>
-            
-            <div className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                  Nombre del Lugar / Salón (Opcional)
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ej: Salón Social Club Campestre o Casa de los abuelos"
-                  value={lugarNombre}
-                  onChange={(e) => setLugarNombre(e.target.value)}
-                  className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                  Dirección Física (Opcional)
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ej: Av. Las Américas # 24-50, Apto 402"
-                  value={lugarDireccion}
-                  onChange={(e) => setLugarDireccion(e.target.value)}
-                  className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* SECCIÓN 4: Detalles Adicionales */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
-            <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
-              <span className="bg-violet-50 text-violet-600 text-xs w-6 h-6 rounded-full inline-flex items-center justify-center font-bold">4</span>
-              <span>Detalles de la Invitación</span>
-            </h2>
-            
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                    Código de Vestimenta (Opcional)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: Casual de blanco / Semiformal"
-                    value={vestimenta}
-                    onChange={(e) => setVestimenta(e.target.value)}
-                    className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                    Fecha límite RSVP (Opcional)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: 14 de Julio"
-                    value={rsvpDeadline}
-                    onChange={(e) => setRsvpDeadline(e.target.value)}
-                    className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                  Mensaje de Bienvenida / Párrafo Intro (Opcional)
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="Ej: Acompáñanos a compartir una mañana especial al aire libre llena de amor..."
-                  value={mensajePersonalizado}
-                  onChange={(e) => setMensajePersonalizado(e.target.value)}
-                  className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30 resize-none"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                  Canción de Fondo de Preferencia (Opcional)
-                </label>
-                <BuscadorCancion value={cancion} onChange={setCancion} />
-                <p className="text-[10px] text-slate-400">Busca la canción para vincular al reproductor de música.</p>
-              </div>
-            </div>
-          </div>
-
-          {/* SECCIÓN 5: Características/Módulos */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
-            <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
-              <span className="bg-violet-50 text-violet-600 text-xs w-6 h-6 rounded-full inline-flex items-center justify-center font-bold">5</span>
-              <span>Activar Módulos Adicionales</span>
-            </h2>
-            <p className="text-xs text-slate-400">Elige qué secciones especiales quieres que se muestren en tu tarjeta:</p>
-            
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              <label className="flex items-center gap-2.5 p-3 border border-slate-200 rounded-xl cursor-pointer select-none hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={features.muroDeseos}
-                  onChange={(e) => updateFeature("muroDeseos", e.target.checked)}
-                  className="w-4 h-4 rounded text-violet-600 focus:ring-violet-500/20 border-slate-300"
-                />
-                <span className="text-xs font-semibold text-slate-700">Muro de Deseos</span>
-              </label>
-
-              <label className="flex items-center gap-2.5 p-3 border border-slate-200 rounded-xl cursor-pointer select-none hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={features.rsvp}
-                  onChange={(e) => updateFeature("rsvp", e.target.checked)}
-                  className="w-4 h-4 rounded text-violet-600 focus:ring-violet-500/20 border-slate-300"
-                />
-                <span className="text-xs font-semibold text-slate-700">Formulario RSVP</span>
-              </label>
-
-              <label className="flex items-center gap-2.5 p-3 border border-slate-200 rounded-xl cursor-pointer select-none hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={features.countdown}
-                  onChange={(e) => updateFeature("countdown", e.target.checked)}
-                  className="w-4 h-4 rounded text-violet-600 focus:ring-violet-500/20 border-slate-300"
-                />
-                <span className="text-xs font-semibold text-slate-700">Cuenta Regresiva</span>
-              </label>
-
-              <label className="flex items-center gap-2.5 p-3 border border-slate-200 rounded-xl cursor-pointer select-none hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={features.mapa}
-                  onChange={(e) => updateFeature("mapa", e.target.checked)}
-                  className="w-4 h-4 rounded text-violet-600 focus:ring-violet-500/20 border-slate-300"
-                />
-                <span className="text-xs font-semibold text-slate-700">Mapa de Ubicación</span>
-              </label>
-
-              <label className="flex items-center gap-2.5 p-3 border border-slate-200 rounded-xl cursor-pointer select-none hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={features.musica}
-                  onChange={(e) => updateFeature("musica", e.target.checked)}
-                  className="w-4 h-4 rounded text-violet-600 focus:ring-violet-500/20 border-slate-300"
-                />
-                <span className="text-xs font-semibold text-slate-700">Reproducción Música</span>
-              </label>
-            </div>
-          </div>
-
-          {/* SECCIÓN 6: Datos de Contacto y Seguimiento */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
-            <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
-              <span className="bg-violet-50 text-violet-600 text-xs w-6 h-6 rounded-full inline-flex items-center justify-center font-bold">6</span>
-              <span>Datos de Contacto (Para Coordinación) *</span>
-            </h2>
-            <p className="text-xs text-slate-400">Usaremos esta información de contacto para escribirte y coordinar los detalles.</p>
-            
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                    Tu número de Celular / WhatsApp *
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="Ej: +57 305 750 2790"
-                    value={telefonoContacto}
-                    onChange={(e) => setTelefonoContacto(e.target.value)}
-                    className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                    WhatsApp para Confirmaciones RSVP *
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="Ej: 573000000000 (Sin símbolos ni espacios)"
-                    value={whatsappNumero}
-                    onChange={(e) => setWhatsappNumero(e.target.value)}
-                    className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30"
-                  />
-                  <p className="text-[10px] text-slate-400">El número al que llegarán las confirmaciones por WhatsApp.</p>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                  Observaciones adicionales / Notas internas (Opcional)
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="Detalles adicionales para administración (ej: color de fondo preferido, enlaces a listas de regalos particulares, etc.)."
-                  value={observaciones}
-                  onChange={(e) => setObservaciones(e.target.value)}
-                  className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30 resize-none"
-                />
-              </div>
-            </div>
-          </div>
-
-          {error && (
-            <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs p-4 rounded-2xl font-semibold">
-              ⚠️ {error}
-            </div>
+            </Section>
           )}
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full bg-violet-600 hover:bg-violet-750 disabled:opacity-50 text-white font-extrabold py-4 rounded-2xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer text-sm"
-          >
-            {submitting ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Registrando Datos...</span>
-              </>
-            ) : (
-              <span>Enviar Información y Registrar Pedido ➔</span>
-            )}
+          {/* PASO 2: Campos dinámicos — Boda */}
+          {cat === "Boda" && (
+            <Section num={2} title="Datos de la Boda">
+              <div className="space-y-4">
+                <IField label="Título del Evento *" placeholder="Ej: Matrimonio de Valentina & Santiago" value={boda.tituloEvento} onChange={(v) => sw("tituloEvento", v)} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <IField label="Nombre de la novia *" placeholder="Ej: Valentina" value={boda.nombreNovia} onChange={(v) => sw("nombreNovia", v)} />
+                  <IField label="Nombre del novio *" placeholder="Ej: Santiago" value={boda.nombreNovio} onChange={(v) => sw("nombreNovio", v)} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <IField label="Fecha *" type="date" value={boda.fecha} onChange={(v) => sw("fecha", v)} />
+                  <IField label="Hora" type="time" value={boda.hora} onChange={(v) => sw("hora", v)} />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider pt-1">Ceremonia</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <IField label="Lugar de ceremonia" placeholder="Ej: Iglesia San Ignacio" value={boda.ceremoniaNombre} onChange={(v) => sw("ceremoniaNombre", v)} />
+                  <IField label="Dirección" placeholder="Ej: Cra 7 #40-62, Bogotá" value={boda.ceremoniaDireccion} onChange={(v) => sw("ceremoniaDireccion", v)} />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider pt-1">Recepción</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <IField label="Salón / Hacienda" placeholder="Ej: Hacienda El Rosal" value={boda.recepcionNombre} onChange={(v) => sw("recepcionNombre", v)} />
+                  <IField label="Dirección" placeholder="Ej: Vía Chía km 3" value={boda.recepcionDireccion} onChange={(v) => sw("recepcionDireccion", v)} />
+                </div>
+              </div>
+            </Section>
+          )}
+
+          {/* PASO 3: Personalización (solo si eligió plantilla) */}
+          {cat && (
+            <>
+              <Section num={3} title="Personalización adicional">
+                <div className="space-y-4">
+                  <IField
+                    label="Código de vestimenta (Opcional)"
+                    placeholder={cat === "Boda" ? "Ej: Formal / Cóctel" : "Ej: Casual, tonos pasteles"}
+                    value={cat === "Boda" ? boda.vestimenta : baby.vestimenta}
+                    onChange={(v) => cat === "Boda" ? sw("vestimenta", v) : sb("vestimenta", v)}
+                  />
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                      {cat === "Boda" ? "Mensaje de los novios (Opcional)" : "Mensaje de bienvenida (Opcional)"}
+                    </label>
+                    <textarea rows={3}
+                      placeholder={cat === "Boda" ? "Ej: Con mucha alegría los invitamos a compartir este día..." : "Ej: Acompáñanos a compartir este momento tan especial..."}
+                      value={cat === "Boda" ? boda.mensajePersonalizado : baby.mensajePersonalizado}
+                      onChange={(e) => cat === "Boda" ? sw("mensajePersonalizado", e.target.value) : sb("mensajePersonalizado", e.target.value)}
+                      className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30 resize-none"
+                    />
+                  </div>
+                  <IField
+                    label="Fecha límite confirmación (Opcional)"
+                    placeholder="Ej: 20 de Agosto"
+                    value={cat === "Boda" ? boda.rsvpDeadline : baby.rsvpDeadline}
+                    onChange={(v) => cat === "Boda" ? sw("rsvpDeadline", v) : sb("rsvpDeadline", v)}
+                  />
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Canción de fondo de preferencia (Opcional)</label>
+                    <BuscadorCancion value={cancion} onChange={setCancion} />
+                    <p className="text-[10px] text-slate-400">Busca y selecciona la canción para el reproductor.</p>
+                  </div>
+                </div>
+              </Section>
+
+              {/* PASO 4: Módulos */}
+              <Section num={4} title="Activar módulos adicionales">
+                <p className="text-xs text-slate-400 mb-3">Elige qué secciones quieres en tu invitación:</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <CkFeat label="Muro de Deseos" checked={features.muroDeseos} onChange={(v) => updateFeature("muroDeseos", v)} />
+                  <CkFeat label="Formulario RSVP" checked={features.rsvp} onChange={(v) => updateFeature("rsvp", v)} />
+                  <CkFeat label="Cuenta Regresiva" checked={features.countdown} onChange={(v) => updateFeature("countdown", v)} />
+                  <CkFeat label="Mapa de Ubicación" checked={features.mapa} onChange={(v) => updateFeature("mapa", v)} />
+                  <CkFeat label="Música de Fondo" checked={features.musica} onChange={(v) => updateFeature("musica", v)} />
+                </div>
+              </Section>
+
+              {/* PASO 5: Contacto */}
+              <Section num={5} title="Tus datos de contacto *">
+                <p className="text-xs text-slate-400 mb-3">Los usamos para coordinar los detalles y el pago contigo.</p>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <IField label="Tu WhatsApp / Celular *" type="tel" placeholder="+57 305 750 2790"
+                      value={cat === "Boda" ? boda.telefonoContacto : baby.telefonoContacto}
+                      onChange={(v) => cat === "Boda" ? sw("telefonoContacto", v) : sb("telefonoContacto", v)} />
+                    <div>
+                      <IField label="WhatsApp para confirmaciones RSVP *" type="tel" placeholder="573057502790 (sin espacios)"
+                        value={cat === "Boda" ? boda.whatsappNumero : baby.whatsappNumero}
+                        onChange={(v) => cat === "Boda" ? sw("whatsappNumero", v) : sb("whatsappNumero", v)} />
+                      <p className="text-[10px] text-slate-400 mt-1">Número al que llegarán las confirmaciones de asistencia.</p>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Observaciones / Notas adicionales (Opcional)</label>
+                    <textarea rows={3}
+                      placeholder="Ej: color de fondo preferido, link de lista de regalos, detalles especiales..."
+                      value={cat === "Boda" ? boda.observaciones : baby.observaciones}
+                      onChange={(e) => cat === "Boda" ? sw("observaciones", e.target.value) : sb("observaciones", e.target.value)}
+                      className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30 resize-none"
+                    />
+                  </div>
+                </div>
+              </Section>
+            </>
+          )}
+
+          {error && (
+            <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs p-4 rounded-2xl font-semibold">⚠️ {error}</div>
+          )}
+
+          <button type="submit" disabled={submitting || !selectedTemplate}
+            className="w-full bg-[#5A1B5E] hover:bg-[#4a1650] disabled:opacity-40 text-white font-extrabold py-4 rounded-2xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer text-sm">
+            {submitting
+              ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /><span>Enviando...</span></>
+              : <span>Enviar solicitud y registrar pedido →</span>
+            }
           </button>
+          {!selectedTemplate && <p className="text-center text-xs text-slate-400">Elige un diseño para continuar.</p>}
         </form>
       </div>
     </div>
+  );
+}
+
+// ── Auxiliares ────────────────────────────────────────────────────────────────
+function Section({ num, title, children }: { num: number; title: string; children: React.ReactNode }) {
+  return (
+    <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
+      <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
+        <span className="bg-violet-50 text-violet-600 text-xs w-6 h-6 rounded-full inline-flex items-center justify-center font-bold shrink-0">{num}</span>
+        <span>{title}</span>
+      </h2>
+      {children}
+    </div>
+  );
+}
+
+function IField({ label, placeholder, value, onChange, type = "text", hint }: { label: string; placeholder?: string; value: string; onChange: (v: string) => void; type?: string; hint?: string }) {
+  return (
+    <div className="space-y-1">
+      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">{label}</label>
+      {hint && <p className="text-[10px] text-slate-400">{hint}</p>}
+      <input type={type} placeholder={placeholder} value={value} onChange={(e) => onChange(e.target.value)}
+        className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30" />
+    </div>
+  );
+}
+
+function CkFeat({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <label className="flex items-center gap-2.5 p-3 border border-slate-200 rounded-xl cursor-pointer select-none hover:bg-slate-50">
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)}
+        className="w-4 h-4 rounded text-violet-600 focus:ring-violet-500/20 border-slate-300" />
+      <span className="text-xs font-semibold text-slate-700">{label}</span>
+    </label>
   );
 }

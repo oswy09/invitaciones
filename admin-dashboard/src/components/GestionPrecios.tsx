@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import { api } from "../lib/api";
-import { IconDollar, IconRefresh, IconCheckCircle, IconWarning } from "./Icons";
+import { CATALOGO_ADMIN } from "../lib/catalogo";
+import { IconDollar, IconCheckCircle, IconWarning } from "./Icons";
 
-const TRM = 4200; // tasa de cambio COP → USD
+const TRM = 4200;
+
+// Solo plantillas de pago tienen precio configurable
+const PLANTILLAS_PRECIO = CATALOGO_ADMIN.filter((t) => !t.esFree);
+
+function defaultPrecios() {
+  return Object.fromEntries(PLANTILLAS_PRECIO.map((t) => [t.id, t.precioDefault]));
+}
 
 export default function GestionPrecios() {
-  const [precios, setPrecios] = useState<Record<string, { cop: number; usd: number }>>({
-    "01-dino": { cop: 70000, usd: 20 },
-    "02-stork": { cop: 60000, usd: 18 },
-    "03-space": { cop: 70000, usd: 20 },
-    "04-Moderna": { cop: 80000, usd: 22 },
-  });
+  const [precios, setPrecios] = useState<Record<string, { cop: number; usd: number }>>(defaultPrecios());
   // Valores crudos de los inputs (string para no perder el cursor al teclear)
   const [rawCop, setRawCop] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
@@ -69,12 +72,7 @@ export default function GestionPrecios() {
     );
   }
 
-  const templates = [
-    { id: "01-dino", nombre: "🦖 Dino", desc: "Baby shower de dinosaurios", bg: "bg-emerald-50/50 border-emerald-100" },
-    { id: "02-stork", nombre: "🦢 Cigüeña", desc: "Baby shower de cigüeña", bg: "bg-sky-50/50 border-sky-100" },
-    { id: "03-space", nombre: "🚀 Espacio", desc: "Baby shower espacial", bg: "bg-indigo-50/50 border-indigo-100" },
-    { id: "04-Moderna", nombre: "💍 Boda Moderna", desc: "Invitación de boda elegante", bg: "bg-rose-50/50 border-rose-100" },
-  ];
+  // Usa PLANTILLAS_PRECIO del catálogo compartido — automático al agregar templates
 
   return (
     <div className="p-8 space-y-8 overflow-y-auto h-full max-w-2xl mx-auto">
@@ -91,14 +89,14 @@ export default function GestionPrecios() {
 
       <form onSubmit={handleSave} className="space-y-6">
         <div className="space-y-4">
-          {templates.map((t) => {
-            const priceInfo = precios[t.id] ?? { cop: 0, usd: 0 };
+          {PLANTILLAS_PRECIO.map((t) => {
+            const priceInfo = precios[t.id] ?? t.precioDefault;
             return (
               <div key={t.id} className={`bg-white border rounded-2xl p-5 shadow-sm space-y-4 transition-all hover:shadow-md border-stone-200`}>
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-bold text-stone-800 text-sm">{t.nombre}</h3>
-                    <p className="text-xs text-stone-400 font-inter mt-0.5">{t.desc}</p>
+                    <h3 className="font-bold text-stone-800 text-sm">{t.emoji} {t.nombre}</h3>
+                    <p className="text-xs text-stone-400 font-inter mt-0.5">{t.descripcion}</p>
                   </div>
                   <span className="text-[10px] font-bold font-inter bg-stone-100 border border-stone-200 text-stone-500 px-2 py-0.5 rounded-md uppercase">
                     ID: {t.id}

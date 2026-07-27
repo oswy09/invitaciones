@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Pedido } from "../types";
+import { CATALOGO_ADMIN } from "../lib/catalogo";
 import { IconSearch } from "./Icons";
 
 interface ListaPedidosProps {
@@ -10,12 +11,10 @@ interface ListaPedidosProps {
 
 type FiltroEstado = "todos" | "pagados" | "sin_pagar" | "pendientes_aprobacion" | "asistidos" | "contacto";
 
-const TEMPLATE_INFO: Record<string, { emoji: string; nombre: string; color: string }> = {
-  "01-dino": { emoji: "🦖", nombre: "Dino", color: "bg-emerald-50 text-emerald-700" },
-  "02-stork": { emoji: "🦢", nombre: "Cigüeña", color: "bg-sky-50 text-sky-700" },
-  "03-space": { emoji: "🚀", nombre: "Espacio", color: "bg-indigo-50 text-indigo-700" },
-  "04-Moderna": { emoji: "💍", nombre: "Boda Moderna", color: "bg-rose-50 text-rose-700" },
-};
+// Generado dinámicamente desde el catálogo — automático al agregar templates
+const TEMPLATE_INFO: Record<string, { emoji: string; nombre: string; color: string }> = Object.fromEntries(
+  CATALOGO_ADMIN.map((t) => [t.id, { emoji: t.emoji, nombre: t.nombre, color: t.colorChip }])
+);
 
 function tiempoRelativo(fechaISO: string): string {
   const diffMs = Date.now() - new Date(fechaISO).getTime();
