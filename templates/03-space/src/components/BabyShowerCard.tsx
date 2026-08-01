@@ -583,13 +583,15 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
               ))}
             </div>
           </div>
-          <a
-            href="https://celebrarte.com.co/plantillas?open=03-space"
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-2 px-5 py-3 rounded-full font-bold text-sm text-white shadow-lg"
-            style={{ background: "linear-gradient(135deg,#5A1B5E,#7A2E8A)", whiteSpace: "nowrap" }}
-          >
-            Personalizar esta invitación →
-          </a>
+          {!isPreview && (
+            <a
+              href="https://celebrarte.com.co/plantillas?open=03-space"
+              className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-2 px-5 py-3 rounded-full font-bold text-sm text-white shadow-lg"
+              style={{ background: "linear-gradient(135deg,#5A1B5E,#7A2E8A)", whiteSpace: "nowrap" }}
+            >
+              Personalizar esta invitación →
+            </a>
+          )}
         </>
       )}
       <style>{`
