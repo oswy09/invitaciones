@@ -393,7 +393,7 @@ const GOLD_TEXT = "#7A5C10";
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {CATALOGO.map((t) => (
-              <a href={`/plantillas?open=${t.id}`} class="tcard">
+              <a href="/plantillas" data-open={t.id} class="tcard" onclick={`event.preventDefault();sessionStorage.setItem('openTemplate','${t.id}');window.location.href='/plantillas';`}>
 
                 <!-- Preview: imagen estática o iframe -->
                 <div class="relative tcard-preview-wrap" style={`height:240px; background:${t.gradiente}; overflow:hidden; flex-shrink:0;`}>
