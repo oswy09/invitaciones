@@ -17,7 +17,7 @@ export default function DemoPage() {
 
       {/* CTA flotante — solo en demo */}
       <a
-        href="https://celebrarte.com.co/plantillas?open=free-01-cumple"
+        href="https://celebrarte.com.co/"
         style={{
           position: "fixed",
           bottom: "1.5rem",
