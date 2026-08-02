@@ -14,12 +14,18 @@ export default function CatalogoIsland() {
     const params = new URLSearchParams(window.location.search);
     if (params.has("contacto") || params.has("whatsapp")) {
       setIsAsistido(true);
+      // Limpia el param del URL para que Google no indexe variantes con query string
+      history.replaceState(null, "", window.location.pathname);
       return;
     }
     const openId = params.get("open");
     if (openId) {
       const found = CATALOGO.find((t) => t.id === openId);
       if (found) setSelected(found);
+    }
+    // Siempre limpia el URL: la canonical de /plantillas no lleva parámetros
+    if (window.location.search) {
+      history.replaceState(null, "", window.location.pathname);
     }
   }, []);
 
