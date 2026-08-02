@@ -1,6 +1,4 @@
 {
-  "name": "Invitación Thomas",
-  "description": "Una elegante invitación interactiva 3D de Baby Shower para niño, con temática de El Principito y zorro aviador.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "name": "Invitación Digital Baby Shower Dinosaurio",
+  "description": "Invitación animada de baby shower con tema dinosaurio. Sobre interactivo, muro de deseos y RSVP. Celebrarte.com.co"
 }

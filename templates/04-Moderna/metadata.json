@@ -1,6 +1,4 @@
 {
-  "name": "Invitación Digital de Bodas",
-  "description": "Plantilla interactiva y animada para invitaciones digitales de matrimonio. Incluye sobre animado con sello de cera, cuenta regresiva, mapas interactivos, mesa de regalos, música de fondo, muro de firmas y confirmación RSVP en tiempo real.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "name": "Invitación Digital de Boda Moderna",
+  "description": "Invitación de boda animada e interactiva: RSVP, mapa de ceremonia y libro de firmas digital. Celebrarte.com.co"
 }

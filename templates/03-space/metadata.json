@@ -1,6 +1,4 @@
 {
-  "name": "Invitación Baby Shower",
-  "description": "Invitación digital e interactiva para Baby Shower con texturas de acuarela, notas musicales y una mágica introducción de cohete espacial.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "name": "Invitación Baby Shower Aventura Espacial",
+  "description": "Invitación digital animada para baby shower con tema espacial. Mapa interactivo, música y confirmación de asistencia. Celebrarte.com.co"
 }
