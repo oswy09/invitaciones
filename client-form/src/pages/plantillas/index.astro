@@ -5,23 +5,68 @@ import { CATALOGO } from '../../types';
 ---
 
 <Base
-  title="Plantillas de Invitaciones Digitales · Celebrarte"
-  description="Explora nuestras plantillas de invitaciones digitales para baby shower, bodas y cumpleaños. Personaliza con tu nombre, fecha y lugar. Desde $60.000 COP."
+  title="Invitaciones Digitales Animadas | Baby Shower, Boda y Cumple"
+  description="Elige entre +5 diseños de invitaciones digitales interactivas. Sobre animado, RSVP y mapa incluidos. Link listo el mismo día por WhatsApp."
   canonical="https://celebrarte.com.co/plantillas"
 >
   <slot name="head" slot="head">
+    <!-- Extra meta -->
+    <meta name="keywords" content="invitaciones digitales, invitaciones animadas, baby shower, boda, cumpleaños, invitación WhatsApp, invitación online Colombia, RSVP digital" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:site_name" content="Celebrarte" />
+    <meta property="og:image:alt" content="Catálogo de invitaciones digitales animadas — Celebrarte Colombia" />
+    <meta name="twitter:image:alt" content="Catálogo de invitaciones digitales animadas — Celebrarte Colombia" />
+
+    <!-- Schema.org JSON-LD -->
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
-      "@type": "ItemList",
-      "name": "Plantillas de invitaciones digitales Celebrarte",
-      "url": "https://celebrarte.com.co/plantillas",
-      "itemListElement": CATALOGO.map((t, i) => ({
-        "@type": "ListItem",
-        "position": i + 1,
-        "name": t.nombre,
-        "description": t.descripcion,
-        "url": `https://celebrarte.com.co/plantillas#${t.id}`,
-      })),
+      "@graph": [
+        {
+          "@type": "CollectionPage",
+          "@id": "https://celebrarte.com.co/plantillas#page",
+          "name": "Invitaciones Digitales Animadas | Baby Shower, Boda y Cumple",
+          "description": "Elige entre +5 diseños de invitaciones digitales interactivas. Sobre animado, RSVP y mapa incluidos. Link listo el mismo día por WhatsApp.",
+          "url": "https://celebrarte.com.co/plantillas",
+          "inLanguage": "es-CO",
+          "publisher": { "@id": "https://celebrarte.com.co#org" },
+          "mainEntity": { "@id": "https://celebrarte.com.co/plantillas#lista" }
+        },
+        {
+          "@type": "ItemList",
+          "@id": "https://celebrarte.com.co/plantillas#lista",
+          "name": "Catálogo de invitaciones digitales Celebrarte",
+          "url": "https://celebrarte.com.co/plantillas",
+          "numberOfItems": CATALOGO.length,
+          "itemListElement": CATALOGO.map((t, i) => ({
+            "@type": "ListItem",
+            "position": i + 1,
+            "name": t.nombre,
+            "description": t.descripcion,
+            "url": `https://celebrarte.com.co/plantillas#${t.id}`,
+          })),
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://celebrarte.com.co" },
+            { "@type": "ListItem", "position": 2, "name": "Plantillas", "item": "https://celebrarte.com.co/plantillas" }
+          ]
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://celebrarte.com.co#org",
+          "name": "Celebrarte",
+          "url": "https://celebrarte.com.co",
+          "logo": "https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png",
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer service",
+            "availableLanguage": "Spanish",
+            "url": "https://wa.me/573057502790"
+          }
+        }
+      ]
     })} />
   </slot>
 

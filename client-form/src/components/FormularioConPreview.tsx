@@ -169,19 +169,33 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
       {/* ── Preview iframe ── */}
       <div style={{ flex: 1, background: "#1A0A20", position: "relative" }}>
         <iframe ref={iframeRef} src={previewUrl} style={{ width: "100%", height: "100%", border: "none" }} title="Invitación" />
-        {/* Botón visible en desktop y mobile cuando panel está cerrado */}
+        {/* Botones visibles cuando panel está cerrado */}
         {!panelAbierto && (
-          <button
-            onClick={() => setPanelAbierto(true)}
-            style={{
-              position: "absolute", bottom: 24, left: "50%", transform: "translateX(-50%)",
-              background: "#5A1B5E", color: "#fff", fontWeight: 800, fontSize: 15,
-              padding: "14px 32px", borderRadius: 99, border: "none", cursor: "pointer",
-              boxShadow: "0 4px 24px rgba(90,27,94,0.35)", whiteSpace: "nowrap",
-            }}
-          >
-            Personalizar mi invitación →
-          </button>
+          <>
+            <button
+              onClick={onBack}
+              style={{
+                position: "absolute", top: 16, left: 16,
+                background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)",
+                color: "#fff", fontWeight: 600, fontSize: 12,
+                padding: "8px 14px", borderRadius: 99, border: "1.5px solid rgba(255,255,255,0.22)",
+                cursor: "pointer", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 5,
+              }}
+            >
+              ← Catálogo de plantillas
+            </button>
+            <button
+              onClick={() => setPanelAbierto(true)}
+              style={{
+                position: "absolute", bottom: 24, left: "50%", transform: "translateX(-50%)",
+                background: "#5A1B5E", color: "#fff", fontWeight: 800, fontSize: 15,
+                padding: "14px 32px", borderRadius: 99, border: "none", cursor: "pointer",
+                boxShadow: "0 4px 24px rgba(90,27,94,0.35)", whiteSpace: "nowrap",
+              }}
+            >
+              Personalizar mi invitación →
+            </button>
+          </>
         )}
       </div>
 
