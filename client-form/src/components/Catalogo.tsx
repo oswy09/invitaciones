@@ -21,6 +21,135 @@ interface CatalogoProps {
   onBack?: () => void;
 }
 
+// ── Modal de plantilla ──────────────────────────────────────────────────────
+function ModalPlantilla({
+  t,
+  precioLabel,
+  onClose,
+  onPersonalizar,
+}: {
+  t: TemplateInfo;
+  precioLabel: string;
+  onClose: () => void;
+  onPersonalizar: () => void;
+}) {
+  // Cierra con Escape
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) { if (e.key === "Escape") onClose(); }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, zIndex: 200,
+        background: "rgba(10,4,20,0.78)", backdropFilter: "blur(6px)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "20px",
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: "#fff", borderRadius: 24, width: "100%", maxWidth: 780,
+          maxHeight: "90vh", overflow: "hidden",
+          display: "flex", flexDirection: "row",
+          boxShadow: "0 40px 100px rgba(0,0,0,0.5)",
+          animation: "modalIn 0.25s ease",
+        }}
+      >
+        {/* Preview izquierda */}
+        <div style={{ width: 320, flexShrink: 0, background: t.gradiente, position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          {t.previewImg ? (
+            <img src={t.previewImg} alt={t.nombreDisplay} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+          ) : (
+            <iframe
+              src={`${t.baseUrl}/demo`}
+              style={{ width: "390px", height: "844px", border: "none", transform: "scale(0.82)", transformOrigin: "top center", pointerEvents: "none" }}
+              loading="eager"
+            />
+          )}
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%)" }} />
+          <span style={{
+            position: "absolute", bottom: 16, left: 16,
+            background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)",
+            color: "#fff", fontSize: 11, fontWeight: 800,
+            padding: "4px 10px", borderRadius: 20, letterSpacing: "0.08em",
+            textTransform: "uppercase",
+          }}>
+            {t.categoria}
+          </span>
+        </div>
+
+        {/* Info derecha */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflowY: "auto" }}>
+          {/* Header */}
+          <div style={{ padding: "20px 24px 16px", borderBottom: "1px solid #f0eaf5", display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+            <div>
+              <span style={{ fontSize: 32 }}>{t.emoji}</span>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: "#1A0A20", margin: "6px 0 4px" }}>
+                {t.nombreDisplay}
+              </h2>
+              <p style={{ fontSize: 13, color: "#7a6890", margin: 0 }}>{t.descripcion}</p>
+            </div>
+            <button onClick={onClose} style={{ background: "#f5f0fa", border: "none", borderRadius: "50%", width: 32, height: 32, cursor: "pointer", fontSize: 18, color: "#9b8aa8", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              ✕
+            </button>
+          </div>
+
+          {/* Precio */}
+          <div style={{ padding: "14px 24px", borderBottom: "1px solid #f9f0fb" }}>
+            <p style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", color: "#C49B3A", marginBottom: 3 }}>Precio</p>
+            <p style={{ fontSize: 22, fontWeight: 800, color: "#3A1140", margin: 0 }}>{precioLabel}</p>
+            {t.esFree && <span style={{ fontSize: 11, color: "#16a34a", fontWeight: 700 }}>¡Totalmente gratis!</span>}
+          </div>
+
+          {/* Features */}
+          <div style={{ padding: "14px 24px", flex: 1 }}>
+            <p style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "#9b8aa8", marginBottom: 10 }}>Incluye</p>
+            <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 7 }}>
+              {t.features.map((f) => (
+                <li key={f.label} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#444" }}>
+                  <span style={{ fontSize: 15 }}>{f.emoji}</span>
+                  <span>{f.label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Botones */}
+          <div style={{ padding: "16px 24px", borderTop: "1px solid #f0eaf5", display: "flex", flexDirection: "column", gap: 10 }}>
+            <button
+              onClick={onPersonalizar}
+              style={{ width: "100%", padding: "13px 0", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#5A1B5E,#7A2E8A)", color: "#fff", fontWeight: 800, fontSize: 15, cursor: "pointer", boxShadow: "0 4px 16px rgba(90,27,94,0.3)" }}
+            >
+              Personalizar esta invitación →
+            </button>
+            <a
+              href={`${t.baseUrl}/demo`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ width: "100%", padding: "11px 0", borderRadius: 12, border: "1.5px solid #e0d0ea", background: "#fff", color: "#5A1B5E", fontWeight: 700, fontSize: 13, cursor: "pointer", textAlign: "center", textDecoration: "none", display: "block" }}
+            >
+              Ver demo completo ↗
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes modalIn { from { opacity:0; transform:scale(0.96) translateY(8px); } to { opacity:1; transform:scale(1) translateY(0); } }
+        @media (max-width: 640px) {
+          .modal-inner { flex-direction: column !important; }
+          .modal-preview { width: 100% !important; height: 200px !important; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 interface Precios {
   [id: string]: { cop: number; usd: number };
 }
@@ -178,6 +307,7 @@ function TemplateCard({
 }
 
 export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
+  const [modalTemplate, setModalTemplate] = useState<TemplateInfo | null>(null);
   const [moneda, setMoneda] = useState<"cop" | "usd">("cop");
   const [tasaCambio, setTasaCambio] = useState<number | null>(null);
   const [precios, setPrecios] = useState<Precios>({
@@ -332,11 +462,21 @@ export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
             <TemplateCard
               key={t.id}
               t={t}
-              onSelect={onSelect}
+              onSelect={(tmpl) => setModalTemplate(tmpl)}
               precioLabel={precioEnMoneda(t)}
             />
           ))}
         </div>
+
+        {/* Modal de plantilla */}
+        {modalTemplate && (
+          <ModalPlantilla
+            t={modalTemplate}
+            precioLabel={precioEnMoneda(modalTemplate)}
+            onClose={() => setModalTemplate(null)}
+            onPersonalizar={() => { setModalTemplate(null); onSelect(modalTemplate); }}
+          />
+        )}
 
         {/* CTA diseño personalizado */}
         <div

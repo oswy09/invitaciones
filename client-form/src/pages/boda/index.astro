@@ -1,0 +1,163 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const templates = [
+  { id: "04-Moderna", nombre: "Boda Moderna", emoji: "💍", precio: "$80.000 COP", demo: "https://boda-moderna.celebrarte.com.co/demo", desc: "Sobre animado con sello de cera, música, RSVP, mapa y libro de firmas digital." },
+];
+
+const schemaLD = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": "https://celebrarte.com.co/boda#page",
+      "name": "Invitaciones Digitales de Boda | Celebrarte Colombia",
+      "description": "Invitaciones digitales de boda animadas con sobre interactivo, RSVP, mapa y libro de firmas. Desde $80.000 COP, lista en 24h.",
+      "url": "https://celebrarte.com.co/boda",
+      "inLanguage": "es-CO",
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://celebrarte.com.co" },
+        { "@type": "ListItem", "position": 2, "name": "Boda", "item": "https://celebrarte.com.co/boda" },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "¿Cuánto cuesta una invitación digital de boda?", "acceptedAnswer": { "@type": "Answer", "text": "Nuestra invitación de boda está desde $80.000 COP. Incluye sobre animado con sello de cera, música personalizada, RSVP, cuenta regresiva, mapa y libro de firmas digital." } },
+        { "@type": "Question", "name": "¿Puedo personalizar los nombres y la fecha de la boda?", "acceptedAnswer": { "@type": "Answer", "text": "Sí. Personalizas los nombres de los novios, fecha, hora, lugar de ceremonia y recepción, vestimenta y canción de fondo." } },
+        { "@type": "Question", "name": "¿Los invitados pueden confirmar asistencia desde la invitación?", "acceptedAnswer": { "@type": "Answer", "text": "Sí, la invitación incluye RSVP integrado y un libro de firmas digital donde los invitados dejan sus mensajes." } },
+      ],
+    },
+  ],
+};
+---
+
+<Base
+  title="Invitaciones Digitales de Boda | Celebrarte Colombia"
+  description="Invitaciones digitales de boda animadas con sobre interactivo, RSVP, mapa y libro de firmas. Desde $80.000 COP, lista en 24h."
+  canonical="https://celebrarte.com.co/boda"
+>
+  <slot name="head" slot="head">
+    <meta name="keywords" content="invitación digital boda, invitación boda Colombia, invitación matrimonio animada, invitación digital matrimonio, invitación boda WhatsApp" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:site_name" content="Celebrarte" />
+    <script type="application/ld+json" set:html={JSON.stringify(schemaLD)} />
+  </slot>
+
+  <!-- NAV -->
+  <header style="background:#fff; border-bottom:1px solid #F0E0E8; position:sticky; top:0; z-index:50;">
+    <nav style="max-width:1000px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; justify-content:space-between;">
+      <a href="/" style="display:flex; align-items:center; gap:8px; text-decoration:none;">
+        <img src="https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png" alt="Celebrarte" style="height:28px; width:auto;" />
+      </a>
+      <div style="display:flex; gap:16px; align-items:center;">
+        <a href="/plantillas" style="font-size:13px; font-weight:700; color:#5A1B5E; text-decoration:none;">Ver todas</a>
+        <a href="/baby-shower" style="font-size:13px; font-weight:600; color:#888; text-decoration:none;">Baby Shower</a>
+        <a href="/cumpleanos" style="font-size:13px; font-weight:600; color:#888; text-decoration:none;">Cumpleaños</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section style="background:linear-gradient(135deg,#f9f4f0 0%,#f0ead8 100%); padding:64px 24px 56px; text-align:center;">
+    <p style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.15em; color:#C49B3A; margin-bottom:12px;">Invitaciones de Boda</p>
+    <h1 style="font-family:'Playfair Display',serif; font-size:clamp(28px,5vw,46px); font-weight:700; color:#3A1140; margin:0 0 16px; line-height:1.2;">
+      Invitación Digital<br/>de Boda Elegante
+    </h1>
+    <p style="font-size:16px; color:#6b5c7a; max-width:520px; margin:0 auto 28px; line-height:1.6;">
+      Sobre animado con sello de cera, música personalizada, RSVP, mapa de ceremonia y libro de firmas digital. Todo en un link para compartir por WhatsApp.
+    </p>
+    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <a href="/plantillas" style="background:linear-gradient(135deg,#3A1140,#5A1B5E); color:#fff; font-weight:800; font-size:15px; padding:13px 28px; border-radius:99px; text-decoration:none; box-shadow:0 4px 20px rgba(58,17,64,0.35);">
+        Ver plantilla de boda →
+      </a>
+      <a href="https://wa.me/573057502790?text=Hola!%20Quiero%20una%20invitaci%C3%B3n%20digital%20de%20boda" target="_blank" rel="noopener" style="border:2px solid #25D366; color:#25D366; font-weight:700; font-size:14px; padding:11px 24px; border-radius:99px; text-decoration:none;">
+        Consultar por WhatsApp
+      </a>
+    </div>
+  </section>
+
+  <!-- PLANTILLAS -->
+  <section style="max-width:680px; margin:0 auto; padding:56px 24px;">
+    <h2 style="font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:#3A1140; text-align:center; margin-bottom:36px;">
+      Diseño de Boda Disponible
+    </h2>
+    <div style="display:grid; grid-template-columns:1fr; gap:24px;">
+      {templates.map(t => (
+        <article style="background:#fff; border-radius:20px; overflow:hidden; border:1px solid #ede0f5; box-shadow:0 2px 12px rgba(90,27,94,0.06); display:flex; gap:0;">
+          <div style="background:linear-gradient(135deg,#3A1140,#5A1B5E); width:160px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:64px;">
+            {t.emoji}
+          </div>
+          <div style="padding:24px; flex:1;">
+            <h3 style="font-size:19px; font-weight:800; color:#1A0A20; margin:0 0 6px;">{t.nombre}</h3>
+            <p style="font-size:13px; color:#7a6890; margin:0 0 12px; line-height:1.5;">{t.desc}</p>
+            <p style="font-size:20px; font-weight:800; color:#3A1140; margin:0 0 16px;">{t.precio}</p>
+            <div style="display:flex; gap:8px;">
+              <a href={t.demo} target="_blank" rel="noopener"
+                style="padding:9px 16px; border-radius:10px; border:'1.5px solid #e0d0ea'; background:#fff; color:#5A1B5E; font-weight:700; font-size:12px; text-align:center; text-decoration:none;">
+                Ver demo ↗
+              </a>
+              <button
+                onclick={`sessionStorage.setItem('openTemplate','${t.id}');window.location.href='/plantillas';`}
+                style="padding:9px 20px; border-radius:10px; border:none; background:linear-gradient(135deg,#3A1140,#5A1B5E); color:#fff; font-weight:800; font-size:13px; cursor:pointer;">
+                Personalizar →
+              </button>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- BENEFICIOS -->
+  <section style="background:linear-gradient(135deg,#3A1140,#5A1B5E); padding:56px 24px; text-align:center;">
+    <h2 style="font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:#fff; margin-bottom:12px;">Todo para el gran día</h2>
+    <p style="color:rgba(255,255,255,0.7); font-size:14px; max-width:480px; margin:0 auto 40px;">Una invitación digital que sorprende a tus invitados desde el primer segundo.</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; max-width:800px; margin:0 auto;">
+      {[
+        { icon:"✉️", title:"Sobre con sello de cera", desc:"Animación exclusiva que enamora al abrir la invitación." },
+        { icon:"🎵", title:"Música de fondo", desc:"Elige la canción que ambienta su historia de amor." },
+        { icon:"✅", title:"RSVP digital", desc:"Los invitados confirman asistencia desde el link." },
+        { icon:"🗺️", title:"Mapa de ceremonia", desc:"Ubicación de ceremonia y recepción con un clic." },
+        { icon:"💬", title:"Libro de firmas", desc:"Muro de mensajes y buenos deseos en tiempo real." },
+        { icon:"⏱️", title:"Cuenta regresiva", desc:"Cronómetro en vivo hasta el día del matrimonio." },
+      ].map(b => (
+        <div style="background:rgba(255,255,255,0.07); border-radius:16px; padding:20px; text-align:center;">
+          <div style="font-size:28px; margin-bottom:8px;">{b.icon}</div>
+          <h3 style="font-size:14px; font-weight:800; color:#fff; margin:0 0 4px;">{b.title}</h3>
+          <p style="font-size:12px; color:rgba(255,255,255,0.6); margin:0; line-height:1.4;">{b.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section style="max-width:680px; margin:0 auto; padding:56px 24px;">
+    <h2 style="font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:#3A1140; text-align:center; margin-bottom:32px;">Preguntas frecuentes</h2>
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      {[
+        { q:"¿Cuánto cuesta la invitación digital de boda?", a:"Desde $80.000 COP. Incluye sobre animado con sello de cera, música personalizada, RSVP, cuenta regresiva, mapa de ceremonia y recepción, y libro de firmas digital." },
+        { q:"¿Puedo personalizar el diseño con nuestros nombres?", a:"Sí. Personalizas los nombres de los novios, fecha, hora, lugar de ceremonia, lugar de recepción, vestimenta y canción de fondo." },
+        { q:"¿Los invitados confirman asistencia desde la invitación?", a:"Sí. La invitación incluye RSVP integrado y un libro de firmas digital donde los invitados dejan mensajes y buenos deseos." },
+        { q:"¿En cuánto tiempo tengo mi invitación lista?", a:"Normalmente en menos de 24 horas tras confirmar el pedido. Te entregamos el link listo para compartir por WhatsApp o redes sociales." },
+      ].map(faq => (
+        <details style="background:#fff; border:1px solid #ede0f5; border-radius:14px; padding:16px 20px; cursor:pointer;">
+          <summary style="font-size:14px; font-weight:700; color:#1A0A20; list-style:none;">{faq.q}</summary>
+          <p style="font-size:13px; color:#6b5c7a; margin:10px 0 0; line-height:1.6;">{faq.a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section style="text-align:center; padding:40px 24px 64px;">
+    <a href="/plantillas"
+      style="background:linear-gradient(135deg,#3A1140,#5A1B5E); color:#fff; font-weight:800; font-size:16px; padding:16px 36px; border-radius:99px; text-decoration:none; display:inline-block; box-shadow:0 6px 24px rgba(58,17,64,0.35);">
+      Personalizar mi invitación de boda →
+    </a>
+  </section>
+</Base>

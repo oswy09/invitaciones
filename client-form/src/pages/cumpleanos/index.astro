@@ -1,0 +1,163 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const templates = [
+  { id: "free-01-cumple", nombre: "Cumpleaños Festivo", emoji: "🎂", precio: "¡Gratis!", demo: "https://free-01.celebrarte.com.co/demo", desc: "Invitación animada gratuita. Lista al instante con animaciones festivas, fecha, hora y lugar." },
+];
+
+const schemaLD = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": "https://celebrarte.com.co/cumpleanos#page",
+      "name": "Invitaciones Digitales de Cumpleaños | Celebrarte Colombia",
+      "description": "Invitaciones digitales de cumpleaños animadas y gratuitas. Listas al instante, comparte el link por WhatsApp en segundos.",
+      "url": "https://celebrarte.com.co/cumpleanos",
+      "inLanguage": "es-CO",
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://celebrarte.com.co" },
+        { "@type": "ListItem", "position": 2, "name": "Cumpleaños", "item": "https://celebrarte.com.co/cumpleanos" },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "¿Es gratis la invitación digital de cumpleaños?", "acceptedAnswer": { "@type": "Answer", "text": "Sí, totalmente gratis. Personalizas nombre, fecha, hora y lugar, y recibes el link al instante sin costo." } },
+        { "@type": "Question", "name": "¿Cuánto se demora en estar lista la invitación?", "acceptedAnswer": { "@type": "Answer", "text": "Segundos. Llenas los datos, haces clic en crear y ya tienes el link listo para compartir." } },
+        { "@type": "Question", "name": "¿Cómo la comparto con los invitados?", "acceptedAnswer": { "@type": "Answer", "text": "Recibes un link único que envías por WhatsApp, Instagram o como prefieras. Cada invitado lo abre desde su celular." } },
+      ],
+    },
+  ],
+};
+---
+
+<Base
+  title="Invitaciones Digitales de Cumpleaños | Celebrarte Colombia"
+  description="Invitaciones digitales de cumpleaños animadas y gratuitas. Listas al instante, comparte el link por WhatsApp en segundos."
+  canonical="https://celebrarte.com.co/cumpleanos"
+>
+  <slot name="head" slot="head">
+    <meta name="keywords" content="invitación digital cumpleaños, invitación cumpleaños gratis, invitación cumpleaños online Colombia, invitación cumpleaños animada, crear invitación cumpleaños WhatsApp" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:site_name" content="Celebrarte" />
+    <script type="application/ld+json" set:html={JSON.stringify(schemaLD)} />
+  </slot>
+
+  <!-- NAV -->
+  <header style="background:#fff; border-bottom:1px solid #F0E0E8; position:sticky; top:0; z-index:50;">
+    <nav style="max-width:1000px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; justify-content:space-between;">
+      <a href="/" style="display:flex; align-items:center; gap:8px; text-decoration:none;">
+        <img src="https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png" alt="Celebrarte" style="height:28px; width:auto;" />
+      </a>
+      <div style="display:flex; gap:16px; align-items:center;">
+        <a href="/plantillas" style="font-size:13px; font-weight:700; color:#5A1B5E; text-decoration:none;">Ver todas</a>
+        <a href="/baby-shower" style="font-size:13px; font-weight:600; color:#888; text-decoration:none;">Baby Shower</a>
+        <a href="/boda" style="font-size:13px; font-weight:600; color:#888; text-decoration:none;">Bodas</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section style="background:linear-gradient(135deg,#fff7ed 0%,#fce7f3 100%); padding:64px 24px 56px; text-align:center;">
+    <p style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.15em; color:#f97316; margin-bottom:12px;">Invitaciones de Cumpleaños</p>
+    <h1 style="font-family:'Playfair Display',serif; font-size:clamp(28px,5vw,46px); font-weight:700; color:#1A0A20; margin:0 0 16px; line-height:1.2;">
+      Invitación Digital<br/>de Cumpleaños Gratis
+    </h1>
+    <p style="font-size:16px; color:#6b5c7a; max-width:520px; margin:0 auto 28px; line-height:1.6;">
+      Lista en segundos. Personaliza con el nombre, fecha, hora y lugar — recibes el link al instante para compartir por WhatsApp.
+    </p>
+    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <button
+        onclick="sessionStorage.setItem('openTemplate','free-01-cumple');window.location.href='/plantillas';"
+        style="background:linear-gradient(135deg,#f97316,#ec4899); color:#fff; font-weight:800; font-size:15px; padding:13px 28px; border-radius:99px; border:none; cursor:pointer; box-shadow:0 4px 20px rgba(249,115,22,0.35);">
+        Crear mi invitación gratis →
+      </button>
+      <a href="https://free-01.celebrarte.com.co/demo" target="_blank" rel="noopener"
+        style="border:2px solid #f97316; color:#f97316; font-weight:700; font-size:14px; padding:11px 24px; border-radius:99px; text-decoration:none;">
+        Ver demo
+      </a>
+    </div>
+  </section>
+
+  <!-- PLANTILLA -->
+  <section style="max-width:560px; margin:0 auto; padding:56px 24px;">
+    <h2 style="font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:#1A0A20; text-align:center; margin-bottom:36px;">
+      Plantilla gratuita disponible
+    </h2>
+    {templates.map(t => (
+      <article style="background:#fff; border-radius:20px; overflow:hidden; border:1px solid #fde0c0; box-shadow:0 2px 12px rgba(249,115,22,0.1);">
+        <div style="background:linear-gradient(135deg,#f97316,#ec4899); padding:40px; text-align:center; font-size:72px;">
+          {t.emoji}
+        </div>
+        <div style="padding:24px;">
+          <h3 style="font-size:19px; font-weight:800; color:#1A0A20; margin:0 0 6px;">{t.nombre}</h3>
+          <p style="font-size:13px; color:#7a6890; margin:0 0 12px; line-height:1.5;">{t.desc}</p>
+          <p style="font-size:22px; font-weight:800; color:#f97316; margin:0 0 16px;">{t.precio}</p>
+          <div style="display:flex; gap:8px;">
+            <a href={t.demo} target="_blank" rel="noopener"
+              style="flex:1; padding:11px 0; border-radius:10px; border:'1.5px solid #fde0c0'; background:#fff; color:#f97316; font-weight:700; font-size:13px; text-align:center; text-decoration:none;">
+              Ver demo ↗
+            </a>
+            <button
+              onclick={`sessionStorage.setItem('openTemplate','${t.id}');window.location.href='/plantillas';`}
+              style="flex:2; padding:11px 0; border-radius:10px; border:none; background:linear-gradient(135deg,#f97316,#ec4899); color:#fff; font-weight:800; font-size:14px; cursor:pointer;">
+              Crear gratis →
+            </button>
+          </div>
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <!-- BENEFICIOS -->
+  <section style="background:linear-gradient(135deg,#1A0A20,#3A1140); padding:56px 24px; text-align:center;">
+    <h2 style="font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:#fff; margin-bottom:12px;">Rápido, gratis y sin complicaciones</h2>
+    <p style="color:rgba(255,255,255,0.7); font-size:14px; max-width:480px; margin:0 auto 40px;">Tu invitación lista antes de que termines de leer esto.</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:20px; max-width:720px; margin:0 auto;">
+      {[
+        { icon:"🎈", title:"100% gratis", desc:"Sin costo, sin tarjeta, sin tramites." },
+        { icon:"⚡", title:"Lista al instante", desc:"Segundos para tener tu link listo." },
+        { icon:"📅", title:"Totalmente personalizable", desc:"Nombre, fecha, hora y lugar." },
+        { icon:"📱", title:"Comparte por WhatsApp", desc:"Un link que cada invitado abre en su celular." },
+      ].map(b => (
+        <div style="background:rgba(255,255,255,0.07); border-radius:16px; padding:20px; text-align:center;">
+          <div style="font-size:28px; margin-bottom:8px;">{b.icon}</div>
+          <h3 style="font-size:14px; font-weight:800; color:#fff; margin:0 0 4px;">{b.title}</h3>
+          <p style="font-size:12px; color:rgba(255,255,255,0.6); margin:0; line-height:1.4;">{b.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section style="max-width:680px; margin:0 auto; padding:56px 24px;">
+    <h2 style="font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:#1A0A20; text-align:center; margin-bottom:32px;">Preguntas frecuentes</h2>
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      {[
+        { q:"¿Es realmente gratis?", a:"Sí, totalmente. La invitación de cumpleaños es gratuita. Personalizas nombre, fecha, hora y lugar, y recibes el link al instante sin ningún costo." },
+        { q:"¿Cuánto tiempo se demora en estar lista?", a:"Segundos. Llenas los datos, das clic en crear y ya tienes el link listo para compartir por WhatsApp o redes sociales." },
+        { q:"¿Cómo la comparto con los invitados?", a:"Recibes un link único que envías por WhatsApp, Instagram o como prefieras. Cada invitado lo abre desde su celular." },
+        { q:"¿También tienen invitaciones de pago con más funciones?", a:"Sí. Nuestras invitaciones premium de baby shower y boda incluyen RSVP, muro de deseos, mapa interactivo y sobre animado. Desde $60.000 COP." },
+      ].map(faq => (
+        <details style="background:#fff; border:1px solid #fde0c0; border-radius:14px; padding:16px 20px; cursor:pointer;">
+          <summary style="font-size:14px; font-weight:700; color:#1A0A20; list-style:none;">{faq.q}</summary>
+          <p style="font-size:13px; color:#6b5c7a; margin:10px 0 0; line-height:1.6;">{faq.a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section style="text-align:center; padding:40px 24px 64px;">
+    <button
+      onclick="sessionStorage.setItem('openTemplate','free-01-cumple');window.location.href='/plantillas';"
+      style="background:linear-gradient(135deg,#f97316,#ec4899); color:#fff; font-weight:800; font-size:16px; padding:16px 36px; border-radius:99px; border:none; cursor:pointer; box-shadow:0 6px 24px rgba(249,115,22,0.35);">
+      Crear mi invitación de cumpleaños gratis →
+    </button>
+  </section>
+</Base>
