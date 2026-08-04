@@ -6,191 +6,177 @@ const VIDEO_CR7  = 'https://res.cloudinary.com/ddqbnr9vo/video/upload/v178587696
 type Phase = 'ball' | 'cta' | 'cr7';
 
 export default function FootballIntro() {
-  const [phase, setPhase]       = useState<Phase>('ball');
+  const [phase, setPhase]         = useState<Phase>('ball');
   const [ctaVisible, setCtaVisible] = useState(false);
   const ballRef = useRef<HTMLVideoElement>(null);
   const cr7Ref  = useRef<HTMLVideoElement>(null);
 
-  /* Mostrar CTA cuando el video de la pelota termina */
-  const handleBallEnded = () => {
-    setPhase('cta');
-    setTimeout(() => setCtaVisible(true), 50);
-  };
-
-  /* También mostrar CTA en los últimos 1.5 s (por si onEnded tarda) */
-  const handleBallTimeUpdate = () => {
-    const v = ballRef.current;
-    if (!v || phase !== 'ball') return;
-    if (v.duration && v.currentTime >= v.duration - 1.5) {
-      handleBallEnded();
+  const showCta = () => {
+    if (phase === 'ball') {
+      setPhase('cta');
+      setTimeout(() => setCtaVisible(true), 50);
     }
   };
 
-  /* Clic en el balón → video CR7 */
-  const handleBallClick = () => {
-    setPhase('cr7');
-    setTimeout(() => cr7Ref.current?.play(), 50);
+  const handleBallTimeUpdate = () => {
+    const v = ballRef.current;
+    if (!v || phase !== 'ball') return;
+    if (v.duration && v.currentTime >= v.duration - 1.5) showCta();
   };
 
-  /* Autoplay del primer video */
+  const handleOpen = () => {
+    setPhase('cr7');
+    setTimeout(() => cr7Ref.current?.play().catch(() => {}), 50);
+  };
+
   useEffect(() => {
     ballRef.current?.play().catch(() => {});
   }, []);
 
   return (
-    <div style={styles.root}>
-
-      {/* ── VIDEO 1: BALÓN ── */}
-      <video
-        ref={ballRef}
-        src={VIDEO_BALL}
-        playsInline
-        muted
-        onTimeUpdate={handleBallTimeUpdate}
-        onEnded={handleBallEnded}
-        style={{
-          ...styles.fullVideo,
-          opacity: phase === 'cr7' ? 0 : 1,
-          transition: 'opacity 0.6s ease',
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* ── CTA overlay ── */}
-      {phase === 'cta' && (
-        <div style={{
-          ...styles.ctaOverlay,
-          opacity: ctaVisible ? 1 : 0,
-          transition: 'opacity 0.7s ease',
-        }}>
-          {/* Texto superior */}
-          <div style={styles.ctaText}>
-            <span style={styles.ctaLine1}>¡Tienes una invitación!</span>
-            <span style={styles.ctaLine2}>Dale clic al balón</span>
-          </div>
-
-          {/* Flecha curva SVG */}
-          <svg viewBox="0 0 80 70" style={styles.arrow} aria-hidden="true">
-            <path
-              d="M 10 5 Q 70 10 55 55"
-              fill="none" stroke="#FFD700" strokeWidth="3"
-              strokeLinecap="round"
-              style={{ animation: 'dashDraw 0.8s ease forwards', strokeDasharray: 90, strokeDashoffset: 90 }}
-            />
-            {/* punta de flecha */}
-            <polyline points="44,52 55,62 62,48" fill="none" stroke="#FFD700" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-
-          {/* Balón clicable */}
-          <button onClick={handleBallClick} style={styles.ballBtn} aria-label="Abrir invitación">
-            ⚽
-          </button>
-        </div>
-      )}
-
-      {/* ── VIDEO 2: CR7 ── */}
-      <video
-        ref={cr7Ref}
-        src={VIDEO_CR7}
-        playsInline
-        style={{
-          ...styles.fullVideo,
-          opacity: phase === 'cr7' ? 1 : 0,
-          transition: 'opacity 0.6s ease',
-          pointerEvents: phase === 'cr7' ? 'auto' : 'none',
-        }}
-      />
-
+    <>
       <style>{`
+        /* fondo desktop */
+        .fb-root {
+          position: fixed; inset: 0;
+          background: radial-gradient(ellipse at 50% 40%, #0d2b0d 0%, #020c02 100%);
+          display: flex; align-items: center; justify-content: center;
+        }
+        /* contenedor: full-screen en móvil, celular en desktop */
+        .fb-phone {
+          position: relative;
+          width: 100%; height: 100%;
+          overflow: hidden;
+          background: #000;
+        }
+        @media (min-width: 641px) {
+          .fb-phone {
+            width: 390px;
+            height: min(780px, 90vh);
+            border-radius: 36px;
+            box-shadow:
+              0 0 0 2px #1a3a1a,
+              0 0 0 4px #0d200d,
+              0 32px 80px rgba(0,0,0,0.8),
+              inset 0 0 0 1px rgba(255,255,255,0.06);
+          }
+        }
         @keyframes dashDraw {
           to { stroke-dashoffset: 0; }
         }
-        @keyframes ballPulse {
-          0%, 100% { transform: scale(1); }
-          50%       { transform: scale(1.12); }
-        }
         @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(16px); }
+          from { opacity: 0; transform: translateY(18px); }
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes shimmer {
-          0%   { text-shadow: 0 0 8px #FFD700, 0 0 24px #FFD700; }
-          50%  { text-shadow: 0 0 20px #FFD700, 0 0 48px #fff200; }
-          100% { text-shadow: 0 0 8px #FFD700, 0 0 24px #FFD700; }
+          0%,100% { text-shadow: 0 0 10px #FFD700, 0 0 28px #FFD700; }
+          50%      { text-shadow: 0 0 24px #FFD700, 0 0 56px #ffe84d; }
+        }
+        @keyframes btnGlow {
+          0%,100% { box-shadow: 0 0 14px rgba(255,215,0,0.5); }
+          50%      { box-shadow: 0 0 28px rgba(255,215,0,0.9), 0 0 8px #FFD700; }
         }
       `}</style>
-    </div>
+
+      <div className="fb-root">
+        <div className="fb-phone">
+
+          {/* ── VIDEO 1: BALÓN ── */}
+          <video
+            ref={ballRef}
+            src={VIDEO_BALL}
+            playsInline
+            onTimeUpdate={handleBallTimeUpdate}
+            onEnded={showCta}
+            style={{
+              position: 'absolute', inset: 0,
+              width: '100%', height: '100%', objectFit: 'cover',
+              opacity: phase === 'cr7' ? 0 : 1,
+              transition: 'opacity 0.6s ease',
+              pointerEvents: 'none',
+            }}
+          />
+
+          {/* ── CTA overlay — sin fondo oscuro ── */}
+          {phase === 'cta' && (
+            <div style={{
+              position: 'absolute', inset: 0, zIndex: 10,
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'flex-end',
+              paddingBottom: '14%',
+              opacity: ctaVisible ? 1 : 0,
+              transition: 'opacity 0.7s ease',
+            }}>
+              {/* Texto + flecha apuntando al botón */}
+              <div style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                animation: 'fadeUp 0.7s ease both',
+              }}>
+                <span style={{
+                  fontFamily: "'Georgia', serif",
+                  fontSize: 'clamp(20px, 5.5vw, 30px)',
+                  fontWeight: 700, color: '#fff',
+                  letterSpacing: '0.02em',
+                  animation: 'shimmer 2.5s ease-in-out infinite',
+                  textShadow: '0 0 10px #FFD700, 0 0 28px #FFD700',
+                }}>
+                  ¡Tienes una invitación!
+                </span>
+
+                {/* flecha curva apuntando hacia abajo */}
+                <svg viewBox="0 0 60 50" style={{
+                  width: 'clamp(50px, 12vw, 74px)', height: 'auto',
+                  filter: 'drop-shadow(0 0 5px #FFD700)',
+                  marginBottom: -4,
+                }}>
+                  <path d="M 8 4 Q 52 8 40 40"
+                    fill="none" stroke="#FFD700" strokeWidth="2.5" strokeLinecap="round"
+                    style={{ animation: 'dashDraw 0.7s 0.3s ease forwards', strokeDasharray: 70, strokeDashoffset: 70 }}
+                  />
+                  <polyline points="31,37 40,46 47,33"
+                    fill="none" stroke="#FFD700" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+
+                {/* Botón principal */}
+                <button
+                  onClick={handleOpen}
+                  style={{
+                    padding: '12px 32px',
+                    borderRadius: 999,
+                    border: '2px solid #FFD700',
+                    background: 'rgba(0,0,0,0.55)',
+                    color: '#FFD700',
+                    fontFamily: "'Georgia', serif",
+                    fontSize: 'clamp(15px, 4vw, 20px)',
+                    fontWeight: 700,
+                    letterSpacing: '0.05em',
+                    cursor: 'pointer',
+                    animation: 'btnGlow 2s ease-in-out infinite',
+                    WebkitTapHighlightColor: 'transparent',
+                  }}
+                >
+                  Ver invitación →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── VIDEO 2: CR7 ── */}
+          <video
+            ref={cr7Ref}
+            src={VIDEO_CR7}
+            playsInline
+            style={{
+              position: 'absolute', inset: 0,
+              width: '100%', height: '100%', objectFit: 'cover',
+              opacity: phase === 'cr7' ? 1 : 0,
+              transition: 'opacity 0.6s ease',
+              pointerEvents: phase === 'cr7' ? 'auto' : 'none',
+            }}
+          />
+
+        </div>
+      </div>
+    </>
   );
 }
-
-/* ── estilos ── */
-const styles: Record<string, React.CSSProperties> = {
-  root: {
-    position: 'fixed',
-    inset: 0,
-    background: '#0a1a0a',
-    overflow: 'hidden',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fullVideo: {
-    position: 'absolute',
-    inset: 0,
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-  },
-  ctaOverlay: {
-    position: 'absolute',
-    inset: 0,
-    zIndex: 10,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.7) 100%)',
-    gap: 0,
-  },
-  ctaText: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 6,
-    animation: 'fadeUp 0.7s ease both',
-  },
-  ctaLine1: {
-    fontFamily: "'Georgia', serif",
-    fontSize: 'clamp(22px, 6vw, 36px)',
-    fontWeight: 700,
-    color: '#fff',
-    letterSpacing: '0.02em',
-    animation: 'shimmer 2.5s ease-in-out infinite',
-    textShadow: '0 0 8px #FFD700, 0 0 24px #FFD700',
-  },
-  ctaLine2: {
-    fontFamily: "'Georgia', serif",
-    fontSize: 'clamp(14px, 3.5vw, 20px)',
-    color: '#FFD700',
-    fontWeight: 600,
-    letterSpacing: '0.06em',
-  },
-  arrow: {
-    width: 'clamp(64px, 16vw, 100px)',
-    height: 'auto',
-    marginTop: 4,
-    marginBottom: -8,
-    filter: 'drop-shadow(0 0 6px #FFD700)',
-  },
-  ballBtn: {
-    fontSize: 'clamp(64px, 18vw, 110px)',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    lineHeight: 1,
-    animation: 'ballPulse 1.4s ease-in-out infinite',
-    filter: 'drop-shadow(0 8px 24px rgba(255,215,0,0.5))',
-    WebkitTapHighlightColor: 'transparent',
-    marginTop: 8,
-  },
-};
