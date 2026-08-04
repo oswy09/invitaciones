@@ -115,55 +115,17 @@ export default function FootballIntro() {
                 background: 'transparent',
               }}
             >
-              {/* ── CIELO multicapa ── */}
+              {/* ── FONDO: imagen estadio ── */}
               <div style={{
-                position: 'absolute', inset: 0, bottom: '35%',
-                background: 'linear-gradient(to bottom, #0a2a6e 0%, #1050b8 18%, #2272d8 36%, #3b9ae0 54%, #70c0f0 72%, #b8dff8 88%, #ddf0ff 100%)',
+                position: 'absolute', inset: 0,
+                backgroundImage: 'url(https://res.cloudinary.com/ddqbnr9vo/image/upload/v1785883343/fondo-futbol_ljqiq8.jpg)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
               }} />
 
-              {/* brillo difuso del sol arriba-derecha */}
+              {/* ── TEXTO centrado ── */}
               <div style={{
-                position: 'absolute', top: '-10%', right: '-8%',
-                width: '55%', height: '55%',
-                background: 'radial-gradient(circle, rgba(255,240,180,0.45) 0%, rgba(255,200,60,0.15) 40%, transparent 70%)',
-                borderRadius: '50%',
-              }} />
-
-              {/* ── NUBES volumétricas ── */}
-              {/* nube 1 izquierda */}
-              <div style={{ position:'absolute', top:'7%', left:'-5%' }}>
-                <div style={{ position:'relative', width:130, height:50 }}>
-                  <div style={{ position:'absolute', bottom:0, left:10, width:110, height:30, background:'rgba(255,255,255,0.9)', borderRadius:30, filter:'blur(3px)' }} />
-                  <div style={{ position:'absolute', bottom:10, left:20, width:80, height:38, background:'rgba(255,255,255,0.85)', borderRadius:50, filter:'blur(2px)' }} />
-                  <div style={{ position:'absolute', bottom:16, left:45, width:55, height:42, background:'rgba(255,255,255,0.8)', borderRadius:50, filter:'blur(2px)' }} />
-                  <div style={{ position:'absolute', bottom:8, left:0, width:50, height:28, background:'rgba(240,248,255,0.75)', borderRadius:40, filter:'blur(4px)' }} />
-                </div>
-              </div>
-              {/* nube 2 derecha */}
-              <div style={{ position:'absolute', top:'14%', right:'-3%' }}>
-                <div style={{ position:'relative', width:150, height:56 }}>
-                  <div style={{ position:'absolute', bottom:0, left:10, width:130, height:32, background:'rgba(255,255,255,0.88)', borderRadius:30, filter:'blur(3px)' }} />
-                  <div style={{ position:'absolute', bottom:12, left:30, width:85, height:44, background:'rgba(255,255,255,0.82)', borderRadius:50, filter:'blur(2px)' }} />
-                  <div style={{ position:'absolute', bottom:20, left:60, width:60, height:46, background:'rgba(255,255,255,0.78)', borderRadius:50, filter:'blur(2px)' }} />
-                  <div style={{ position:'absolute', bottom:14, right:0, width:55, height:30, background:'rgba(220,238,255,0.7)', borderRadius:40, filter:'blur(4px)' }} />
-                </div>
-              </div>
-              {/* nube 3 pequeña centro */}
-              <div style={{ position:'absolute', top:'4%', left:'38%' }}>
-                <div style={{ position:'relative', width:80, height:34 }}>
-                  <div style={{ position:'absolute', bottom:0, left:5, width:70, height:20, background:'rgba(255,255,255,0.82)', borderRadius:24, filter:'blur(3px)' }} />
-                  <div style={{ position:'absolute', bottom:6, left:15, width:48, height:28, background:'rgba(255,255,255,0.78)', borderRadius:40, filter:'blur(2px)' }} />
-                </div>
-              </div>
-              {/* neblina de horizonte */}
-              <div style={{
-                position:'absolute', bottom:'34%', left:0, right:0, height:'12%',
-                background:'linear-gradient(to bottom, transparent, rgba(185,225,255,0.5))',
-              }} />
-
-              {/* ── TEXTO en el cielo ── */}
-              <div style={{
-                position: 'absolute', top: '26%', left: 0, right: 0,
+                position: 'absolute', top: '22%', left: 0, right: 0,
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
                 pointerEvents: 'none',
               }}>
@@ -174,7 +136,7 @@ export default function FootballIntro() {
                   color: '#fff',
                   letterSpacing: '0.02em',
                   animation: 'shimmer 2.4s ease-in-out infinite',
-                  textShadow: '0 2px 12px rgba(0,50,120,0.5), 0 0 24px rgba(255,215,0,0.7)',
+                  textShadow: '0 2px 12px rgba(0,0,0,0.7), 0 0 24px rgba(255,215,0,0.7)',
                   textAlign: 'center',
                   padding: '0 24px',
                 }}>
@@ -186,78 +148,16 @@ export default function FootballIntro() {
                   letterSpacing: '0.18em',
                   textTransform: 'uppercase',
                   fontFamily: 'sans-serif',
-                  textShadow: '0 1px 6px rgba(0,40,100,0.6)',
+                  textShadow: '0 1px 6px rgba(0,0,0,0.8)',
                 }}>
                   toca para abrir
                 </span>
               </div>
 
-              {/* ── CÉSPED: base + franjas tipo estadio ── */}
-              <div style={{
-                position: 'absolute', bottom: 0, left: 0, right: 0, height: '36%',
-                background: 'linear-gradient(to bottom, #3aaa3a 0%, #2d8a2d 30%, #236e23 60%, #1a5218 100%)',
-              }}>
-                {/* franjas oscuras de estadio */}
-                {[0,1,2,3,4,5,6,7].map(i => (
-                  <div key={i} style={{
-                    position: 'absolute', top: 0, bottom: 0,
-                    left: `${i * 12.5}%`, width: '6.25%',
-                    background: 'rgba(0,0,0,0.08)',
-                  }} />
-                ))}
-                {/* brillo superior de la grama */}
-                <div style={{
-                  position: 'absolute', top: 0, left: 0, right: 0, height: '25%',
-                  background: 'linear-gradient(to bottom, rgba(255,255,255,0.12), transparent)',
-                }} />
-              </div>
-
-              {/* ── BORDE ondulado cielo↔grama ── */}
-              <svg viewBox="0 0 390 44" preserveAspectRatio="none"
-                style={{ position:'absolute', bottom:'34%', left:0, width:'100%', height:44, display:'block' }}>
-                <defs>
-                  <linearGradient id="grassEdge" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#4cbe4c" />
-                    <stop offset="100%" stopColor="#2d8a2d" />
-                  </linearGradient>
-                </defs>
-                <path d="M0,28 C30,10 60,36 90,18 C120,2 150,32 180,14 C210,0 240,30 270,12 C300,0 330,28 360,14 C375,8 385,20 390,16 L390,44 L0,44 Z"
-                  fill="url(#grassEdge)" />
-              </svg>
-
-              {/* ── BRIZNAS de grama — 3 capas ── */}
-              {[
-                // capa trasera (pequeña, más oscura)
-                ...[5,22,38,55,70,86,102,118,134,150,166,182,198,214,230,246,262,278,294,310,326,342,358,374,388].map((x,i) => ({
-                  x, bot:'35.5%', h:8+(i%3)*3, w:2,
-                  color: i%2===0 ? '#1f7a1f' : '#196019', rot:(i%5-2)*7,
-                })),
-                // capa media
-                ...[12,30,48,65,82,100,116,133,149,165,181,200,217,234,250,267,283,300,318,335,352,370,385].map((x,i) => ({
-                  x, bot:'35.8%', h:12+(i%4)*4, w:3,
-                  color: i%2===0 ? '#2ea82e' : '#238823', rot:(i%5-2)*10,
-                })),
-                // capa frontal (grande, verde vivo)
-                ...[0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,320,340,360,380].map((x,i) => ({
-                  x, bot:'36%', h:16+(i%4)*5, w:3,
-                  color: i%3===0 ? '#3dc43d' : i%3===1 ? '#2ea02e' : '#239823', rot:(i%7-3)*9,
-                })),
-              ].map((b, i) => (
-                <div key={i} style={{
-                  position:'absolute', bottom:b.bot,
-                  left:`${(b.x/390)*100}%`,
-                  width:b.w, height:b.h,
-                  background:b.color,
-                  borderRadius:'2px 2px 0 0',
-                  transform:`rotate(${b.rot}deg)`,
-                  transformOrigin:'bottom center',
-                }} />
-              ))}
-
               {/* ── balón: arranca desde la grama ── */}
               <div style={{
                 position: 'absolute',
-                bottom: '38%',
+                bottom: '18%',
                 left: '50%',
                 transform: 'translateX(-50%)',
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
