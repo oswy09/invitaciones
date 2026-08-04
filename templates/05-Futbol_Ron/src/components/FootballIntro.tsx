@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 
 const VIDEO_BALL = 'https://res.cloudinary.com/ddqbnr9vo/video/upload/v1785876951/Bal%C3%B3n_de_f%C3%BAtbo_stp8ed.mp4';
 const VIDEO_CR7  = 'https://res.cloudinary.com/ddqbnr9vo/video/upload/v1785876967/cr7_sacando_gorro_pastel_ayfb6g.mp4';
-const BALL_IMG   = 'https://static.vecteezy.com/system/resources/thumbnails/012/996/773/small/sport-ball-football-free-png.png';
+const BALL_IMG   = 'https://res.cloudinary.com/ddqbnr9vo/image/upload/v1785887534/balon-cumple_rzkv2p.png';
 const NOMBRE     = 'Matias';
 
 type Phase = 'splash' | 'ball' | 'reveal' | 'cr7';
@@ -67,15 +67,14 @@ export default function FootballIntro() {
           }
         }
 
-        /* ── balón saltando ── */
+        /* ── balón flotando suave ── */
         @keyframes jump {
-          0%        { transform: translateY(0) rotate(0deg); animation-timing-function: cubic-bezier(0.33,0,0.66,0); }
-          45%, 55%  { transform: translateY(-72vh) rotate(300deg); animation-timing-function: cubic-bezier(0.33,1,0.66,1); }
-          100%      { transform: translateY(0) rotate(540deg); }
+          0%, 100% { transform: translateY(0px) rotate(-4deg); }
+          50%       { transform: translateY(-18px) rotate(4deg); }
         }
         @keyframes shadow {
-          0%, 100% { transform: scaleX(1);   opacity: 0.55; }
-          50%       { transform: scaleX(0.2); opacity: 0.07; }
+          0%, 100% { transform: scaleX(1);   opacity: 0.35; }
+          50%       { transform: scaleX(0.8); opacity: 0.18; }
         }
         @keyframes shimmer {
           0%,100% { text-shadow: 0 0 10px #FFD700, 0 0 28px #FFD700; }
@@ -118,7 +117,7 @@ export default function FootballIntro() {
               {/* ── FONDO: imagen estadio ── */}
               <div style={{
                 position: 'absolute', inset: 0,
-                backgroundImage: 'url(https://res.cloudinary.com/ddqbnr9vo/image/upload/v1785883343/fondo-futbol_ljqiq8.jpg)',
+                backgroundImage: 'url(https://res.cloudinary.com/ddqbnr9vo/image/upload/v1785887622/fondo-grama_wwopta.png)',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }} />
@@ -154,29 +153,32 @@ export default function FootballIntro() {
                 </span>
               </div>
 
-              {/* ── balón: arranca desde la grama ── */}
+              {/* ── balón flotando sobre la zona negra inferior ── */}
               <div style={{
                 position: 'absolute',
-                bottom: '18%',
+                bottom: '8%',
                 left: '50%',
                 transform: 'translateX(-50%)',
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
               }}>
+                <img
+                  src={BALL_IMG}
+                  alt="balón"
+                  style={{
+                    width: 110, height: 110,
+                    objectFit: 'contain',
+                    animation: 'jump 2.8s ease-in-out infinite',
+                    filter: 'drop-shadow(0 12px 20px rgba(0,0,0,0.6))',
+                  }}
+                />
+                {/* sombra suave bajo el balón */}
                 <div style={{
-                  width: 90, height: 90,
-                  backgroundImage: `url(${BALL_IMG})`,
-                  backgroundSize: 'cover',
-                  backgroundRepeat: 'no-repeat',
-                  animation: 'jump 1.4s ease-in-out infinite',
-                }} />
-                {/* sombra en el suelo */}
-                <div style={{
-                  width: 65, height: 10,
+                  width: 70, height: 10,
                   borderRadius: '50%',
-                  background: 'rgba(0,0,0,0.35)',
-                  filter: 'blur(4px)',
-                  marginTop: 3,
-                  animation: 'shadow 1.4s ease-in-out infinite',
+                  background: 'rgba(0,0,0,0.5)',
+                  filter: 'blur(5px)',
+                  marginTop: -4,
+                  animation: 'shadow 2.8s ease-in-out infinite',
                 }} />
               </div>
             </button>
