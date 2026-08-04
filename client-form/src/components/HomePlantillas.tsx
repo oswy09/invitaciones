@@ -336,7 +336,11 @@ function MobileCard({ t, onSelect, precioLabel }: { t: TemplateInfo; onSelect: (
 // ── Principal ─────────────────────────────────────────────────────────────────
 interface Precios { [id: string]: { cop: number } }
 
-export default function HomePlantillas() {
+interface HomePlantillasProps {
+  categoria?: "Baby Shower" | "Boda" | "Cumpleaños";
+}
+
+export default function HomePlantillas({ categoria }: HomePlantillasProps) {
   const [modal, setModal] = useState<TemplateInfo | null>(null);
   const [moneda, setMoneda] = useState<"cop" | "usd">("cop");
   const [precios, setPrecios] = useState<Precios>({
@@ -357,6 +361,10 @@ export default function HomePlantillas() {
       .then((d) => { if (d?.rates?.COP) setTasaCambio(d.rates.COP); })
       .catch(() => {});
   }, []);
+
+  const filteredCatalog = categoria
+    ? CATALOGO.filter((t) => t.categoria === categoria)
+    : CATALOGO;
 
   function precioLabel(t: TemplateInfo): string {
     if (t.esFree) return "¡Gratis!";
@@ -403,14 +411,14 @@ export default function HomePlantillas() {
 
       {/* Mobile list */}
       <div className="hp-mobile">
-        {CATALOGO.map((t) => (
+        {filteredCatalog.map((t) => (
           <MobileCard key={t.id} t={t} onSelect={() => setModal(t)} precioLabel={precioLabel(t)} />
         ))}
       </div>
 
       {/* Desktop grid */}
       <div className="hp-desktop">
-        {CATALOGO.map((t) => (
+        {filteredCatalog.map((t) => (
           <DesktopCard key={t.id} t={t} onSelect={() => setModal(t)} precioLabel={precioLabel(t)} />
         ))}
       </div>

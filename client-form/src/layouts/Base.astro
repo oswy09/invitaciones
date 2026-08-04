@@ -65,6 +65,12 @@ const {
       />
     </noscript>
 
+    <style is:global>
+      .is-category-page #cursor-vermas {
+        display: none !important;
+      }
+    </style>
+
     <slot name="head" />
 
     <!-- Google Analytics -->
@@ -76,7 +82,7 @@ const {
       gtag('config', 'G-KSRXF01437');
     </script>
   </head>
-  <body>
+  <body class={canonical.includes('/baby-shower') || canonical.includes('/boda') || canonical.includes('/cumpleanos') ? "is-category-page" : ""}>
     <SiteHeader client:load />
     <slot />
 
@@ -103,6 +109,10 @@ const {
         let raf: number;
 
         function isOverCard(x, y) {
+          const path = window.location.pathname;
+          if (path.includes('/baby-shower') || path.includes('/boda') || path.includes('/cumpleanos')) {
+            return false;
+          }
           const target = document.elementFromPoint(x, y);
           return !!(target && target.closest('.tcard, .js-card'));
         }

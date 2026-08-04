@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import HomePlantillas from '../../components/HomePlantillas';
 
 const templates = [
   { id: "04-Moderna", nombre: "Boda Moderna", emoji: "💍", precio: "$80.000 COP", demo: "https://boda-moderna.celebrarte.com.co/demo", desc: "Sobre animado con sello de cera, música, RSVP, mapa y libro de firmas digital." },
@@ -48,19 +49,7 @@ const schemaLD = {
     <script type="application/ld+json" set:html={JSON.stringify(schemaLD)} />
   </slot>
 
-  <!-- NAV -->
-  <header style="background:#fff; border-bottom:1px solid #F0E0E8; position:sticky; top:0; z-index:50;">
-    <nav style="max-width:1000px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; justify-content:space-between;">
-      <a href="/" style="display:flex; align-items:center; gap:8px; text-decoration:none;">
-        <img src="https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png" alt="Celebrarte" style="height:28px; width:auto;" />
-      </a>
-      <div style="display:flex; gap:16px; align-items:center;">
-        <a href="/plantillas" style="font-size:13px; font-weight:700; color:#5A1B5E; text-decoration:none;">Ver todas</a>
-        <a href="/baby-shower" style="font-size:13px; font-weight:600; color:#888; text-decoration:none;">Baby Shower</a>
-        <a href="/cumpleanos" style="font-size:13px; font-weight:600; color:#888; text-decoration:none;">Cumpleaños</a>
-      </div>
-    </nav>
-  </header>
+
 
   <!-- HERO -->
   <section style="background:linear-gradient(135deg,#f9f4f0 0%,#f0ead8 100%); padding:64px 24px 56px; text-align:center;">
@@ -82,35 +71,11 @@ const schemaLD = {
   </section>
 
   <!-- PLANTILLAS -->
-  <section style="max-width:680px; margin:0 auto; padding:56px 24px;">
+  <section style="max-width:960px; margin:0 auto; padding:56px 24px;">
     <h2 style="font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:#3A1140; text-align:center; margin-bottom:36px;">
       Diseño de Boda Disponible
     </h2>
-    <div style="display:grid; grid-template-columns:1fr; gap:24px;">
-      {templates.map(t => (
-        <article style="background:#fff; border-radius:20px; overflow:hidden; border:1px solid #ede0f5; box-shadow:0 2px 12px rgba(90,27,94,0.06); display:flex; gap:0;">
-          <div style="background:linear-gradient(135deg,#3A1140,#5A1B5E); width:160px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:64px;">
-            {t.emoji}
-          </div>
-          <div style="padding:24px; flex:1;">
-            <h3 style="font-size:19px; font-weight:800; color:#1A0A20; margin:0 0 6px;">{t.nombre}</h3>
-            <p style="font-size:13px; color:#7a6890; margin:0 0 12px; line-height:1.5;">{t.desc}</p>
-            <p style="font-size:20px; font-weight:800; color:#3A1140; margin:0 0 16px;">{t.precio}</p>
-            <div style="display:flex; gap:8px;">
-              <a href={t.demo} target="_blank" rel="noopener"
-                style="padding:9px 16px; border-radius:10px; border:'1.5px solid #e0d0ea'; background:#fff; color:#5A1B5E; font-weight:700; font-size:12px; text-align:center; text-decoration:none;">
-                Ver demo ↗
-              </a>
-              <button
-                onclick={`sessionStorage.setItem('openTemplate','${t.id}');window.location.href='/plantillas';`}
-                style="padding:9px 20px; border-radius:10px; border:none; background:linear-gradient(135deg,#3A1140,#5A1B5E); color:#fff; font-weight:800; font-size:13px; cursor:pointer;">
-                Personalizar →
-              </button>
-            </div>
-          </div>
-        </article>
-      ))}
-    </div>
+    <HomePlantillas client:load categoria="Boda" />
   </section>
 
   <!-- BENEFICIOS -->

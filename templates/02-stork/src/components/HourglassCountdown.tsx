@@ -8,12 +8,13 @@ interface HourglassCountdownProps {
 export const HourglassCountdown: React.FC<HourglassCountdownProps> = ({ 
   targetDateStr = '2026-07-05T10:30:00' 
 }) => {
-  const targetDate = new Date(targetDateStr);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
+    const targetDate = new Date(targetDateStr);
+    
     const calculateTimeLeft = () => {
       const difference = targetDate.getTime() - Date.now();
       if (difference > 0) {
@@ -31,7 +32,7 @@ export const HourglassCountdown: React.FC<HourglassCountdownProps> = ({
     calculateTimeLeft();
     const interval = setInterval(calculateTimeLeft, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [targetDateStr]);
 
   if (!isClient) return null;
 

@@ -67,12 +67,14 @@ export function fromInvitationData(data: InvitationData): InvitationDetails {
     locationAddress: data.lugar.direccion,
     locationMapUrl: data.lugar.mapUrl,
     dressCode: data.vestimenta ?? "",
-    giftRegistry: (data.registroRegalos ?? []).map((r) => ({
-      shopName: r.tienda,
-      code: r.codigo ?? "",
-      url: r.url ?? "#",
-      alternativeText: r.notaAlternativa,
-    })),
+    giftRegistry: (data.registroRegalos ?? [])
+      .filter((r) => r !== null && r !== undefined)
+      .map((r) => ({
+        shopName: r.tienda || "",
+        code: r.codigo ?? "",
+        url: r.url ?? "#",
+        alternativeText: r.notaAlternativa,
+      })),
     whatsappNumber: data.whatsappNumero ?? "",
     welcomeMessage: data.mensajePersonalizado || "¡Te invitamos a celebrar con nosotros!",
     tituloEvento: data.tituloEvento || "Baby Shower",

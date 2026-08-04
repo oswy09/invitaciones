@@ -1053,6 +1053,17 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
               <p className="font-serif-lux text-base md:text-lg text-[#2F4554] leading-relaxed max-w-md mx-auto">
                 {String(details.extra?.txtNotaRegalo || "¡Tu cariño es nuestro mejor regalo! Si quieres complementarlo con un detalle, te sugerimos ropa para el bebé en la talla que desees.")}
               </p>
+              {details.extra?.giftRegistryUrl && (
+                <a
+                  href={String(details.extra.giftRegistryUrl)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 mt-4 px-6 py-3 bg-[#2F4554] hover:bg-[#1f2f3c] active:bg-[#152029] text-white font-serif-lux font-semibold rounded-xl shadow-xs text-sm transition-all text-decoration-none border border-[#1f2f3c]/20"
+                >
+                  <Gift className="w-4 h-4 text-white" />
+                  <span>Ver mesa de regalos ↗</span>
+                </a>
+              )}
             </div>
           </div>
         </ScrollReveal>

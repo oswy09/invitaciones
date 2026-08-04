@@ -34,6 +34,17 @@ import watercolorBg from '../assets/images/watercolor_bg_1779837998884.png';
 // @ts-ignore
 import babyIllustration from '../assets/images/baby_illustration_1779838016763.png';
 
+function formatTime12h(timeStr: string): string {
+  const match = String(timeStr).trim().match(/^(\d{1,2}):(\d{1,2})/);
+  if (!match) return timeStr;
+  let hours = parseInt(match[1]);
+  const minutes = match[2];
+  const period = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12;
+  if (hours === 0) hours = 12;
+  return `${hours}:${minutes} ${period}`;
+}
+
 interface BabyShowerCardProps {
   initialAudioSynth: LullabySynth | null;
   /** Si viene de client-form en modo preview, sobreescribe los datos cargados de Supabase. */
@@ -44,7 +55,7 @@ interface BabyShowerCardProps {
 export default function BabyShowerCard({ initialAudioSynth, previewDetails, previewPagado }: BabyShowerCardProps) {
   // Lullaby audio management
   const [audioSynth, setAudioSynth] = useState<LullabySynth | null>(initialAudioSynth);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [floatingNotes, setFloatingNotes] = useState<{ id: string; char: string; left: number; delay: number }[]>([]);
 
   // Scroll progress for the adventure rocket track
@@ -297,8 +308,19 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
         alternativeText: "Sugerencia: Juguetes de estimulación temprana"
       }
     ],
-    whatsappNumber: "3154384042"
   });
+
+  const cancionPersonalizada = details.extra?.cancionSeleccionada as
+    { titulo?: string; artista?: string; youtubeId?: string } | undefined;
+  const tieneCancionPersonalizada = !!(cancionPersonalizada?.titulo);
+  const songTitle = tieneCancionPersonalizada ? cancionPersonalizada!.titulo! : "Beautiful Boy";
+  const songArtist = tieneCancionPersonalizada ? (cancionPersonalizada!.artista ?? "") : "John Lennon (Tema Oficial)";
+  const songYtId = cancionPersonalizada?.youtubeId ?? null;
+
+  const [ytPlaying, setYtPlaying] = useState(false);
+
+  // effectivePlaying unifies default HTML5 music and custom YouTube song
+  const effectivePlaying = songYtId ? ytPlaying : !isMuted;
 
   const eventoId = getEventoIdFromUrl();
   const [pagado, setPagado] = useState(true);
@@ -446,6 +468,10 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
 
   // Play/Pause handling when model mute state transitions
   useEffect(() => {
+    if (songYtId) {
+      songAudio.pause();
+      return;
+    }
     if (!isMuted) {
       songAudio.play().catch(err => {
         console.log("Audio play deferred until user gesture interaction:", err);
@@ -453,7 +479,16 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
     } else {
       songAudio.pause();
     }
-  }, [isMuted, songAudio]);
+  }, [isMuted, songAudio, songYtId]);
+
+  // Stop default audio and enable YT playing when a custom song is loaded/changed
+  useEffect(() => {
+    if (songYtId) {
+      songAudio.pause();
+      setYtPlaying(true);
+      setIsMuted(false);
+    }
+  }, [songYtId, songAudio]);
 
   // Cleanup on unmount to prevent ghost playing
   useEffect(() => {
@@ -464,7 +499,7 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
 
   // Spawn notes at a sweet interval when music is playing (or unmuted)
   useEffect(() => {
-    if (isMuted) return;
+    if (!effectivePlaying) return;
 
     const spawnNote = () => {
       const chars = ['✨', '⭐', '🚀', '🌙', '🪐', '💫', '🍼', '👶', '🧸', '💖'];
@@ -481,14 +516,27 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
     spawnNote();
     const interval = setInterval(spawnNote, 800);
     return () => clearInterval(interval);
-  }, [isMuted]);
+  }, [effectivePlaying]);
 
   // Toggle audio (plays beautiful John Lennon track and secures quiet mode of old synth)
   const handleToggleMute = () => {
+    if (songYtId) {
+      if (ytPlaying) {
+        setYtPlaying(false);
+      } else {
+        setYtPlaying(true);
+        setIsMuted(false);
+        if (audioSynth) {
+          audioSynth.stop();
+        }
+      }
+      return;
+    }
+
     if (isMuted) {
       setIsMuted(false);
       if (audioSynth) {
-        audioSynth.stop(); // shut down old synth notes if initialized
+        audioSynth.stop();
       }
     } else {
       setIsMuted(true);
@@ -1084,14 +1132,7 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
             {details.babyName}
           </motion.h1>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            {...getEditableProps("vestimenta", "font-sans text-pink-650 font-black text-lg md:text-xl tracking-widest mb-6 z-20 text-center uppercase drop-shadow-xs")}
-          >
-            {details.dressCode}
-          </motion.div>
+
 
           {/* Cosmic Micro-Constellation Space Graphics to bridge beautifully without overlap */}
           <div className="flex items-center gap-3 my-4 z-20">
@@ -1131,7 +1172,7 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
                 <span 
                   {...getEditableProps("hora", "text-xs text-pink-650 font-black mt-0.5 block")}
                 >
-                  {details.time}
+                  {formatTime12h(details.time)}
                 </span>
               </div>
             </div>
@@ -1198,7 +1239,9 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
             </p>
             
             <div className="w-full flex flex-col gap-2.5 mt-1">
-              {details.giftRegistry.map((item, idx) => (
+              {details.giftRegistry
+                .filter(item => item.shopName?.trim() || item.code?.trim())
+                .map((item, idx) => (
                 <div 
                   key={idx}
                   className="flex items-center justify-between w-full p-3 bg-white/75 border border-indigo-50 rounded-2xl shadow-xs hover:border-indigo-200/50 transition-all"
@@ -1231,6 +1274,18 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
                 </div>
               ))}
             </div>
+
+            {details.extra?.giftRegistryUrl && (
+              <a
+                href={String(details.extra.giftRegistryUrl)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-11/12 max-w-[340px] mt-5 py-3 px-5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-extrabold rounded-xl uppercase tracking-wider text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md border border-indigo-500/20 transition-all text-decoration-none active:translate-y-[1px]"
+              >
+                <Gift className="w-4 h-4 text-white" />
+                <span>Ver mesa de regalos ↗</span>
+              </a>
+            )}
           </div>
 
           {/* Decorative Space Character Mascot below the gift list */}
@@ -1276,24 +1331,24 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
                 type="button"
                 onClick={handleToggleMute}
                 className={`w-11 h-11 rounded-full flex items-center justify-center text-white text-sm cursor-pointer border-2 font-black transition-all active:translate-y-[2px] shrink-0 ${
-                  isMuted 
-                    ? 'bg-[#ec4899] hover:bg-[#db2777] border-[#9d174d] shadow-[0_3px_0px_#9d174d]' 
-                    : 'bg-[#06b6d4] hover:bg-[#0891b2] border-[#083344] shadow-[0_3px_0px_#083344] animate-pulse'
+                  effectivePlaying 
+                    ? 'bg-[#06b6d4] hover:bg-[#0891b2] border-[#083344] shadow-[0_3px_0px_#083344] animate-pulse'
+                    : 'bg-[#ec4899] hover:bg-[#db2777] border-[#9d174d] shadow-[0_3px_0px_#9d174d]' 
                 }`}
-                title={isMuted ? "Reproducir" : "Pausar"}
+                title={effectivePlaying ? "Pausar" : "Reproducir"}
               >
-                {isMuted ? "▶" : "⏸"}
+                {effectivePlaying ? "⏸" : "▶"}
               </button>
 
               <div className="flex-1 min-w-0 text-left">
                 <span className="text-[8px] font-mono font-black uppercase text-[#ff2e93] block tracking-widest leading-none">CANCION DE CUNA</span>
-                <h5 className="text-xs font-sans font-black text-white truncate drop-shadow-sm mt-0.5">“Beautiful Boy”</h5>
-                <p className="text-[10px] text-cyan-300 font-bold truncate leading-none mt-1">John Lennon (Tema Oficial)</p>
+                <h5 className="text-xs font-sans font-black text-white truncate drop-shadow-sm mt-0.5">“{songTitle}”</h5>
+                <p className="text-[10px] text-cyan-300 font-bold truncate leading-none mt-1">{songArtist}</p>
               </div>
 
               {/* Glowing Space Equalizer or spectrum waveform */}
               <div className="flex items-end gap-1 h-6 pe-1 shrink-0">
-                {isMuted ? (
+                {!effectivePlaying ? (
                   <>
                     <span className="w-1 h-1 rounded-full bg-slate-700" />
                     <span className="w-1 h-1 rounded-full bg-slate-700" />
@@ -1308,6 +1363,17 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
                   </>
                 )}
               </div>
+
+              {/* YouTube iframe oculto para canción personalizada */}
+              {songYtId && ytPlaying && (
+                <iframe
+                  key={songYtId}
+                  src={`https://www.youtube.com/embed/${songYtId}?autoplay=1&loop=1&playlist=${songYtId}&controls=0`}
+                  allow="autoplay; encrypted-media"
+                  style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none", top: 0, left: 0 }}
+                  title="audio-youtube"
+                />
+              )}
             </div>
           </div>
         </div>

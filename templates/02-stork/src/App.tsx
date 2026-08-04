@@ -292,6 +292,18 @@ export default function App() {
                 {String(details.extra?.txtNotaRegalo || "¡Tu cariño es nuestro mejor regalo! Ropa para bebé en cualquier talla.")}
               </p>
 
+              {details.extra?.giftRegistryUrl && (
+                <a
+                  href={String(details.extra.giftRegistryUrl)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mb-6 px-6 py-2.5 bg-[#0ea5e9] hover:bg-[#0284c7] active:bg-[#0369a1] text-white font-fredoka font-black rounded-2xl shadow-sm text-sm transition-all text-decoration-none inline-flex items-center gap-2 cursor-pointer border border-[#0284c7]/20"
+                >
+                  <Gift className="w-4 h-4 text-white" />
+                  <span>Ver mesa de regalos ↗</span>
+                </a>
+              )}
+
               {/* Beautiful Animated Clothes Stork Image requested */}
               <div className="flex flex-col items-center justify-center mt-2 mb-2">
                 <motion.img 

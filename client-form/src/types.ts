@@ -168,7 +168,7 @@ const MESES = [
   "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
 ];
 
-function fechaTextoDe(fecha: Date): string {
+export function fechaTextoDe(fecha: Date): string {
   return `${DIAS_SEMANA[fecha.getDay()]}, ${fecha.getDate()} de ${MESES[fecha.getMonth()]} de ${fecha.getFullYear()}`;
 }
 
@@ -193,9 +193,15 @@ export function datosEjemplo(templateId: string): InvitationData {
       direccion: "Calle 123 #45-67, Bogotá",
       mapUrl: "",
     },
-    vestimenta: "Casual elegante, tonos pastel",
+    vestimenta: templateId === "03-space" ? "" : "Casual elegante, tonos pastel",
     mensajePersonalizado: "Acompáñanos a compartir una mañana especial al aire libre, llena de amor, buenos momentos y muchas bendiciones.",
     whatsappNumero: "573000000000",
     features: { muroDeseos: true, rsvp: true, countdown: true, mapa: true, musica: false },
+    registroRegalos: templateId === "03-space" ? [
+      { tienda: "🍼 Kit de Lactancia (Teteros o platos)", codigo: "" },
+      { tienda: "👶 Pañales (Tallas Etapa 1, 2 o 3)", codigo: "" },
+      { tienda: "👕 Ropita de algodón (3-6 meses)", codigo: "" },
+      { tienda: "🧸 Juguetes de estimulación", codigo: "" },
+    ] : [],
   };
 }

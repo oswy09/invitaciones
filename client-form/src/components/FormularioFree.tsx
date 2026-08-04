@@ -71,6 +71,7 @@ export default function FormularioFree({ template, onBack }: Props) {
         <iframe
           key={previewUrl}
           src={previewUrl}
+          allow="autoplay; encrypted-media"
           style={{ width: "100%", height: "100%", border: "none" }}
           title="Preview invitación"
         />

@@ -12,7 +12,12 @@ import { usePreviewBridge } from './hooks/usePreviewBridge';
 import { InvitationData, InvitationDetails, fromInvitationData } from './types';
 
 export default function App() {
-  const [showCard, setShowCard] = useState(false);
+  const [showCard, setShowCard] = useState(() => {
+    if (typeof window !== "undefined") {
+      return new URLSearchParams(window.location.search).get("preview") === "1";
+    }
+    return false;
+  });
   const [carriedSynth, setCarriedSynth] = useState<LullabySynth | null>(null);
   const [babyName, setBabyName] = useState<string | undefined>(undefined);
   const [extra, setExtra] = useState<Record<string, any> | undefined>(undefined);

@@ -77,43 +77,81 @@ export default function InvitationPreview({
     }
   }, [guestName]);
 
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const customSong = data.extra?.cancionSeleccionada as any;
+  const songYtId = customSong?.youtubeId ?? null;
+
   // Setup audio on source changes
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.pause();
+      audioRef.current = null;
     }
-    const audio = new Audio(data.musicUrl);
-    audio.loop = true;
-    audioRef.current = audio;
-    
-    // Automatically play if possible
-    if (isPlaying) {
-      audio.play().catch(err => {
-        console.log('Audio autoplay prevented, waiting for click:', err);
-        setIsPlaying(false);
-      });
+
+    if (!songYtId && data.musicUrl) {
+      const audio = new Audio(data.musicUrl);
+      audio.loop = true;
+      audioRef.current = audio;
+      
+      // Automatically play if possible
+      if (isPlaying) {
+        audio.play().catch(err => {
+          console.log('Audio autoplay prevented, waiting for click:', err);
+          setIsPlaying(false);
+        });
+      }
     }
 
     return () => {
-      audio.pause();
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
     };
-  }, [data.musicUrl]);
+  }, [data.musicUrl, songYtId]);
 
   const togglePlay = () => {
-    if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
+    if (songYtId) {
+      const newPlay = !isPlaying;
+      setIsPlaying(newPlay);
+      try {
+        const command = newPlay ? "playVideo" : "pauseVideo";
+        iframeRef.current?.contentWindow?.postMessage(
+          JSON.stringify({ event: "command", func: command, args: [] }),
+          "*"
+        );
+      } catch (e) {
+        console.error(e);
+      }
     } else {
-      audioRef.current.play().catch(e => console.log('Audio play failed:', e));
-      setIsPlaying(true);
+      if (!audioRef.current) return;
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current.play().catch(e => console.log('Audio play failed:', e));
+        setIsPlaying(true);
+      }
     }
   };
+
+  // Sync YouTube playback state when isPlaying or songYtId changes
+  useEffect(() => {
+    if (!songYtId || !iframeRef.current) return;
+    try {
+      const command = isPlaying ? "playVideo" : "pauseVideo";
+      iframeRef.current.contentWindow?.postMessage(
+        JSON.stringify({ event: "command", func: command, args: [] }),
+        "*"
+      );
+    } catch (e) {
+      console.error("Error communicating with YouTube iframe", e);
+    }
+  }, [isPlaying, songYtId]);
 
   // Start playing automatically once preview loads (after envelope is opened)
   useEffect(() => {
     setIsPlaying(true);
-    if (audioRef.current) {
+    if (!songYtId && audioRef.current) {
       audioRef.current.play().catch(e => {
         // Safe check for browser blocker
         setIsPlaying(false);
@@ -122,7 +160,7 @@ export default function InvitationPreview({
     return () => {
       if (audioRef.current) audioRef.current.pause();
     };
-  }, []);
+  }, [songYtId]);
 
   // Countdown calculation
   useEffect(() => {
@@ -1484,6 +1522,15 @@ export default function InvitationPreview({
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Hidden YouTube player for custom songs */}
+      {songYtId && (
+        <iframe
+          ref={iframeRef}
+          src={`https://www.youtube.com/embed/${songYtId}?enablejsapi=1&autoplay=1&mute=0&loop=1&playlist=${songYtId}`}
+          style={{ display: "none", width: 0, height: 0 }}
+          allow="autoplay; encrypted-media"
+        />
+      )}
     </div>
   );
 }

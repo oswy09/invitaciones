@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { InvitationData, TemplateInfo } from "../types";
-import { datosEjemplo, WHATSAPP_CONTACTO, DEV_PORT_POR_TEMPLATE } from "../types";
+import { datosEjemplo, WHATSAPP_CONTACTO, DEV_PORT_POR_TEMPLATE, fechaTextoDe } from "../types";
 import { supabase } from "../lib/supabase";
 import BuscadorCancion from "./BuscadorCancion";
 import type { CancionSeleccionada } from "./BuscadorCancion";
@@ -217,7 +217,17 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
 
   function update<K extends keyof InvitationData>(key: K, value: InvitationData[K]) {
     setShowHint(false);
-    setDraft((prev) => ({ ...prev, [key]: value }));
+    setDraft((prev) => {
+      const next = { ...prev, [key]: value };
+      if (key === "fecha") {
+        const parts = (value as string).split("-");
+        if (parts.length === 3) {
+          const dateObj = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+          next.fechaTexto = fechaTextoDe(dateObj);
+        }
+      }
+      return next;
+    });
   }
   function updateLugar(key: keyof InvitationData["lugar"], value: string) {
     setShowHint(false);
@@ -302,11 +312,13 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
     <>
       {paso === 0 && (
         <>
-          <div style={{ background: "linear-gradient(135deg,#fdf5ff,#f5f0fa)", borderRadius: 10, padding: "9px 12px" }}>
-            <p style={{ fontSize: 12, color: "#7a5c8a", margin: 0, lineHeight: 1.5 }}>
-              ✨ Toca la pantalla del celular para abrir la invitación, luego edita aquí.
-            </p>
-          </div>
+          {template.id === "01-dino" && (
+            <div style={{ background: "linear-gradient(135deg,#fdf5ff,#f5f0fa)", borderRadius: 10, padding: "9px 12px", marginBottom: 10 }}>
+              <p style={{ fontSize: 12, color: "#7a5c8a", margin: 0, lineHeight: 1.5 }}>
+                ✨ Toca la pantalla del celular para abrir la invitación, luego edita aquí.
+              </p>
+            </div>
+          )}
           <Campo label="Título del evento *">
             <input id="input-tituloEvento" style={INPUT_STYLE} placeholder="Baby Shower de Sofía..."
               value={draft.tituloEvento} onChange={(e) => update("tituloEvento", e.target.value)} />
@@ -345,15 +357,30 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
             <input id="input-lugar-direccion" style={INPUT_STYLE} placeholder="Calle 80 #12-34, Bogotá"
               value={draft.lugar.direccion} onChange={(e) => updateLugar("direccion", e.target.value)} />
           </Campo>
-          <Campo label="Vestimenta (opcional)">
-            <input id="input-vestimenta" style={INPUT_STYLE} placeholder="Ej: Azul pastel y blanco"
-              value={draft.vestimenta ?? ""} onChange={(e) => update("vestimenta", e.target.value)} />
-          </Campo>
+          {template.id !== "03-space" && (
+            <Campo label="Vestimenta (opcional)">
+              <input id="input-vestimenta" style={INPUT_STYLE} placeholder="Ej: Azul pastel y blanco"
+                value={draft.vestimenta ?? ""} onChange={(e) => update("vestimenta", e.target.value)} />
+            </Campo>
+          )}
         </>
       )}
 
       {paso === 2 && (
         <>
+          <Campo label="Lista de Regalos (escribe un regalo por línea)">
+            <textarea
+              style={{ ...INPUT_STYLE, resize: "vertical" }}
+              rows={4}
+              placeholder="Ej:&#10;🍼 Kit de Lactancia (Teteros o platos)&#10;👶 Pañales (Tallas Etapa 1, 2 o 3)&#10;👕 Ropita de algodón (3-6 meses)"
+              value={(draft.registroRegalos || []).map(r => r.tienda).join("\n")}
+              onChange={(e) => {
+                const lines = e.target.value.split("\n");
+                const newRegalos = lines.map(line => ({ tienda: line, codigo: "" }));
+                update("registroRegalos", newRegalos);
+              }}
+            />
+          </Campo>
           <Campo label="Canción de fondo (opcional)">
             <BuscadorCancion value={cancionSeleccionada} onChange={updateCancion}
               onPlay={(id) => setPlayingYtId(id)} />
@@ -391,18 +418,18 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
 
   // ── Layout ────────────────────────────────────────────────────────────────
   return (
-    <div className="fp-root" style={{ display: "flex", height: "100vh", overflow: "hidden", fontFamily: "inherit", background: "#f5f0fa" }}>
+    <div className="fp-root" style={{ display: "flex", height: "100vh", overflow: "hidden", fontFamily: "inherit", background: "#f5f0fa", position: "relative" }}>
+
+      {/* Estrellas */}
+      <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+        {[...Array(18)].map((_, i) => (
+          <div key={i} style={{ position: "absolute", width: i % 4 === 0 ? 3 : 2, height: i % 4 === 0 ? 3 : 2, borderRadius: "50%", background: "white", opacity: 0.1 + (i % 5) * 0.06, top: `${5 + (i * 17) % 90}%`, left: `${8 + (i * 23) % 84}%` }} />
+        ))}
+      </div>
 
       {/* ── Panel PREVIEW (derecha en desktop, arriba en mobile) ── */}
       <div className="fp-preview"
         style={{ flex: 1, background: "linear-gradient(145deg,#1A0A20 0%,#2d1045 60%,#1a0a20 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
-
-        {/* Estrellas */}
-        <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-          {[...Array(18)].map((_, i) => (
-            <div key={i} style={{ position: "absolute", width: i % 4 === 0 ? 3 : 2, height: i % 4 === 0 ? 3 : 2, borderRadius: "50%", background: "white", opacity: 0.1 + (i % 5) * 0.06, top: `${5 + (i * 17) % 90}%`, left: `${8 + (i * 23) % 84}%` }} />
-          ))}
-        </div>
 
         {/* Phone frame */}
         <div className="fp-frame-wrapper" style={{ position: "relative", zIndex: 1 }}>
@@ -420,7 +447,7 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
             <div style={{ position: "absolute", left: -10, top: 120, width: 3, height: 48, background: "#1e1e1e", borderRadius: 2 }} />
 
             {/* Hint — pointer-events:none para no bloquear el iframe */}
-            {showHint && (
+            {showHint && template.id === "01-dino" && (
               <div style={{ position: "absolute", inset: 0, zIndex: 20, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
                 <div style={{ textAlign: "center", background: "rgba(30,10,40,0.7)", borderRadius: 16, padding: "12px 18px", backdropFilter: "blur(8px)", animation: "fadeInHint 0.3s ease" }}>
                   <div style={{ fontSize: 28, animation: "bounceUp 1.3s ease infinite" }}>👆</div>
@@ -433,6 +460,7 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
             <iframe
               ref={iframeRef}
               src={previewUrl}
+              allow="autoplay; encrypted-media"
               style={{
                 width: "390px", height: "844px", border: "none",
                 transform: `scale(${274 / 390})`,
@@ -568,6 +596,32 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
         @keyframes bounceUp  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
         @keyframes gradientFlow { from{background-position:0 0} to{background-position:0 100%} }
 
+        /* ── DESKTOP: Formulario flotante y celular juntos, centrados al 80% ── */
+        @media (min-width: 769px) {
+          .fp-root {
+            background: linear-gradient(145deg,#1A0A20 0%,#2d1045 60%,#1a0a20 100%) !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: clamp(30px, 5vw, 80px) !important;
+          }
+          
+          .fp-preview {
+            flex: none !important;
+            background: transparent !important;
+            width: auto !important;
+            height: auto !important;
+            overflow: visible !important;
+          }
+
+          .fp-form {
+            height: auto !important;
+            max-height: 88vh !important;
+            border-radius: 24px !important;
+            border: none !important;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45) !important;
+          }
+        }
+
         /* ── MOBILE: preview arriba, form abajo ── */
         @media (max-width: 768px) {
           .fp-root {
@@ -578,7 +632,7 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
           /* Preview: mitad superior */
           .fp-preview {
             width: 100% !important;
-            flex: 0 0 60% !important;
+            flex: 0 0 50% !important;
             min-height: 0 !important;
             padding: 0 !important;
             justify-content: flex-start !important;
@@ -610,7 +664,7 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
           /* Form: mitad inferior — scrollable */
           .fp-form {
             width: 100% !important;
-            flex: 0 0 40% !important;
+            flex: 0 0 50% !important;
             min-height: 0 !important;
             order: 0 !important;
             border-left: none !important;
