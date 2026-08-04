@@ -1,24 +1,35 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 
 const VIDEO_BALL = 'https://res.cloudinary.com/ddqbnr9vo/video/upload/v1785876951/Bal%C3%B3n_de_f%C3%BAtbo_stp8ed.mp4';
 const VIDEO_CR7  = 'https://res.cloudinary.com/ddqbnr9vo/video/upload/v1785876967/cr7_sacando_gorro_pastel_ayfb6g.mp4';
 
-type Phase = 'ball' | 'cta' | 'cr7';
+type Phase = 'splash' | 'ball' | 'cta' | 'cr7';
 
 export default function FootballIntro() {
-  const [phase, setPhase]         = useState<Phase>('ball');
+  const [phase, setPhase]           = useState<Phase>('splash');
   const [ctaVisible, setCtaVisible] = useState(false);
   const ballRef = useRef<HTMLVideoElement>(null);
   const cr7Ref  = useRef<HTMLVideoElement>(null);
 
-  const showCta = () => {
-    if (phase === 'ball') {
-      setPhase('cta');
-      setTimeout(() => setCtaVisible(true), 50);
-    }
+  /* Pantalla splash → el usuario toca → autoplay con sonido garantizado */
+  const handleStart = () => {
+    setPhase('ball');
+    const v = ballRef.current;
+    if (!v) return;
+    v.muted = false;
+    v.play().catch(() => {
+      v.muted = true;
+      v.play().catch(() => {});
+    });
   };
 
-  const handleBallTimeUpdate = () => {
+  const showCta = () => {
+    if (phase !== 'ball') return;
+    setPhase('cta');
+    setTimeout(() => setCtaVisible(true), 50);
+  };
+
+  const handleTimeUpdate = () => {
     const v = ballRef.current;
     if (!v || phase !== 'ball') return;
     if (v.duration && v.currentTime >= v.duration - 1.5) showCta();
@@ -29,20 +40,14 @@ export default function FootballIntro() {
     setTimeout(() => cr7Ref.current?.play().catch(() => {}), 50);
   };
 
-  useEffect(() => {
-    ballRef.current?.play().catch(() => {});
-  }, []);
-
   return (
     <>
       <style>{`
-        /* fondo desktop */
         .fb-root {
           position: fixed; inset: 0;
           background: radial-gradient(ellipse at 50% 40%, #0d2b0d 0%, #020c02 100%);
           display: flex; align-items: center; justify-content: center;
         }
-        /* contenedor: full-screen en móvil, celular en desktop */
         .fb-phone {
           position: relative;
           width: 100%; height: 100%;
@@ -76,22 +81,57 @@ export default function FootballIntro() {
           0%,100% { box-shadow: 0 0 14px rgba(255,215,0,0.5); }
           50%      { box-shadow: 0 0 28px rgba(255,215,0,0.9), 0 0 8px #FFD700; }
         }
+        @keyframes splashPulse {
+          0%,100% { transform: scale(1);   opacity: 1; }
+          50%      { transform: scale(1.06); opacity: 0.85; }
+        }
       `}</style>
 
       <div className="fb-root">
         <div className="fb-phone">
+
+          {/* ── SPLASH: tap to start ── */}
+          {phase === 'splash' && (
+            <button
+              onClick={handleStart}
+              style={{
+                position: 'absolute', inset: 0, zIndex: 20,
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center',
+                gap: 20,
+                background: 'linear-gradient(160deg, #0a1f0a 0%, #000 100%)',
+                border: 'none', cursor: 'pointer',
+                WebkitTapHighlightColor: 'transparent',
+              }}
+            >
+              <span style={{ fontSize: 72, animation: 'splashPulse 1.8s ease-in-out infinite', lineHeight: 1 }}>⚽</span>
+              <span style={{
+                fontFamily: "'Georgia', serif",
+                fontSize: 'clamp(15px, 4vw, 20px)',
+                color: '#FFD700',
+                fontWeight: 700,
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                animation: 'shimmer 2.5s ease-in-out infinite',
+                textShadow: '0 0 10px #FFD700',
+              }}>
+                Toca para iniciar
+              </span>
+            </button>
+          )}
 
           {/* ── VIDEO 1: BALÓN ── */}
           <video
             ref={ballRef}
             src={VIDEO_BALL}
             playsInline
-            onTimeUpdate={handleBallTimeUpdate}
+            preload="auto"
+            onTimeUpdate={handleTimeUpdate}
             onEnded={showCta}
             style={{
               position: 'absolute', inset: 0,
               width: '100%', height: '100%', objectFit: 'cover',
-              opacity: phase === 'cr7' ? 0 : 1,
+              opacity: phase === 'ball' || phase === 'cta' ? 1 : 0,
               transition: 'opacity 0.6s ease',
               pointerEvents: 'none',
             }}
@@ -107,7 +147,6 @@ export default function FootballIntro() {
               opacity: ctaVisible ? 1 : 0,
               transition: 'opacity 0.7s ease',
             }}>
-              {/* Texto + flecha apuntando al botón */}
               <div style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
                 animation: 'fadeUp 0.7s ease both',
@@ -123,7 +162,6 @@ export default function FootballIntro() {
                   ¡Tienes una invitación!
                 </span>
 
-                {/* flecha curva apuntando hacia abajo */}
                 <svg viewBox="0 0 60 50" style={{
                   width: 'clamp(50px, 12vw, 74px)', height: 'auto',
                   filter: 'drop-shadow(0 0 5px #FFD700)',
@@ -134,10 +172,10 @@ export default function FootballIntro() {
                     style={{ animation: 'dashDraw 0.7s 0.3s ease forwards', strokeDasharray: 70, strokeDashoffset: 70 }}
                   />
                   <polyline points="31,37 40,46 47,33"
-                    fill="none" stroke="#FFD700" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    fill="none" stroke="#FFD700" strokeWidth="2.5"
+                    strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
 
-                {/* Botón principal */}
                 <button
                   onClick={handleOpen}
                   style={{
