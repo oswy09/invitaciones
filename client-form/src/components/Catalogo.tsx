@@ -293,10 +293,10 @@ function ModalPlantilla({
           alignItems: "center", justifyContent: "center",
         }}>
           <iframe
-            src={previewSrc(t)}
+            src={previewSrcForModal(t)}
             title={`Preview ${t.nombreDisplay}`}
             scrolling="no"
-            allow="autoplay 'none'"
+            allow="autoplay; encrypted-media"
             style={{
               width: "390px",
               height: "844px",
