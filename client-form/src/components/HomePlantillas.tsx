@@ -130,27 +130,35 @@ function Modal({ t, precioLabel, onClose, onPersonalizar }: {
 
         {/* Info panel */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
-          {/* Hero mobile — iframe con URL directa /demo?preview=1 (sin redirect) */}
+          {/* Hero mobile — previewImg si existe, si no iframe con /demo?preview=1 */}
           <div className="hp-modal-hero" style={{
             display: "none", background: t.gradiente,
             position: "relative", overflow: "hidden", flexShrink: 0,
           }}>
-            <iframe
-              key={t.id}
-              src={previewSrcModal(t)}
-              title={`Preview ${t.nombreDisplay}`}
-              scrolling="no"
-              allow="autoplay; encrypted-media"
-              style={{
-                width: 390, height: 844, border: "none",
-                position: "absolute",
-                top: 0, left: "50%",
-                transform: "translateX(-50%) scale(0.56)",
-                transformOrigin: "top center",
-                pointerEvents: "none",
-              }}
-              loading="eager"
-            />
+            {t.previewImg ? (
+              <img
+                src={t.previewImg}
+                alt={`Preview ${t.nombreDisplay}`}
+                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+              />
+            ) : (
+              <iframe
+                key={t.id}
+                src={previewSrcModal(t)}
+                title={`Preview ${t.nombreDisplay}`}
+                scrolling="no"
+                allow="autoplay; encrypted-media"
+                style={{
+                  width: 390, height: 844, border: "none",
+                  position: "absolute",
+                  top: 0, left: "50%",
+                  transform: "translateX(-50%) scale(0.56)",
+                  transformOrigin: "top center",
+                  pointerEvents: "none",
+                }}
+                loading="eager"
+              />
+            )}
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 55%)" }} />
             <span style={{ position: "absolute", bottom: 10, left: 14, background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", color: "#fff", fontSize: 10, fontWeight: 800, padding: "3px 10px", borderRadius: 20, letterSpacing: "0.1em", textTransform: "uppercase" }}>
               {t.categoria}

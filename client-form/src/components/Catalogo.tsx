@@ -329,22 +329,30 @@ function ModalPlantilla({
             background: t.gradiente, position: "relative", overflow: "hidden",
           }}>
             <style>{`@media (max-width:640px) { .modal-hero-mobile { display:block !important; } }`}</style>
-            <iframe
-              key={t.id}
-              src={previewSrcForModal(t)}
-              title={`Preview ${t.nombreDisplay}`}
-              scrolling="no"
-              allow="autoplay; encrypted-media"
-              style={{
-                width: 390, height: 844, border: "none",
-                position: "absolute",
-                top: 0, left: "50%",
-                transform: "translateX(-50%) scale(0.56)",
-                transformOrigin: "top center",
-                pointerEvents: "none",
-              }}
-              loading="eager"
-            />
+            {t.previewImg ? (
+              <img
+                src={t.previewImg}
+                alt={`Preview ${t.nombreDisplay}`}
+                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+              />
+            ) : (
+              <iframe
+                key={t.id}
+                src={previewSrcForModal(t)}
+                title={`Preview ${t.nombreDisplay}`}
+                scrolling="no"
+                allow="autoplay; encrypted-media"
+                style={{
+                  width: 390, height: 844, border: "none",
+                  position: "absolute",
+                  top: 0, left: "50%",
+                  transform: "translateX(-50%) scale(0.56)",
+                  transformOrigin: "top center",
+                  pointerEvents: "none",
+                }}
+                loading="eager"
+              />
+            )}
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 55%)" }} />
             <span style={{
               position: "absolute", bottom: 10, left: 14,
