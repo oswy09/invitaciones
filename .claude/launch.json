@@ -36,6 +36,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--dir", "templates/free-01-cumple", "run", "dev", "--", "-p", "3105"],
       "port": 3105
+    },
+    {
+      "name": "futbol-ron",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "templates/05-Futbol_Ron"],
+      "port": 3106
     }
   ]
 }
