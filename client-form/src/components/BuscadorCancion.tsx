@@ -1,224 +1,245 @@
 import { useEffect, useRef, useState } from "react";
+import { searchYouTubeSongs, type YouTubeSearchResult } from "../utils/youtube";
 
 export interface CancionSeleccionada {
   titulo: string;
   artista: string;
-}
-
-interface ResultadoITunes {
-  trackName: string;
-  artistName: string;
-  artworkUrl60?: string;
+  youtubeId?: string;
+  thumbnailUrl?: string;
 }
 
 interface BuscadorCancionProps {
   value: CancionSeleccionada | null;
   onChange: (cancion: CancionSeleccionada | null) => void;
+  onPlay?: (youtubeId: string | null) => void;
 }
 
-export default function BuscadorCancion({ value, onChange }: BuscadorCancionProps) {
-  const [tipoSeleccion, setTipoSeleccion] = useState<'buscar' | 'link'>('buscar');
+const BRAND = "#5A1B5E";
+
+export default function BuscadorCancion({ value, onChange, onPlay }: BuscadorCancionProps) {
   const [query, setQuery] = useState("");
-  const [linkInput, setLinkInput] = useState("");
-  const [resultados, setResultados] = useState<ResultadoITunes[]>([]);
+  const [resultados, setResultados] = useState<YouTubeSearchResult[]>([]);
   const [buscando, setBuscando] = useState(false);
+  const [cargandoInicial, setCargandoInicial] = useState(true);
+  const [playingId, setPlayingId] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    searchYouTubeSongs("").then((items) => {
+      setResultados(items);
+      setCargandoInicial(false);
+    });
+  }, []);
+
+  useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (query.trim().length < 2) {
-      setResultados([]);
+    if (!query.trim()) {
+      setBuscando(false);
+      searchYouTubeSongs("").then(setResultados);
       return;
     }
-
+    setBuscando(true);
     debounceRef.current = setTimeout(async () => {
-      setBuscando(true);
       try {
-        const res = await fetch(
-          `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=6`
-        );
-        const json = await res.json();
-        setResultados(json.results ?? []);
+        const items = await searchYouTubeSongs(query);
+        setResultados(items);
       } catch {
         setResultados([]);
       } finally {
         setBuscando(false);
       }
-    }, 400);
-
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
+    }, 420);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [query]);
 
-  // Si ya hay una canción seleccionada, mostrar una tarjeta premium con animación de música
+  function togglePlay(id: string) {
+    const next = playingId === id ? null : id;
+    setPlayingId(next);
+    onPlay?.(next);
+  }
+
+  function seleccionar(r: YouTubeSearchResult) {
+    onChange({ titulo: r.title, artista: r.artist, youtubeId: r.id, thumbnailUrl: r.thumbnailUrl });
+    setPlayingId(r.id);
+    onPlay?.(r.id);
+    setQuery("");
+  }
+
+  // ── Canción seleccionada ───────────────────────────────────────────────────
   if (value) {
-    const isLink = value.artista === "Link externo" || value.titulo.startsWith("http");
+    const ytId = value.youtubeId;
     return (
-      <div className="flex items-center justify-between gap-4 border border-violet-100 bg-gradient-to-r from-violet-50/50 to-fuchsia-50/30 rounded-2xl p-4 shadow-sm transition-all duration-300">
-        <div className="flex items-center gap-3 overflow-hidden">
-          {/* Icono de disco giratorio o nota */}
-          <div className="w-10 h-10 rounded-full bg-violet-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-violet-600/10 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-tr from-violet-600 to-indigo-500 rounded-full animate-pulse"></div>
-            <svg className="w-5 h-5 relative z-10 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <div style={{
+          display: "flex", alignItems: "center", gap: 10,
+          background: "linear-gradient(135deg,#fdf5ff,#f5eef8)",
+          border: `1.5px solid #d8b8e8`, borderRadius: 14, padding: "10px 12px",
+        }}>
+          {/* Icono musical */}
+          <div style={{ width: 36, height: 36, borderRadius: "50%", background: `linear-gradient(135deg,${BRAND},#7A2E8A)`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.1-1.34 2-3 2s-3-.9-3-2 1.34-2 3-2 3 .9 3 2zm12-3c0 1.1-1.34 2-3 2s-3-.9-3-2 1.34-2 3-2 3 .9 3 2z" />
             </svg>
           </div>
-          
-          <div className="text-sm overflow-hidden">
-            <p className="font-bold text-slate-800 truncate leading-tight">{isLink ? "Enlace de música" : value.titulo}</p>
-            <p className="text-xs text-slate-500 font-medium truncate mt-0.5">{value.artista === "Link externo" ? value.titulo : value.artista}</p>
+
+          <div style={{ flex: 1, overflow: "hidden" }}>
+            <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#1e293b", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              {value.titulo}
+            </p>
+            <p style={{ margin: "2px 0 0", fontSize: 11, color: "#7a5c8a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              {value.artista}
+            </p>
+          </div>
+
+          {/* Botones: reproducir + quitar */}
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+            {ytId && (
+              <button type="button" onClick={() => togglePlay(ytId)}
+                style={{ width: 30, height: 30, borderRadius: "50%", border: "none", background: playingId === ytId ? "#ef4444" : BRAND, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {playingId === ytId ? (
+                  <svg width="12" height="12" fill="white" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                ) : (
+                  <svg width="12" height="12" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                )}
+              </button>
+            )}
+            <button type="button" onClick={() => { onChange(null); setPlayingId(null); onPlay?.(null); }}
+              style={{ fontSize: 10, fontWeight: 700, color: "#ef4444", background: "none", border: "1px solid #fca5a5", borderRadius: 8, padding: "4px 8px", cursor: "pointer" }}>
+              Quitar
+            </button>
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => onChange(null)}
-          className="text-xs font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-100 hover:border-rose-200 transition-all cursor-pointer shrink-0"
-        >
-          Quitar
-        </button>
+        {/* Mini player — audio only, sin video */}
+        {ytId && playingId === ytId && (
+          <div style={{ display: "flex", alignItems: "center", gap: 10, background: "#f5eeff", border: "1px solid #e0ccf5", borderRadius: 10, padding: "8px 12px" }}>
+            <div style={{ width: 32, height: 32, borderRadius: "50%", background: BRAND, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, animation: "spin 3s linear infinite" }}>
+              <svg width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M9 19V6l12-3v13M9 19c0 1.1-1.34 2-3 2s-3-.9-3-2 1.34-2 3-2 3 .9 3 2zm12-3c0 1.1-1.34 2-3 2s-3-.9-3-2 1.34-2 3-2 3 .9 3 2z"/></svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: BRAND }}>{value.titulo}</p>
+              <p style={{ margin: "1px 0 0", fontSize: 10, color: "#9b7ab0" }}>{value.artista}</p>
+            </div>
+            <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+            {/* iframe invisible — solo audio */}
+            <iframe
+              key={ytId}
+              src={`https://www.youtube.com/embed/${ytId}?autoplay=1&controls=0&rel=0&showinfo=0&modestbranding=1`}
+              allow="autoplay; encrypted-media"
+              style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none" }}
+            />
+          </div>
+        )}
       </div>
     );
   }
 
+  // ── Buscador ───────────────────────────────────────────────────────────────
   return (
-    <div className="space-y-4">
-      {/* Selector de Pestañas con mejor estilo */}
-      <div className="flex bg-slate-100/80 border border-slate-200/40 p-1 rounded-xl gap-1">
-        <button
-          type="button"
-          onClick={() => setTipoSeleccion('buscar')}
-          className={`flex-1 text-xs py-2 rounded-lg font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-            tipoSeleccion === 'buscar'
-              ? 'bg-white text-violet-700 shadow-sm border border-slate-200/50'
-              : 'text-slate-500 hover:text-slate-700 hover:bg-white/40'
-          }`}
-        >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      {/* Input */}
+      <div style={{ position: "relative" }}>
+        <div style={{ position: "absolute", left: 11, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}>
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="#94a3b8" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-          <span>Buscar Canción</span>
-        </button>
-        
-        <button
-          type="button"
-          onClick={() => setTipoSeleccion('link')}
-          className={`flex-1 text-xs py-2 rounded-lg font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-            tipoSeleccion === 'link'
-              ? 'bg-white text-violet-700 shadow-sm border border-slate-200/50'
-              : 'text-slate-500 hover:text-slate-700 hover:bg-white/40'
-          }`}
-        >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-          </svg>
-          <span>Pegar Enlace</span>
-        </button>
+        </div>
+        <input
+          type="text" value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Busca canción, artista o pega un link de YouTube..."
+          style={{ width: "100%", boxSizing: "border-box", paddingLeft: 32, paddingRight: query ? 32 : 12, paddingTop: 9, paddingBottom: 9, fontSize: 13, fontWeight: 500, color: "#334155", background: "#faf8ff", border: "1.5px solid #e8dcef", borderRadius: 10, outline: "none" }}
+        />
+        {query && (
+          <button type="button" onClick={() => setQuery("")}
+            style={{ position: "absolute", right: 9, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#94a3b8", padding: 2 }}>
+            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
       </div>
 
-      {tipoSeleccion === 'buscar' ? (
-        <div className="relative">
-          <div className="relative flex items-center">
-            <input
-              type="text"
-              className="w-full pl-10 pr-10 py-2.5 text-sm bg-slate-50/50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all font-medium placeholder:text-slate-400 text-slate-700"
-              placeholder="Escribe el nombre de la canción o del artista..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            {/* Icono de búsqueda fijo a la izquierda */}
-            <div className="absolute left-3.5 pointer-events-none">
-              <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            {/* Spinner de cargando o botón limpiar a la derecha */}
-            <div className="absolute right-3.5 flex items-center">
-              {buscando ? (
-                <svg className="animate-spin h-4 w-4 text-violet-600" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-              ) : query ? (
-                <button
-                  type="button"
-                  onClick={() => setQuery("")}
-                  className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              ) : null}
-            </div>
-          </div>
+      {/* Etiqueta */}
+      <p style={{ margin: 0, fontSize: 10, color: "#94a3b8", fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}>
+        {buscando ? "Buscando…" : query ? `Resultados para "${query}"` : "Populares"}
+      </p>
 
-          {resultados.length > 0 && (
-            <div className="absolute z-30 mt-2 w-full bg-white border border-slate-200/80 rounded-2xl shadow-xl max-h-60 overflow-y-auto divide-y divide-slate-100 py-1 transition-all">
-              {resultados.map((r, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => {
-                    onChange({ titulo: r.trackName, artista: r.artistName });
-                    setQuery("");
-                    setResultados([]);
-                  }}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-violet-50/50 text-left cursor-pointer transition-colors group"
-                >
-                  {r.artworkUrl60 ? (
-                    <img
-                      src={r.artworkUrl60}
-                      alt=""
-                      className="w-10 h-10 rounded-lg shrink-0 object-cover shadow-sm group-hover:scale-105 transition-transform"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 text-slate-400">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                      </svg>
-                    </div>
-                  )}
-                  <div className="text-sm overflow-hidden flex-1">
-                    <p className="font-bold text-slate-700 group-hover:text-violet-900 truncate leading-snug">{r.trackName}</p>
-                    <p className="text-xs text-slate-500 font-medium truncate mt-0.5">{r.artistName}</p>
-                  </div>
-                  
-                  {/* Flechita / Check discreto al pasar el cursor */}
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity pr-1">
-                    <svg className="w-4 h-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="flex gap-2">
-          <input
-            type="url"
-            className="flex-1 px-4 py-2.5 text-sm bg-slate-50/50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all font-medium placeholder:text-slate-400 text-slate-700"
-            placeholder="Pegar enlace de YouTube o Spotify..."
-            value={linkInput}
-            onChange={(e) => setLinkInput(e.target.value)}
+      {/* Mini player activo — audio only, sin video */}
+      {playingId && (
+        <div style={{ display: "flex", alignItems: "center", gap: 10, background: "#f5eeff", border: "1px solid #e0ccf5", borderRadius: 10, padding: "8px 12px" }}>
+          <div style={{ width: 32, height: 32, borderRadius: "50%", background: BRAND, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, animation: "spin 3s linear infinite" }}>
+            <svg width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M9 19V6l12-3v13M9 19c0 1.1-1.34 2-3 2s-3-.9-3-2 1.34-2 3-2 3 .9 3 2zm12-3c0 1.1-1.34 2-3 2s-3-.9-3-2 1.34-2 3-2 3 .9 3 2z"/></svg>
+          </div>
+          <span style={{ fontSize: 12, color: BRAND, fontWeight: 700, flex: 1 }}>Reproduciendo…</span>
+          <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+          {/* iframe invisible — solo audio */}
+          <iframe
+            key={playingId}
+            src={`https://www.youtube.com/embed/${playingId}?autoplay=1&controls=0&rel=0&showinfo=0&modestbranding=1`}
+            allow="autoplay; encrypted-media"
+            style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none" }}
           />
-          <button
-            type="button"
-            onClick={() => {
-              if (linkInput.trim()) {
-                onChange({ titulo: linkInput.trim(), artista: "Link externo" });
-                setLinkInput("");
-              }
-            }}
-            className="bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs px-5 rounded-xl cursor-pointer transition-colors shadow-sm active:scale-95"
-          >
-            Agregar
-          </button>
         </div>
       )}
+
+      {/* Lista */}
+      {cargandoInicial ? (
+        <div style={{ display: "flex", justifyContent: "center", padding: "16px 0" }}>
+          <svg style={{ animation: "spin 1s linear infinite" }} width="18" height="18" fill="none" viewBox="0 0 24 24">
+            <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke={BRAND} strokeWidth="4" />
+            <path style={{ opacity: 0.75 }} fill={BRAND} d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 1, maxHeight: 220, overflowY: "auto", borderRadius: 10, border: "1px solid #f1f0f5", background: "#fff" }}>
+          {resultados.length === 0 && (
+            <p style={{ margin: 0, padding: "14px 12px", fontSize: 12, color: "#94a3b8", textAlign: "center" }}>
+              Sin resultados
+            </p>
+          )}
+          {resultados.map((r) => (
+            <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", borderBottom: "1px solid #f8f5ff" }}>
+              {/* Botón de reproducir */}
+              <button
+                type="button"
+                onClick={() => togglePlay(r.id)}
+                style={{ width: 28, height: 28, borderRadius: "50%", border: "none", flexShrink: 0, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", background: playingId === r.id ? "#ef4444" : "#f0e8f8", transition: "background 0.15s" }}
+              >
+                {playingId === r.id ? (
+                  <svg width="10" height="10" fill="#fff" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                ) : (
+                  <svg width="10" height="10" fill={BRAND} viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                )}
+              </button>
+
+              {/* Info */}
+              <div style={{ flex: 1, overflow: "hidden" }}>
+                <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: "#1e293b", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {r.title}
+                </p>
+                <p style={{ margin: "1px 0 0", fontSize: 10, color: "#64748b", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {r.artist}{r.duration && <span style={{ marginLeft: 5, color: "#94a3b8" }}>{r.duration}</span>}
+                </p>
+              </div>
+
+              {/* Seleccionar */}
+              <button
+                type="button"
+                onClick={() => seleccionar(r)}
+                style={{ fontSize: 10, fontWeight: 800, color: BRAND, background: "#f0e8f8", border: "none", borderRadius: 8, padding: "4px 9px", cursor: "pointer", flexShrink: 0 }}
+              >
+                Elegir
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <p style={{ margin: 0, fontSize: 10, color: "#cbd5e1", textAlign: "center" }}>
+        ▶ Escucha antes de elegir • Resultados vía YouTube
+      </p>
     </div>
   );
 }

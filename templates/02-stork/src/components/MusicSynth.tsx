@@ -2,14 +2,41 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { Play, Pause, CornerDownRight } from 'lucide-react';
 
-export const MusicSynth: React.FC = () => {
+interface CancionSeleccionada {
+  titulo?: string;
+  artista?: string;
+  youtubeId?: string;
+}
+
+interface MusicSynthProps {
+  cancion?: CancionSeleccionada | null;
+}
+
+const DEFAULT_AUDIO_URL = 'https://res.cloudinary.com/ddqbnr9vo/video/upload/v1779927259/BEAUTIFUL_BOY_JOHN_LENNON_fb85tn.mp3';
+const DEFAULT_TITLE = 'Beautiful Boy';
+const DEFAULT_ARTIST = 'John Lennon';
+
+export const MusicSynth: React.FC<MusicSynthProps> = ({ cancion }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const autoplayAttemptedRef = useRef(false);
+  const customYoutubeId = cancion?.youtubeId?.trim() || null;
+  const title = cancion?.titulo?.trim() || DEFAULT_TITLE;
+  const artist = cancion?.artista?.trim() || DEFAULT_ARTIST;
+  const isCustomSong = !!customYoutubeId;
 
   useEffect(() => {
-    // Create audio instance with John Lennon - Beautiful Boy MP3
-    const audio = new Audio('https://res.cloudinary.com/ddqbnr9vo/video/upload/v1779927259/BEAUTIFUL_BOY_JOHN_LENNON_fb85tn.mp3');
+    // Si hay canción personalizada (YouTube), el audio se reproduce por iframe.
+    if (isCustomSong) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      return;
+    }
+
+    // Fallback demo/producción: mp3 por defecto.
+    const audio = new Audio(DEFAULT_AUDIO_URL);
     audio.loop = true;
     audio.volume = 0.4;
     audio.preload = 'auto';
@@ -81,9 +108,10 @@ export const MusicSynth: React.FC = () => {
         audioRef.current.pause();
       }
     };
-  }, []);
+  }, [isCustomSong]);
 
   useEffect(() => {
+    if (isCustomSong) return;
     if (!audioRef.current) return;
     if (isPlaying) {
       audioRef.current.muted = false;
@@ -92,7 +120,7 @@ export const MusicSynth: React.FC = () => {
     } else {
       audioRef.current.pause();
     }
-  }, [isPlaying]);
+  }, [isPlaying, isCustomSong]);
 
   const togglePlayback = () => {
     setIsPlaying(prev => !prev);
@@ -167,10 +195,10 @@ export const MusicSynth: React.FC = () => {
           {/* Song text info using elegant Cormorant font for text */}
           <div className="text-left font-cormorant leading-tight">
             <p className="text-sm font-bold text-slate-800 tracking-wide mt-1 font-fredoka">
-              “Beautiful Boy”
+              “{title}”
             </p>
             <p className="text-xs text-slate-500 font-medium italic mt-0.5 leading-none">
-              John Lennon
+              {artist}
             </p>
           </div>
 
@@ -232,6 +260,16 @@ export const MusicSynth: React.FC = () => {
         </div>
 
       </motion.div>
+
+      {isCustomSong && isPlaying && customYoutubeId && (
+        <iframe
+          key={customYoutubeId}
+          src={`https://www.youtube.com/embed/${customYoutubeId}?autoplay=1&controls=0&rel=0&modestbranding=1&loop=1&playlist=${customYoutubeId}`}
+          allow="autoplay; encrypted-media"
+          style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
+          title="audio-youtube"
+        />
+      )}
     </div>
   );
 };

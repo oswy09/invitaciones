@@ -29,7 +29,7 @@ import BabyWordSoup from "./BabyWordSoup";
 import ScrollReveal from "./ScrollReveal";
 import BabyShowerMap from "./BabyShowerMap";
 
-// Dynamic background audio path with beautiful boy song
+// Background audio fallback (used when no custom song is selected)
 const BACKGROUND_MUSIC_URL = "https://res.cloudinary.com/ddqbnr9vo/video/upload/v1779927259/BEAUTIFUL_BOY_JOHN_LENNON_fb85tn.mp3";
 
 const BabyHangingClothes = () => {
@@ -238,7 +238,18 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
     return { className: baseClass };
   };
 
+  // En preview: solo mostrar canción si el usuario la eligió. En demo/producción: siempre "Beautiful Boy".
+  const cancionPersonalizada = details.extra?.cancionSeleccionada as
+    { titulo?: string; artista?: string; youtubeId?: string } | undefined;
+  const tieneCancionPersonalizada = !!(cancionPersonalizada?.titulo);
+  // En preview sin canción elegida, ocultamos el player completo
+  const mostrarPlayer = !isPreview || tieneCancionPersonalizada;
+  const songTitle = tieneCancionPersonalizada ? cancionPersonalizada!.titulo! : "Beautiful Boy";
+  const songArtist = tieneCancionPersonalizada ? (cancionPersonalizada!.artista ?? "") : "John Lennon";
+  const songYtId = cancionPersonalizada?.youtubeId ?? null;
+
   const [isPlaying, setIsPlaying] = useState(false);
+  const [ytPlaying, setYtPlaying] = useState(false);
   const [audioObj] = useState(() => {
     const audio = new Audio(BACKGROUND_MUSIC_URL);
     audio.loop = true;
@@ -246,24 +257,35 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
     return audio;
   });
 
+  // effectivePlaying unifica ambos modos: MP3 o YouTube
+  const effectivePlaying = songYtId ? ytPlaying : isPlaying;
+
+  // Cuando cambia la canción personalizada, parar el audio MP3
+  useEffect(() => {
+    if (songYtId) {
+      audioObj.pause();
+      setIsPlaying(false);
+    }
+  }, [songYtId]);
+
   const [musicalNotes, setMusicalNotes] = useState<{ id: number; char: string; left: number; delay: number; duration: number; size: number }[]>([]);
 
   useEffect(() => {
-    if (isPlaying) {
+    if (effectivePlaying) {
       const chars = ["♫", "♪", "♩", "♬", "🎵", "🎶"];
       const newNotes = Array.from({ length: 8 }).map((_, i) => ({
         id: i,
         char: chars[i % chars.length],
-        left: 5 + Math.random() * 90, // distributed layout
+        left: 5 + Math.random() * 90,
         delay: Math.random() * 5,
-        duration: 8.5 + Math.random() * 8.5, // much slower & gentler
+        duration: 8.5 + Math.random() * 8.5,
         size: 14 + Math.random() * 16
       }));
       setMusicalNotes(newNotes);
     } else {
       setMusicalNotes([]);
     }
-  }, [isPlaying]);
+  }, [effectivePlaying]);
 
   const [rsvpList, setRsvpList] = useState<Guest[]>([]);
   const { wishes: wishesList, loading: dbLoading, addWish } = useMuroDeseos(supabase, details.eventoId);
@@ -345,6 +367,10 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
 
   // Audio play/pause toggler
   const togglePlay = () => {
+    if (songYtId) {
+      setYtPlaying((p) => !p);
+      return;
+    }
     if (isPlaying) {
       audioObj.pause();
     } else {
@@ -355,17 +381,21 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
 
   // Play audio automatically after a brief delay when invitation is opened
   useEffect(() => {
-    if (isOpened && !isPlaying) {
+    if (isOpened && mostrarPlayer) {
       const playTimer = setTimeout(() => {
-        audioObj.play().then(() => {
-          setIsPlaying(true);
-        }).catch(() => {
-          console.log("Audio autoplay prevented by browser. User must click play button.");
-        });
+        if (songYtId) {
+          setYtPlaying(true);
+        } else {
+          audioObj.play().then(() => {
+            setIsPlaying(true);
+          }).catch(() => {
+            // autoplay blocked by browser
+          });
+        }
       }, 1000);
       return () => clearTimeout(playTimer);
     }
-  }, [isOpened]);
+  }, [isOpened, songYtId, mostrarPlayer]);
 
   // Stop music if closed
   useEffect(() => {
@@ -510,7 +540,7 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
       {/* Ambient Descending Musical Notes (Drifts gently downward from the top across the full screen when playing) */}
       {typeof document !== "undefined" && createPortal(
         <div className="fixed inset-0 pointer-events-none overflow-hidden select-none z-50">
-          {isPlaying && musicalNotes.map(note => (
+          {effectivePlaying && musicalNotes.map(note => (
             <motion.span
               key={note.id}
               initial={{ y: "-10%", opacity: 0, scale: 0.5 }}
@@ -565,30 +595,30 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
           </div>
         </div>
 
-        {/* Compact, Highly-Interactive Music Player Strip */}
-        <div className="bg-gradient-to-r from-[#FFFDF7] via-[#FCFAF2] to-[#F5EFE0] text-[#4A5D6B] py-2.5 px-5 flex items-center justify-between border-b border-[#C3A66A]/20 shadow-xs relative overflow-visible shrink-0 animate-fade-in">
+        {/* Compact, Highly-Interactive Music Player Strip — oculto en preview si no hay canción elegida */}
+        {mostrarPlayer && <div className="bg-gradient-to-r from-[#FFFDF7] via-[#FCFAF2] to-[#F5EFE0] text-[#4A5D6B] py-2.5 px-5 flex items-center justify-between border-b border-[#C3A66A]/20 shadow-xs relative overflow-visible shrink-0 animate-fade-in">
           <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-amber-500/5 pointer-events-none"></div>
           
           <div className="flex items-center gap-3 relative z-10">
             <div className="relative">
               {/* Spinning & Dancing Golden Record (Turntable) - Scaled Up and Animated */}
-              <motion.div 
-                animate={isPlaying 
-                  ? { 
-                      rotate: 360, 
+              <motion.div
+                animate={effectivePlaying
+                  ? {
+                      rotate: 360,
                       y: [0, -3, 3, 0],
                       x: [0, 2, -1, 0],
                       scale: [1, 1.05, 0.98, 1]
-                    } 
+                    }
                   : { rotate: 0 }
                 }
-                transition={isPlaying 
-                  ? { 
+                transition={effectivePlaying
+                  ? {
                       rotate: { duration: 6, repeat: Infinity, ease: "linear" },
                       y: { duration: 1.8, repeat: Infinity, ease: "easeInOut" },
                       x: { duration: 2.2, repeat: Infinity, ease: "easeInOut" },
                       scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
-                    } 
+                    }
                   : {}
                 }
                 className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-tr from-stone-900 via-stone-850 to-stone-950 flex items-center justify-center border-2 border-[#C3A66A] shadow-md shrink-0 relative"
@@ -606,7 +636,7 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
 
               {/* Drifting and cascading magical notes directly emitting out of the turntable downwards over the card */}
               <AnimatePresence>
-                {isPlaying && (
+                {effectivePlaying && (
                   <div className="absolute top-8 left-1.5 w-16 h-16 pointer-events-none overflow-visible">
                     {[
                       { char: "🎵", delay: 0, x: -35, y: 150 },
@@ -644,12 +674,12 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
 
             <div className="text-left space-y-0.5">
               <div className="flex flex-wrap items-center gap-1.5 leading-none">
-                <h4 className="font-serif-lux text-base md:text-lg font-bold text-[#4A5D6B]">Beautiful Boy</h4>
+                <h4 className="font-serif-lux text-base md:text-lg font-bold text-[#4A5D6B]">{songTitle}</h4>
                 <span className="text-stone-400 text-[10px]">•</span>
-                <p className="font-serif-lux text-sm italic text-[#4A5D6B]/85 font-medium">John Lennon</p>
-                
+                <p className="font-serif-lux text-sm italic text-[#4A5D6B]/85 font-medium">{songArtist}</p>
+
                 {/* Dynamic Tiny Waves */}
-                {isPlaying && (
+                {effectivePlaying && (
                   <div className="flex items-end gap-[1.5px] h-3 ml-1.5 shrink-0">
                     <motion.span animate={{ height: [3, 10, 3] }} transition={{ duration: 0.5, repeat: Infinity }} className="w-[1.5px] bg-[#C3A66A]"></motion.span>
                     <motion.span animate={{ height: [8, 3, 8] }} transition={{ duration: 0.45, repeat: Infinity, delay: 0.08 }} className="w-[1.5px] bg-[#C3A66A]"></motion.span>
@@ -664,12 +694,12 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
           <button
             onClick={togglePlay}
             className={`py-1.5 px-4 rounded-xl border text-xs md:text-sm font-serif-lux font-bold tracking-[0.08em] flex items-center gap-1.5 transition-all shadow-xs cursor-pointer ${
-              isPlaying 
-                ? "bg-[#4A5D6B] text-stone-50 border-[#4a5d6b] hover:bg-[#394a56]" 
+              effectivePlaying
+                ? "bg-[#4A5D6B] text-stone-50 border-[#4a5d6b] hover:bg-[#394a56]"
                 : "bg-white text-[#4A5D6B] border-stone-200/60 hover:bg-stone-50"
             }`}
           >
-            {isPlaying ? (
+            {effectivePlaying ? (
               <>
                 <VolumeX size={11} /> Pausar
               </>
@@ -679,7 +709,17 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
               </>
             )}
           </button>
-        </div>
+
+          {/* YouTube iframe oculto para canción personalizada */}
+          {songYtId && ytPlaying && (
+            <iframe
+              key={songYtId}
+              src={`https://www.youtube.com/embed/${songYtId}?autoplay=1&loop=1&playlist=${songYtId}&controls=0`}
+              allow="autoplay; encrypted-media"
+              style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none", top: 0, left: 0 }}
+            />
+          )}
+        </div>}
       </div>
 
       {/* Main Content (Natural scroll) - Padded at the top to clear the fixed top bar */}

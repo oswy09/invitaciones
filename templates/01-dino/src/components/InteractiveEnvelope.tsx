@@ -108,6 +108,11 @@ export default function InteractiveEnvelope() {
     }, 600);
   };
 
+  const handleEnvelopePrimaryAction = (event?: React.SyntheticEvent) => {
+    event?.preventDefault();
+    handleOpenEnvelope();
+  };
+
   const handleCloseEnvelope = () => {
     // Reverse timeline
     setEnvelopeState('sliding-card');
@@ -216,7 +221,16 @@ export default function InteractiveEnvelope() {
               exit={{ opacity: 0, scale: 0.94, y: -25 }}
               transition={{ type: "spring", stiffness: 100, damping: 21 }}
               className="relative w-full max-w-2xl aspect-[100/70] group cursor-pointer"
-              onClick={handleOpenEnvelope}
+              role="button"
+              tabIndex={0}
+              aria-label="Abrir invitacion"
+              onClick={handleEnvelopePrimaryAction}
+              onPointerUp={handleEnvelopePrimaryAction}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  handleEnvelopePrimaryAction(event);
+                }
+              }}
             >
               
               {/* Envelope content structure utilizing adapted high UX Dribbble SVG coordinates */}

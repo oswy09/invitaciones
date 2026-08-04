@@ -21,6 +21,12 @@ import { useMuroDeseos } from './hooks/useMuroDeseos';
 import { useRsvp } from './hooks/useRsvp';
 import { usePreviewBridge } from './hooks/usePreviewBridge';
 
+interface CancionSeleccionada {
+  titulo?: string;
+  artista?: string;
+  youtubeId?: string;
+}
+
 export default function App() {
   const [screen, setScreen] = useState<'intro' | 'invitation'>('intro');
   const [showConfetti, setShowConfetti] = useState(false);
@@ -39,6 +45,9 @@ export default function App() {
   }, []);
 
   const isPreview = usePreviewBridge<InvitationData>(handlePreviewUpdate);
+
+  const cancionSeleccionada =
+    (details.extra?.cancionSeleccionada as CancionSeleccionada | undefined) ?? null;
 
   const getEditableProps = (field: string, baseClass: string = "") => {
     return { className: baseClass };
@@ -202,7 +211,7 @@ export default function App() {
           />
 
           {/* Ambient Music Box Synthesizer Button */}
-          <MusicSynth />
+          <MusicSynth cancion={cancionSeleccionada} />
 
           {/* Floating interactive particles */}
           {showConfetti && (

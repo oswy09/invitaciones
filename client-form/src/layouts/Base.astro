@@ -1,5 +1,6 @@
 ---
 import '../index.css';
+import SiteHeader from '../components/SiteHeader';
 
 interface Props {
   title: string;
@@ -76,6 +77,7 @@ const {
     </script>
   </head>
   <body>
+    <SiteHeader client:load />
     <slot />
 
     <!-- Cursor "Ver más" global: sigue al mouse sobre cualquier card -->

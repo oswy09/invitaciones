@@ -11,6 +11,29 @@ interface BabyWordSoupProps {
   getEditableProps?: (field: string, baseClass?: string) => any;
 }
 
+function normalizeTime(rawTime: string): string {
+  const match = String(rawTime).trim().match(/^(\d{1,2}):(\d{1,2})$/);
+  if (!match) return "10:30";
+
+  const hours = Math.min(23, Math.max(0, Number(match[1])));
+  const minutes = Math.min(59, Math.max(0, Number(match[2])));
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+}
+
+function formatTimeForDisplay(normalizedTime: string): string {
+  const [hoursRaw, minutesRaw] = normalizedTime.split(":");
+  const hours = Number(hoursRaw);
+  const minutes = Number(minutesRaw);
+
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+    return "10:30 a. m.";
+  }
+
+  const period = hours >= 12 ? "p. m." : "a. m.";
+  const hour12 = hours % 12 === 0 ? 12 : hours % 12;
+  return `${hour12}:${String(minutes).padStart(2, "0")} ${period}`;
+}
+
 export default function BabyWordSoup({
   rsvpDeadline = "",
   dressCode = "",
@@ -19,8 +42,11 @@ export default function BabyWordSoup({
   isPreview = false,
   getEditableProps = () => ({}),
 }: BabyWordSoupProps) {
+  const normalizedTime = normalizeTime(time);
+  const displayTime = formatTimeForDisplay(normalizedTime);
+
   // Target date parsing dynamically
-  const targetDate = new Date(`${date}T${time}:00`);
+  const targetDate = new Date(`${date}T${normalizedTime}:00`);
 
   const year = isNaN(targetDate.getTime()) ? "2026" : targetDate.getFullYear().toString();
   const dayNum = isNaN(targetDate.getTime()) ? "05" : targetDate.getDate().toString().padStart(2, "0");
@@ -69,7 +95,7 @@ export default function BabyWordSoup({
     return () => {
       clearInterval(interval);
     };
-  }, [date, time]);
+  }, [date, normalizedTime]);
 
   // Run intro animation only when the soup section first enters viewport.
   useEffect(() => {
@@ -167,7 +193,7 @@ export default function BabyWordSoup({
               <div 
                 {...getEditableProps("hora", "font-sans text-lg md:text-xl font-extrabold tracking-[0.04em] text-[#F4F8FB] text-center pr-2 border-r border-white/10 flex items-center justify-center gap-2 min-w-0")}
               >
-                <span>{time}</span>
+                <span>{displayTime}</span>
               </div>
               
               {/* Placeholder spacer for the large circle badge overlaying in the center */}
