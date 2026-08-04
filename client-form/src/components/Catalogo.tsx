@@ -292,24 +292,28 @@ function ModalPlantilla({
           overflow: "hidden", display: "none",
           alignItems: "center", justifyContent: "center",
         }}>
-          <iframe
-            src={previewSrcForModal(t)}
-            title={`Preview ${t.nombreDisplay}`}
-            scrolling="no"
-            allow="autoplay; encrypted-media"
-            style={{
-              width: "390px",
-              height: "844px",
-              border: "none",
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%) scale(0.72)",
-              transformOrigin: "center center",
-              pointerEvents: "none",
-            }}
-            loading="eager"
-          />
+          {t.previewImg ? (
+            <img
+              src={t.previewImg}
+              alt={`Preview ${t.nombreDisplay}`}
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+            />
+          ) : (
+            <iframe
+              src={previewSrcForModal(t)}
+              title={`Preview ${t.nombreDisplay}`}
+              scrolling="no"
+              allow="autoplay; encrypted-media"
+              style={{
+                width: "390px", height: "844px", border: "none",
+                position: "absolute", top: "50%", left: "50%",
+                transform: "translate(-50%, -50%) scale(0.72)",
+                transformOrigin: "center center",
+                pointerEvents: "none",
+              }}
+              loading="eager"
+            />
+          )}
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 50%)" }} />
           <span style={{
             position: "absolute", bottom: 16, left: 16,
@@ -430,6 +434,13 @@ function ModalPlantilla({
               style={{ width: "100%", padding: "11px 0", borderRadius: 12, border: "1.5px solid #e0d0ea", background: "#fff", color: "#5A1B5E", fontWeight: 700, fontSize: 13, cursor: "pointer", textAlign: "center", textDecoration: "none", display: "block" }}
             >
               Ver demo completo ↗
+            </a>
+            <a
+              href={`https://wa.me/573057502790?text=${encodeURIComponent(`Hola, me interesa la plantilla *${t.nombreDisplay}*. ¿Pueden ayudarme?`)}`}
+              target="_blank" rel="noopener noreferrer"
+              style={{ display: "block", textAlign: "center", fontSize: 12, color: "#7a6890", textDecoration: "none", padding: "4px 0" }}
+            >
+              💬 ¿Dudas o querés que lo armemos por vos?
             </a>
           </div>
           </div>

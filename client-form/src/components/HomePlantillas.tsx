@@ -115,13 +115,22 @@ function Modal({ t, precioLabel, onClose, onPersonalizar }: {
           position: "relative", overflow: "hidden",
           alignItems: "center", justifyContent: "center", display: "none",
         }}>
-          <iframe
-            src={previewSrcModal(t)}
-            title={`Preview ${t.nombreDisplay}`}
-            scrolling="no" allow="autoplay 'none'"
-            style={{ width: 390, height: 844, border: "none", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%) scale(0.72)", transformOrigin: "center center", pointerEvents: "none" }}
-            loading="eager"
-          />
+          {t.previewImg ? (
+            <img
+              src={t.previewImg}
+              alt={`Preview ${t.nombreDisplay}`}
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+            />
+          ) : (
+            <iframe
+              key={t.id}
+              src={previewSrcModal(t)}
+              title={`Preview ${t.nombreDisplay}`}
+              scrolling="no" allow="autoplay; encrypted-media"
+              style={{ width: 390, height: 844, border: "none", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%) scale(0.72)", transformOrigin: "center center", pointerEvents: "none" }}
+              loading="eager"
+            />
+          )}
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 50%)" }} />
           <span style={{ position: "absolute", bottom: 16, left: 16, background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)", color: "#fff", fontSize: 11, fontWeight: 800, padding: "4px 10px", borderRadius: 20, letterSpacing: "0.08em", textTransform: "uppercase" }}>
             {t.categoria}
@@ -204,6 +213,13 @@ function Modal({ t, precioLabel, onClose, onPersonalizar }: {
               </button>
               <a href={`${t.baseUrl}/demo`} target="_blank" rel="noopener noreferrer" style={{ width: "100%", padding: "11px 0", borderRadius: 12, border: "1.5px solid #e0d0ea", background: "#fff", color: BRAND, fontWeight: 700, fontSize: 13, textAlign: "center", textDecoration: "none", display: "block" }}>
                 Ver demo completo ↗
+              </a>
+              <a
+                href={`https://wa.me/573057502790?text=${encodeURIComponent(`Hola, me interesa la plantilla *${t.nombreDisplay}*. ¿Pueden ayudarme?`)}`}
+                target="_blank" rel="noopener noreferrer"
+                style={{ display: "block", textAlign: "center", fontSize: 12, color: "#7a6890", textDecoration: "none", padding: "4px 0" }}
+              >
+                💬 ¿Dudas o querés que lo armemos por vos?
               </a>
             </div>
           </div>
