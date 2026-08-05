@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 
 const VIDEO_BALL   = 'https://res.cloudinary.com/ddqbnr9vo/video/upload/v1785876951/Bal%C3%B3n_de_f%C3%BAtbo_stp8ed.mp4';
-const VIDEO_PLAYER = 'https://res.cloudinary.com/ddqbnr9vo/video/upload/v1785889536/edit-this-cartoon-soccer-player-image-add-a-colorf_cdbven.webp';
+const IMG_PLAYER   = 'https://res.cloudinary.com/ddqbnr9vo/image/upload/v1785889536/edit-this-cartoon-soccer-player-image-add-a-colorf_cdbven.webp';
 const BALL_IMG     = 'https://res.cloudinary.com/ddqbnr9vo/image/upload/v1785887534/balon-cumple_rzkv2p.png';
 
 // ── Datos del evento (se parametrizarán luego) ──
@@ -19,8 +19,7 @@ type Phase = 'splash' | 'ball' | 'player' | 'details';
 export default function FootballIntro() {
   const [phase, setPhase]       = useState<Phase>('splash');
   const [titleIn, setTitleIn]   = useState(false);
-  const ballRef   = useRef<HTMLVideoElement>(null);
-  const playerRef = useRef<HTMLVideoElement>(null);
+  const ballRef = useRef<HTMLVideoElement>(null);
 
   const handleStart = () => {
     setPhase('ball');
@@ -33,10 +32,9 @@ export default function FootballIntro() {
   const goToPlayer = () => {
     if (phase !== 'ball') return;
     setPhase('player');
-    setTimeout(() => {
-      playerRef.current?.play().catch(() => {});
-      setTimeout(() => setTitleIn(true), 800);
-    }, 50);
+    setTimeout(() => setTitleIn(true), 600);
+    // imagen animada: avanza a detalles después de 5 s
+    setTimeout(() => setPhase('details'), 5500);
   };
 
   const handleBallTimeUpdate = () => {
@@ -45,10 +43,6 @@ export default function FootballIntro() {
     if (v.duration && v.currentTime >= v.duration - 1) goToPlayer();
   };
 
-  const goToDetails = () => {
-    if (phase !== 'player') return;
-    setPhase('details');
-  };
 
   return (
     <>
@@ -204,15 +198,19 @@ export default function FootballIntro() {
             }}
           />
 
-          {/* ══ VIDEO 2: JUGADOR ══ */}
-          <video ref={playerRef} src={VIDEO_PLAYER} playsInline
-            onEnded={goToDetails}
-            style={{
-              position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
-              opacity: phase === 'player' ? 1 : 0, transition: 'opacity 0.7s ease',
-              pointerEvents: phase === 'player' ? 'auto' : 'none',
-            }}
-          />
+          {/* ══ IMAGEN JUGADOR (webp animado) ══ */}
+          {phase === 'player' && (
+            <img
+              src={IMG_PLAYER}
+              alt="jugador"
+              style={{
+                position: 'absolute', inset: 0,
+                width: '100%', height: '100%', objectFit: 'cover',
+                objectPosition: 'center',
+                animation: 'detailsIn 0.6s ease both',
+              }}
+            />
+          )}
 
           {/* Título encima del video del jugador */}
           {phase === 'player' && titleIn && (
