@@ -1,15 +1,14 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 
 const VIDEO_BALL = 'https://res.cloudinary.com/ddqbnr9vo/video/upload/v1785876951/Bal%C3%B3n_de_f%C3%BAtbo_stp8ed.mp4';
 const VIDEO_CR7  = 'https://res.cloudinary.com/ddqbnr9vo/video/upload/v1785876967/cr7_sacando_gorro_pastel_ayfb6g.mp4';
 const BALL_IMG   = 'https://res.cloudinary.com/ddqbnr9vo/image/upload/v1785887534/balon-cumple_rzkv2p.png';
 const NOMBRE     = 'Matias';
 
-type Phase = 'splash' | 'ball' | 'reveal' | 'cr7';
+type Phase = 'splash' | 'ball' | 'cr7';
 
 export default function FootballIntro() {
-  const [phase, setPhase]             = useState<Phase>('splash');
-  const [revealVisible, setRevealVisible] = useState(false);
+  const [phase, setPhase] = useState<Phase>('splash');
   const ballRef = useRef<HTMLVideoElement>(null);
   const cr7Ref  = useRef<HTMLVideoElement>(null);
 
@@ -22,16 +21,11 @@ export default function FootballIntro() {
     v.play().catch(() => { v.muted = true; v.play().catch(() => {}); });
   };
 
-  /* Video 1 termina → pantalla reveal */
+  /* Video 1 termina → directo a CR7 */
   const showReveal = () => {
     if (phase !== 'ball') return;
-    setPhase('reveal');
-    setTimeout(() => setRevealVisible(true), 80);
-    // Auto-avanza a CR7 después de 3.2 s
-    setTimeout(() => {
-      setPhase('cr7');
-      cr7Ref.current?.play().catch(() => {});
-    }, 3500);
+    setPhase('cr7');
+    cr7Ref.current?.play().catch(() => {});
   };
 
   const handleTimeUpdate = () => {
@@ -81,8 +75,8 @@ export default function FootballIntro() {
           to { stroke-dashoffset: 0; }
         }
         @keyframes shimmer {
-          0%,100% { text-shadow: 0 0 10px #FFD700, 0 0 28px #FFD700; }
-          50%      { text-shadow: 0 0 24px #FFD700, 0 0 56px #ffe84d; }
+          0%,100% { text-shadow: 0 0 10px #FFFF66, 0 0 28px #FFFF44; }
+          50%      { text-shadow: 0 0 24px #FFFF88, 0 0 56px #FFFF55; }
         }
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(22px); }
@@ -126,22 +120,22 @@ export default function FootballIntro() {
                 backgroundPosition: 'center',
               }} />
 
-              {/* ── TEXTO estilo fútbol ── */}
+              {/* ── TEXTO + FLECHA cerca al balón ── */}
               <div style={{
-                position: 'absolute', top: '18%', left: 0, right: 0,
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                position: 'absolute', bottom: '30%', left: 0, right: 0,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
                 pointerEvents: 'none',
               }}>
                 <span style={{
                   fontFamily: "'Anton', 'Impact', sans-serif",
-                  fontSize: 'clamp(28px, 8vw, 42px)',
+                  fontSize: 'clamp(26px, 7.5vw, 40px)',
                   fontWeight: 900,
-                  color: '#FFD700',
+                  color: '#FFFF55',
                   letterSpacing: '0.04em',
                   textTransform: 'uppercase',
                   lineHeight: 1.1,
                   animation: 'shimmer 2.4s ease-in-out infinite',
-                  textShadow: '0 3px 0 rgba(0,0,0,0.5), 0 0 30px rgba(255,215,0,0.6)',
+                  textShadow: '0 3px 0 rgba(0,0,0,0.55)',
                   textAlign: 'center',
                   padding: '0 20px',
                 }}>
@@ -149,49 +143,46 @@ export default function FootballIntro() {
                 </span>
                 <span style={{
                   fontFamily: "'Anton', 'Impact', sans-serif",
-                  fontSize: 'clamp(34px, 10vw, 52px)',
+                  fontSize: 'clamp(32px, 9.5vw, 50px)',
                   fontWeight: 900,
                   color: '#fff',
                   letterSpacing: '0.06em',
                   textTransform: 'uppercase',
                   lineHeight: 1,
-                  textShadow: '0 3px 0 rgba(0,0,0,0.6), 0 0 20px rgba(255,255,255,0.2)',
+                  textShadow: '0 3px 0 rgba(0,0,0,0.6)',
                   textAlign: 'center',
                 }}>
                   INVITACIÓN!
                 </span>
 
-                {/* flecha curva SVG apuntando al balón (abajo-centro) */}
-                <svg viewBox="0 0 100 120" style={{
-                  width: 'clamp(50px, 14vw, 80px)', height: 'auto',
-                  marginTop: 6,
-                  filter: 'drop-shadow(0 0 6px rgba(255,215,0,0.7))',
+                {/* flecha curva con punta real */}
+                <svg viewBox="0 0 80 70" style={{
+                  width: 'clamp(44px, 11vw, 64px)', height: 'auto',
+                  marginTop: 4,
+                  filter: 'drop-shadow(0 0 5px rgba(255,255,80,0.6))',
                 }}>
+                  <defs>
+                    <marker id="arrowTip" markerWidth="6" markerHeight="6"
+                      refX="3" refY="3" orient="auto">
+                      <path d="M0,0 L0,6 L6,3 Z" fill="#FFFF55" />
+                    </marker>
+                  </defs>
                   <path
-                    d="M 20 8 C 80 8, 90 60, 50 100"
-                    fill="none" stroke="#FFD700" strokeWidth="3.5"
+                    d="M 15 6 C 65 6, 72 40, 40 60"
+                    fill="none" stroke="#FFFF55" strokeWidth="3"
                     strokeLinecap="round"
+                    markerEnd="url(#arrowTip)"
                     style={{
-                      strokeDasharray: 180,
-                      strokeDashoffset: 180,
-                      animation: 'arrowDraw 0.9s 0.4s ease forwards',
-                    }}
-                  />
-                  <polyline
-                    points="38,92 50,108 62,92"
-                    fill="none" stroke="#FFD700" strokeWidth="3.5"
-                    strokeLinecap="round" strokeLinejoin="round"
-                    style={{
-                      strokeDasharray: 40,
-                      strokeDashoffset: 40,
-                      animation: 'arrowDraw 0.4s 1.2s ease forwards',
+                      strokeDasharray: 160,
+                      strokeDashoffset: 160,
+                      animation: 'arrowDraw 0.9s 0.3s ease forwards',
                     }}
                   />
                 </svg>
 
                 <span style={{
-                  fontSize: 'clamp(10px, 2.5vw, 13px)',
-                  color: 'rgba(255,255,255,0.75)',
+                  fontSize: 'clamp(10px, 2.5vw, 12px)',
+                  color: 'rgba(255,255,255,0.65)',
                   letterSpacing: '0.2em',
                   textTransform: 'uppercase',
                   fontFamily: 'sans-serif',
@@ -248,49 +239,6 @@ export default function FootballIntro() {
             }}
           />
 
-          {/* ══ FASE 3: REVEAL "Es el cumpleaños de…" ══ */}
-          {(phase === 'reveal' || phase === 'cr7') && (
-            <div style={{
-              position: 'absolute', inset: 0, zIndex: 15,
-              display: 'flex', flexDirection: 'column',
-              alignItems: 'center', justifyContent: 'center',
-              background: 'linear-gradient(160deg, #0a1f0a 0%, #000 100%)',
-              opacity: phase === 'reveal' ? (revealVisible ? 1 : 0) : 0,
-              transition: phase === 'cr7' ? 'opacity 0.6s ease' : 'opacity 0.5s ease',
-              gap: 12,
-              padding: '0 24px',
-              textAlign: 'center',
-            }}>
-              <span style={{
-                fontSize: 'clamp(14px, 4vw, 18px)',
-                color: 'rgba(255,255,255,0.7)',
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-                fontFamily: 'sans-serif',
-                animation: revealVisible ? 'fadeUp 0.6s ease both' : 'none',
-              }}>
-                Es el cumpleaños de
-              </span>
-              <span style={{
-                fontFamily: "'Georgia', serif",
-                fontSize: 'clamp(42px, 13vw, 72px)',
-                fontWeight: 700,
-                color: '#FFD700',
-                lineHeight: 1.1,
-                animation: revealVisible ? 'letterIn 0.8s 0.25s ease both' : 'none',
-                textShadow: '0 0 30px rgba(255,215,0,0.5)',
-              }}>
-                {NOMBRE}
-              </span>
-              {/* decoración: línea dorada */}
-              <div style={{
-                width: 60, height: 3,
-                background: 'linear-gradient(90deg, transparent, #FFD700, transparent)',
-                borderRadius: 2,
-                animation: revealVisible ? 'zoomIn 0.6s 0.5s ease both' : 'none',
-              }} />
-            </div>
-          )}
 
           {/* ══ VIDEO 2: CR7 ══ */}
           <video
