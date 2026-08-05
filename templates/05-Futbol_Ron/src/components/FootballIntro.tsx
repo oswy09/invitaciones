@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import FifaCard from './FifaCard';
 
 const VIDEO_BALL   = 'https://res.cloudinary.com/ddqbnr9vo/video/upload/v1785876951/Bal%C3%B3n_de_f%C3%BAtbo_stp8ed.mp4';
 const IMG_PLAYER   = 'https://res.cloudinary.com/ddqbnr9vo/image/upload/v1785889536/edit-this-cartoon-soccer-player-image-add-a-colorf_cdbven.webp';
@@ -14,7 +15,7 @@ const EVENTO = {
   nota:    '¡Trae tus botines y muchas ganas de celebrar!',
 };
 
-type Phase = 'splash' | 'ball' | 'player' | 'details';
+type Phase = 'splash' | 'ball' | 'player' | 'card' | 'details';
 
 export default function FootballIntro() {
   const [phase, setPhase]       = useState<Phase>('splash');
@@ -33,8 +34,8 @@ export default function FootballIntro() {
     if (phase !== 'ball') return;
     setPhase('player');
     setTimeout(() => setTitleIn(true), 600);
-    // imagen animada: avanza a detalles después de 5 s
-    setTimeout(() => setPhase('details'), 5500);
+    // imagen animada: avanza a card FIFA después de 5.5 s
+    setTimeout(() => setPhase('card'), 5500);
   };
 
   const handleBallTimeUpdate = () => {
@@ -212,13 +213,13 @@ export default function FootballIntro() {
             />
           )}
 
-          {/* Título encima del video del jugador */}
+          {/* Título al fondo del video — no tapa la cara */}
           {phase === 'player' && titleIn && (
             <div style={{
-              position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10,
-              padding: '24px 16px 20px',
-              background: 'linear-gradient(to bottom, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.4) 70%, transparent 100%)',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+              position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 10,
+              padding: '32px 16px 24px',
+              background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.55) 60%, transparent 100%)',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
               animation: 'titlePop 0.6s ease both',
             }}>
               <span style={{
@@ -226,7 +227,7 @@ export default function FootballIntro() {
                 fontSize: 'clamp(28px, 8vw, 44px)',
                 fontWeight: 900, color: '#FFFF55',
                 textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.05,
-                textShadow: '0 3px 0 rgba(0,0,0,0.6), 0 0 30px rgba(255,255,60,0.5)',
+                textShadow: '0 3px 0 rgba(0,0,0,0.7), 0 0 30px rgba(255,255,60,0.5)',
                 textAlign: 'center',
                 animation: 'shimmer 2.5s ease-in-out infinite',
               }}>¡Te invito a</span>
@@ -235,10 +236,15 @@ export default function FootballIntro() {
                 fontSize: 'clamp(34px, 10vw, 54px)',
                 fontWeight: 900, color: '#fff',
                 textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1,
-                textShadow: '0 3px 0 rgba(0,0,0,0.7)',
+                textShadow: '0 3px 0 rgba(0,0,0,0.8)',
                 textAlign: 'center',
               }}>MI CUMPLE!</span>
             </div>
+          )}
+
+          {/* ══ CARD FIFA ══ */}
+          {phase === 'card' && (
+            <FifaCard nombre={EVENTO.nombre} onContinuar={() => setPhase('details')} />
           )}
 
           {/* ══ PANTALLA DETALLES ══ */}
