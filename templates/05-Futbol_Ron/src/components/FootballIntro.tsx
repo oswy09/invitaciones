@@ -43,9 +43,10 @@ export default function FootballIntro() {
   return (
     <>
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
         .fb-root {
           position: fixed; inset: 0;
-          background: linear-gradient(to bottom, #0d2a5e 0%, #1a5c1a 100%);
+          background: linear-gradient(135deg, #0f4a0f 0%, #1a6b1a 40%, #0d400d 100%);
           display: flex; align-items: center; justify-content: center;
         }
         .fb-phone {
@@ -67,14 +68,17 @@ export default function FootballIntro() {
           }
         }
 
-        /* ── balón flotando suave ── */
+        /* ── balón: izquierda ↔ derecha ── */
         @keyframes jump {
-          0%, 100% { transform: translateY(0px) rotate(-4deg); }
-          50%       { transform: translateY(-18px) rotate(4deg); }
+          0%, 100% { transform: translateX(-22px) rotate(-6deg); }
+          50%       { transform: translateX(22px)  rotate(6deg); }
         }
         @keyframes shadow {
-          0%, 100% { transform: scaleX(1);   opacity: 0.35; }
-          50%       { transform: scaleX(0.8); opacity: 0.18; }
+          0%, 100% { transform: translateX(-18px) scaleX(0.85); opacity: 0.4; }
+          50%       { transform: translateX(18px)  scaleX(1.1);  opacity: 0.25; }
+        }
+        @keyframes arrowDraw {
+          to { stroke-dashoffset: 0; }
         }
         @keyframes shimmer {
           0%,100% { text-shadow: 0 0 10px #FFD700, 0 0 28px #FFD700; }
@@ -122,41 +126,85 @@ export default function FootballIntro() {
                 backgroundPosition: 'center',
               }} />
 
-              {/* ── TEXTO centrado ── */}
+              {/* ── TEXTO estilo fútbol ── */}
               <div style={{
-                position: 'absolute', top: '22%', left: 0, right: 0,
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                position: 'absolute', top: '18%', left: 0, right: 0,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
                 pointerEvents: 'none',
               }}>
                 <span style={{
-                  fontFamily: "'Georgia', serif",
-                  fontSize: 'clamp(22px, 6vw, 32px)',
-                  fontWeight: 700,
-                  color: '#fff',
-                  letterSpacing: '0.02em',
+                  fontFamily: "'Anton', 'Impact', sans-serif",
+                  fontSize: 'clamp(28px, 8vw, 42px)',
+                  fontWeight: 900,
+                  color: '#FFD700',
+                  letterSpacing: '0.04em',
+                  textTransform: 'uppercase',
+                  lineHeight: 1.1,
                   animation: 'shimmer 2.4s ease-in-out infinite',
-                  textShadow: '0 2px 12px rgba(0,0,0,0.7), 0 0 24px rgba(255,215,0,0.7)',
+                  textShadow: '0 3px 0 rgba(0,0,0,0.5), 0 0 30px rgba(255,215,0,0.6)',
                   textAlign: 'center',
-                  padding: '0 24px',
+                  padding: '0 20px',
                 }}>
-                  ¡Tienes una invitación!
+                  ¡Tienes una
                 </span>
                 <span style={{
-                  fontSize: 'clamp(11px, 3vw, 14px)',
-                  color: 'rgba(255,255,255,0.9)',
-                  letterSpacing: '0.18em',
+                  fontFamily: "'Anton', 'Impact', sans-serif",
+                  fontSize: 'clamp(34px, 10vw, 52px)',
+                  fontWeight: 900,
+                  color: '#fff',
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                  lineHeight: 1,
+                  textShadow: '0 3px 0 rgba(0,0,0,0.6), 0 0 20px rgba(255,255,255,0.2)',
+                  textAlign: 'center',
+                }}>
+                  INVITACIÓN!
+                </span>
+
+                {/* flecha curva SVG apuntando al balón (abajo-centro) */}
+                <svg viewBox="0 0 100 120" style={{
+                  width: 'clamp(50px, 14vw, 80px)', height: 'auto',
+                  marginTop: 6,
+                  filter: 'drop-shadow(0 0 6px rgba(255,215,0,0.7))',
+                }}>
+                  <path
+                    d="M 20 8 C 80 8, 90 60, 50 100"
+                    fill="none" stroke="#FFD700" strokeWidth="3.5"
+                    strokeLinecap="round"
+                    style={{
+                      strokeDasharray: 180,
+                      strokeDashoffset: 180,
+                      animation: 'arrowDraw 0.9s 0.4s ease forwards',
+                    }}
+                  />
+                  <polyline
+                    points="38,92 50,108 62,92"
+                    fill="none" stroke="#FFD700" strokeWidth="3.5"
+                    strokeLinecap="round" strokeLinejoin="round"
+                    style={{
+                      strokeDasharray: 40,
+                      strokeDashoffset: 40,
+                      animation: 'arrowDraw 0.4s 1.2s ease forwards',
+                    }}
+                  />
+                </svg>
+
+                <span style={{
+                  fontSize: 'clamp(10px, 2.5vw, 13px)',
+                  color: 'rgba(255,255,255,0.75)',
+                  letterSpacing: '0.2em',
                   textTransform: 'uppercase',
                   fontFamily: 'sans-serif',
-                  textShadow: '0 1px 6px rgba(0,0,0,0.8)',
+                  marginTop: 2,
                 }}>
                   toca para abrir
                 </span>
               </div>
 
-              {/* ── balón flotando sobre la zona negra inferior ── */}
+              {/* ── BALÓN flotando izquierda↔derecha ── */}
               <div style={{
                 position: 'absolute',
-                bottom: '8%',
+                bottom: '7%',
                 left: '50%',
                 transform: 'translateX(-50%)',
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
@@ -165,20 +213,19 @@ export default function FootballIntro() {
                   src={BALL_IMG}
                   alt="balón"
                   style={{
-                    width: 110, height: 110,
+                    width: 160, height: 160,
                     objectFit: 'contain',
-                    animation: 'jump 2.8s ease-in-out infinite',
-                    filter: 'drop-shadow(0 12px 20px rgba(0,0,0,0.6))',
+                    animation: 'jump 3s ease-in-out infinite',
+                    filter: 'drop-shadow(0 14px 22px rgba(0,0,0,0.65))',
                   }}
                 />
-                {/* sombra suave bajo el balón */}
                 <div style={{
-                  width: 70, height: 10,
+                  width: 90, height: 10,
                   borderRadius: '50%',
-                  background: 'rgba(0,0,0,0.5)',
-                  filter: 'blur(5px)',
-                  marginTop: -4,
-                  animation: 'shadow 2.8s ease-in-out infinite',
+                  background: 'rgba(0,0,0,0.45)',
+                  filter: 'blur(6px)',
+                  marginTop: -6,
+                  animation: 'shadow 3s ease-in-out infinite',
                 }} />
               </div>
             </button>
