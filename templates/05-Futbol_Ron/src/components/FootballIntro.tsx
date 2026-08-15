@@ -6,16 +6,23 @@ const IMG_PLAYER   = 'https://res.cloudinary.com/ddqbnr9vo/image/upload/v1785889
 const BALL_IMG     = 'https://res.cloudinary.com/ddqbnr9vo/image/upload/v1785887534/balon-cumple_rzkv2p.png';
 
 // ── Datos del evento (se parametrizarán luego) ──
+const _demoFecha = (() => {
+  const d = new Date(); d.setDate(d.getDate() + 20);
+  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  return `${dias[d.getDay()]} ${d.getDate()} de ${meses[d.getMonth()]}, ${d.getFullYear()}`;
+})();
+
 const EVENTO = {
   nombre:  'Matias',
-  fecha:   'Sábado 12 de Julio, 2025',
+  fecha:   _demoFecha,
   hora:    '4:00 PM',
   lugar:   'Cancha El Pibe, Calle 45 #12-30',
   ciudad:  'Bogotá',
   nota:    '¡Trae tus botines y muchas ganas de celebrar!',
 };
 
-type Phase = 'splash' | 'ball' | 'player' | 'card' | 'details';
+type Phase = 'splash' | 'ball' | 'player' | 'card';
 
 export default function FootballIntro() {
   const [phase, setPhase]       = useState<Phase>('splash');
@@ -242,98 +249,12 @@ export default function FootballIntro() {
             </div>
           )}
 
-          {/* ══ CARD FIFA ══ */}
+          {/* ══ CARD FIFA + DATOS DEL EVENTO ══ */}
           {phase === 'card' && (
-            <FifaCard nombre={EVENTO.nombre} onContinuar={() => setPhase('details')} />
-          )}
-
-          {/* ══ PANTALLA DETALLES ══ */}
-          {phase === 'details' && (
-            <div style={{
-              position: 'absolute', inset: 0, zIndex: 20, overflowY: 'auto',
-              background: 'linear-gradient(160deg, #0a2a0a 0%, #0d1a0d 100%)',
-              display: 'flex', flexDirection: 'column', alignItems: 'center',
-              justifyContent: 'center', padding: '28px 24px',
-              animation: 'detailsIn 0.7s ease both',
-            }}>
-              {/* cabecera */}
-              <div style={{ textAlign: 'center', marginBottom: 20 }}>
-                <span style={{ fontSize: 48 }}>⚽</span>
-                <p style={{
-                  fontFamily: "'Anton', 'Impact', sans-serif",
-                  fontSize: 'clamp(13px, 3.5vw, 16px)',
-                  color: '#FFFF55', letterSpacing: '0.25em', textTransform: 'uppercase',
-                  margin: '6px 0 0',
-                }}>CUMPLEAÑOS DE</p>
-                <h1 style={{
-                  fontFamily: "'Anton', 'Impact', sans-serif",
-                  fontSize: 'clamp(44px, 13vw, 66px)',
-                  color: '#fff', textTransform: 'uppercase',
-                  letterSpacing: '0.04em', lineHeight: 1, margin: '2px 0',
-                  textShadow: '0 4px 0 rgba(0,0,0,0.5)',
-                }}>{EVENTO.nombre}</h1>
-                {/* línea decorativa */}
-                <div style={{
-                  width: 80, height: 3, margin: '10px auto 0',
-                  background: 'linear-gradient(90deg, transparent, #FFFF55, transparent)',
-                  borderRadius: 2,
-                }} />
-              </div>
-
-              {/* tarjeta de datos */}
-              <div style={{
-                width: '100%', maxWidth: 340,
-                background: 'rgba(255,255,255,0.05)',
-                border: '1.5px solid rgba(255,255,80,0.25)',
-                borderRadius: 20, padding: '20px 22px',
-                display: 'flex', flexDirection: 'column', gap: 16,
-              }}>
-                {[
-                  { icon: '📅', label: 'Fecha',  valor: EVENTO.fecha },
-                  { icon: '🕓', label: 'Hora',   valor: EVENTO.hora },
-                  { icon: '📍', label: 'Lugar',  valor: EVENTO.lugar },
-                  { icon: '🏙️', label: 'Ciudad', valor: EVENTO.ciudad },
-                ].map(row => (
-                  <div key={row.label} style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                    <span style={{ fontSize: 22, lineHeight: 1, marginTop: 2 }}>{row.icon}</span>
-                    <div>
-                      <p style={{
-                        fontSize: 10, color: 'rgba(255,255,80,0.7)', fontWeight: 700,
-                        letterSpacing: '0.18em', textTransform: 'uppercase', margin: '0 0 2px',
-                        fontFamily: 'sans-serif',
-                      }}>{row.label}</p>
-                      <p style={{
-                        fontSize: 'clamp(14px, 3.8vw, 16px)', color: '#fff',
-                        fontWeight: 600, margin: 0, fontFamily: 'sans-serif',
-                      }}>{row.valor}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* nota final */}
-              <p style={{
-                marginTop: 20, fontSize: 'clamp(13px, 3.5vw, 15px)',
-                color: 'rgba(255,255,255,0.7)', textAlign: 'center',
-                fontFamily: 'sans-serif', fontStyle: 'italic',
-                padding: '0 8px',
-              }}>{EVENTO.nota}</p>
-
-              {/* CTA WhatsApp confirmar */}
-              <a
-                href="https://wa.me/573057502790"
-                target="_blank" rel="noopener noreferrer"
-                style={{
-                  marginTop: 22, padding: '13px 32px', borderRadius: 999,
-                  background: 'linear-gradient(135deg, #25D366, #128C7E)',
-                  color: '#fff', fontFamily: "'Anton', 'Impact', sans-serif",
-                  fontSize: 16, letterSpacing: '0.06em', textTransform: 'uppercase',
-                  textDecoration: 'none', display: 'inline-block',
-                  animation: 'pulse 2s ease-in-out infinite',
-                  boxShadow: '0 4px 20px rgba(37,211,102,0.4)',
-                }}
-              >Confirmar asistencia ✔</a>
-            </div>
+            <FifaCard
+              nombre={EVENTO.nombre}
+              evento={{ fecha: EVENTO.fecha, hora: EVENTO.hora, lugar: EVENTO.lugar, nota: EVENTO.nota }}
+            />
           )}
 
         </div>

@@ -37,11 +37,17 @@ export interface BabyShowerDetails {
   extra?: Record<string, unknown>; // Campo para textos y configuraciones personalizadas del admin
 }
 
+function _demoISODate(daysAhead = 20): string {
+  const d = new Date();
+  d.setDate(d.getDate() + daysAhead);
+  return d.toISOString().slice(0, 10);
+}
+
 export const DEFAULT_SHOWER_DETAILS: BabyShowerDetails = {
   eventoId: "baby-shower-thomas",
   babyName: "Thomas",
   parentsNames: "Sofía & Alejandro",
-  date: "2026-07-05",
+  date: _demoISODate(20),
   time: "10:30",
   locationName: "Edificio Jade",
   locationAddress: "Carrera 14A # 109-55 - Piso 13 (Terraza con espacio cubierto), Bogotá",

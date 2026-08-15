@@ -9,7 +9,7 @@ export default function DemoPage() {
         saludo="¡Estás invitado!"
         titulo="Cumpleaños de Valeria 🎂"
         frase="Ven a celebrar este día tan especial con nosotros"
-        fecha="Sábado 23 de Agosto, 2025"
+        fecha={(() => { const d = new Date(); d.setDate(d.getDate()+20); const dias=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],meses=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']; return `${dias[d.getDay()]} ${d.getDate()} de ${meses[d.getMonth()]}, ${d.getFullYear()}`; })()}
         hora="4:00 PM"
         lugar="Salón Jardín, Calle 45 #12-30, Bogotá"
         bg="fce7f3"

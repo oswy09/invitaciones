@@ -275,9 +275,9 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
       mother: "María Fernanda",
       father: "Andrés"
     },
-    date: "Domingo, 5 de julio de 2026",
+    date: (() => { const d = new Date(); d.setDate(d.getDate()+20); const dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'],meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']; return `${dias[d.getDay()].charAt(0).toUpperCase()+dias[d.getDay()].slice(1)}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`; })(),
     time: "10:30 a.m. – 1:30 p.m.",
-    timestamp: "2026-07-05T10:30:00",
+    timestamp: (() => { const d = new Date(); d.setDate(d.getDate()+20); return d.toISOString().slice(0,10)+'T10:30:00'; })(),
     locationName: "Centro Comercial Santa Fe",
     locationAddress: "Centro Comercial Santafé, Autopista Norte #185-35, Bogotá - Salón de Eventos",
     locationMapUrl: "https://www.google.com/maps/search/?api=1&query=Centro+Comercial+Santaf%C3%A9+Bogot%C3%A1",

@@ -10,9 +10,15 @@ export interface StorkDetails {
   extra?: Record<string, unknown>; // Campo para textos y configuraciones personalizadas del admin
 }
 
+function _demoISODatetime(daysAhead = 20): string {
+  const d = new Date();
+  d.setDate(d.getDate() + daysAhead);
+  return d.toISOString().slice(0, 10) + 'T10:30:00';
+}
+
 export const DEFAULT_STORK_DETAILS: StorkDetails = {
   babyName: "Thomas",
-  timestamp: "2026-07-05T10:30:00",
+  timestamp: _demoISODatetime(20),
   locationName: "Edificio Jade",
   locationAddress: "Carrera 14A #109-55 Edificio Jade - Piso 13, Bogotá",
   locationMapUrl: "https://maps.google.com/?q=Carrera+14A+%23109-55+Edificio+Jade+Bogota",

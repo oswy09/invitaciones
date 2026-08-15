@@ -109,14 +109,14 @@ export const DEFAULT_INVITATION: InvitationData = {
   // Ceremony Details
   ceremonyName: 'Santuario de San Francisco',
   ceremonyTime: '09:00 AM',
-  ceremonyDate: '2026-12-10',
+  ceremonyDate: (() => { const d = new Date(); d.setDate(d.getDate()+20); return d.toISOString().slice(0,10); })(),
   ceremonyAddress: '123 Anywhere St., Any City',
   ceremonyMapUrl: 'https://maps.google.com/?q=123+Anywhere+St+Any+City',
   
   // Reception Details
   receptionName: 'Salón y Jardín Las Flores',
   receptionTime: '02:00 PM',
-  receptionDate: '2026-12-10',
+  receptionDate: (() => { const d = new Date(); d.setDate(d.getDate()+20); return d.toISOString().slice(0,10); })(),
   receptionAddress: '456 Celebration Way, Any City',
   receptionMapUrl: 'https://maps.google.com/?q=456+Celebration+Way+Any+City',
   
