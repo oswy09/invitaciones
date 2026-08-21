@@ -93,8 +93,8 @@ export default function DemoViewer({ templateId, onPersonalizar, onBack }: DemoV
       {/* Barra flotante inferior */}
       <div style={{
         position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 10,
-        background: "linear-gradient(to top, rgba(10,4,20,0.96) 60%, transparent 100%)",
-        padding: "28px 20px 20px",
+        background: "linear-gradient(to top, rgba(8,3,16,0.88) 0%, rgba(8,3,16,0.72) 45%, transparent 100%)",
+        padding: "40px 20px 18px",
         display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
       }}>
         <div style={{ display: "flex", gap: 10, width: "100%", maxWidth: 380 }}>
