@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CATALOGO, WHATSAPP_CONTACTO } from "../types";
 import type { TemplateInfo } from "../types";
 
@@ -19,6 +19,18 @@ export default function DemoViewer({ templateId, onPersonalizar, onBack }: DemoV
   const [error, setError] = useState(false);
   const t = CATALOGO.find((tmpl) => tmpl.id === templateId);
 
+  // Oculta el botón de WhatsApp flotante y el cursor "Ver más" del layout de Astro mientras el demo está abierto
+  useEffect(() => {
+    const wa = document.querySelector<HTMLElement>('a[href*="wa.me"]');
+    const cursor = document.getElementById("cursor-vermas");
+    if (wa) wa.style.display = "none";
+    if (cursor) cursor.style.display = "none";
+    return () => {
+      if (wa) wa.style.display = "";
+      if (cursor) cursor.style.display = "";
+    };
+  }, []);
+
   if (!t) {
     return (
       <div style={{ position: "fixed", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(160deg,#0a0410,#1a0a20)", fontFamily: "sans-serif" }}>
@@ -35,7 +47,7 @@ export default function DemoViewer({ templateId, onPersonalizar, onBack }: DemoV
   const hasUrl = !!t.baseUrl;
 
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: t.gradiente, display: "flex", flexDirection: "column" }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 10001, background: t.gradiente, display: "flex", flexDirection: "column" }}>
 
       {/* Loading shimmer — se oculta cuando carga */}
       {!loaded && !error && hasUrl && (
