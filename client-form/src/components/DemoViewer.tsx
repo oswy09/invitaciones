@@ -9,7 +9,6 @@ interface DemoViewerProps {
 }
 
 function demoSrc(t: TemplateInfo): string {
-  // Siempre usa la URL de producción — el template ya está deployado
   if (t.esFree) return t.baseUrl;
   return `${t.baseUrl}/demo`;
 }
@@ -19,7 +18,7 @@ export default function DemoViewer({ templateId, onPersonalizar, onBack }: DemoV
   const [error, setError] = useState(false);
   const t = CATALOGO.find((tmpl) => tmpl.id === templateId);
 
-  // Oculta el botón de WhatsApp flotante y el cursor "Ver más" del layout de Astro mientras el demo está abierto
+  // Oculta elementos flotantes del layout de Astro mientras el demo está abierto
   useEffect(() => {
     const wa = document.querySelector<HTMLElement>('a[href*="wa.me"]');
     const cursor = document.getElementById("cursor-vermas");
@@ -49,7 +48,7 @@ export default function DemoViewer({ templateId, onPersonalizar, onBack }: DemoV
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 10001, background: t.gradiente, display: "flex", flexDirection: "column" }}>
 
-      {/* Loading shimmer — se oculta cuando carga */}
+      {/* Loading shimmer */}
       {!loaded && !error && hasUrl && (
         <div style={{
           position: "absolute", inset: 0, zIndex: 1,
@@ -65,7 +64,7 @@ export default function DemoViewer({ templateId, onPersonalizar, onBack }: DemoV
         </div>
       )}
 
-      {/* Error — plantilla no tiene URL o iframe bloqueado */}
+      {/* Error — sin URL o iframe bloqueado */}
       {(error || !hasUrl) && (
         <div style={{
           position: "absolute", inset: 0, zIndex: 1,
@@ -104,49 +103,47 @@ export default function DemoViewer({ templateId, onPersonalizar, onBack }: DemoV
 
       {/* Barra flotante inferior */}
       <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 10 }}>
-        {/* zona de fade — solo transición visual, no contiene botones */}
+        {/* zona de fade — visual only */}
         <div style={{ height: 56, background: "linear-gradient(to bottom, transparent, rgba(8,3,16,0.94))", pointerEvents: "none" }} />
-        {/* zona de botones — opaca para que nada del iframe se cuele */}
-        <div style={{
-          background: "rgba(8,3,16,0.97)",
-          padding: "12px 20px 18px",
-          display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
-        }}>
-        <div style={{ display: "flex", gap: 10, width: "100%", maxWidth: 380 }}>
+        {/* zona de botones — opaca: nada del iframe se cuela */}
+        <div style={{ background: "rgba(8,3,16,0.97)", padding: "12px 20px 18px", display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+          <div style={{ display: "flex", gap: 10, width: "100%", maxWidth: 380 }}>
+            <button
+              onClick={() => onPersonalizar(t)}
+              style={{
+                flex: 1, padding: "13px 0", borderRadius: 999,
+                border: "none", background: "linear-gradient(135deg,#5A1B5E,#7A2E8A)",
+                color: "#fff", fontWeight: 800, fontSize: 14,
+                cursor: "pointer", boxShadow: "0 4px 20px rgba(90,27,94,0.5)",
+                fontFamily: "'Poppins',sans-serif",
+              }}
+            >
+              Personalizar →
+            </button>
+            <a
+              href={`https://wa.me/${WHATSAPP_CONTACTO}?text=${waMsg}`}
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                flex: 1, padding: "13px 0", borderRadius: 999,
+                border: "1.5px solid rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.1)",
+                color: "#fff", fontWeight: 700, fontSize: 14,
+                textDecoration: "none", textAlign: "center",
+                backdropFilter: "blur(6px)",
+                fontFamily: "'Poppins',sans-serif",
+              }}
+            >
+              Solicitar 💬
+            </a>
+          </div>
           <button
-            onClick={() => onPersonalizar(t)}
-            style={{
-              flex: 1, padding: "13px 0", borderRadius: 999,
-              border: "none", background: "linear-gradient(135deg,#5A1B5E,#7A2E8A)",
-              color: "#fff", fontWeight: 800, fontSize: 14,
-              cursor: "pointer", boxShadow: "0 4px 20px rgba(90,27,94,0.5)",
-              fontFamily: "'Poppins',sans-serif",
-            }}
+            onClick={onBack}
+            style={{ background: "none", border: "none", color: "rgba(255,255,255,0.45)", fontSize: 12, cursor: "pointer", padding: "4px 8px", fontFamily: "sans-serif" }}
           >
-            Personalizar →
+            ← Volver al catálogo
           </button>
-          <a
-            href={`https://wa.me/${WHATSAPP_CONTACTO}?text=${waMsg}`}
-            target="_blank" rel="noopener noreferrer"
-            style={{
-              flex: 1, padding: "13px 0", borderRadius: 999,
-              border: "1.5px solid rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.1)",
-              color: "#fff", fontWeight: 700, fontSize: 14,
-              textDecoration: "none", textAlign: "center",
-              backdropFilter: "blur(6px)",
-              fontFamily: "'Poppins',sans-serif",
-            }}
-          >
-            Solicitar 💬
-          </a>
         </div>
-        <button
-          onClick={onBack}
-          style={{ background: "none", border: "none", color: "rgba(255,255,255,0.45)", fontSize: 12, cursor: "pointer", padding: "4px 8px", fontFamily: "sans-serif" }}
-        >
-          ← Volver al catálogo
-        </button>
       </div>
+
     </div>
   );
 }
