@@ -126,7 +126,7 @@ function Modal({ t, precioLabel, onClose, onPersonalizar }: {
               key={t.id}
               src={previewSrcModal(t)}
               title={`Preview ${t.nombreDisplay}`}
-              scrolling="no" allow="autoplay; encrypted-media"
+              scrolling="no" allow="autoplay 'none'"
               style={{ width: 390, height: 844, border: "none", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%) scale(0.72)", transformOrigin: "center center", pointerEvents: "none" }}
               loading="eager"
             />
@@ -156,7 +156,7 @@ function Modal({ t, precioLabel, onClose, onPersonalizar }: {
                 src={previewSrcModal(t)}
                 title={`Preview ${t.nombreDisplay}`}
                 scrolling="no"
-                allow="autoplay; encrypted-media"
+                allow="autoplay 'none'"
                 style={{
                   width: 390, height: 844, border: "none",
                   position: "absolute",
@@ -211,15 +211,15 @@ function Modal({ t, precioLabel, onClose, onPersonalizar }: {
               <button onClick={onPersonalizar} style={{ width: "100%", padding: "13px 0", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#5A1B5E,#7A2E8A)", color: "#fff", fontWeight: 800, fontSize: 15, cursor: "pointer", boxShadow: "0 4px 16px rgba(90,27,94,0.3)" }}>
                 Personalizar esta invitación →
               </button>
+              <a
+                href={`https://wa.me/573057502790?text=${encodeURIComponent(`¡Hola! Me gustaría solicitar la plantilla *${t.nombreDisplay}*. ¿Pueden armarla por mí?`)}`}
+                target="_blank" rel="noopener noreferrer"
+                style={{ width: "100%", padding: "12px 0", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#C49B3A,#A07820)", color: "#fff", fontWeight: 800, fontSize: 14, textAlign: "center", textDecoration: "none", display: "block", boxShadow: "0 4px 16px rgba(196,155,58,0.3)" }}
+              >
+                Solicitar este diseño 💬
+              </a>
               <a href={`${t.baseUrl}/demo`} target="_blank" rel="noopener noreferrer" style={{ width: "100%", padding: "11px 0", borderRadius: 12, border: "1.5px solid #e0d0ea", background: "#fff", color: BRAND, fontWeight: 700, fontSize: 13, textAlign: "center", textDecoration: "none", display: "block" }}>
                 Ver demo completo ↗
-              </a>
-              <a
-                href={`https://wa.me/573057502790?text=${encodeURIComponent(`Hola, me interesa la plantilla *${t.nombreDisplay}*. ¿Pueden ayudarme?`)}`}
-                target="_blank" rel="noopener noreferrer"
-                style={{ display: "block", textAlign: "center", fontSize: 12, color: "#7a6890", textDecoration: "none", padding: "4px 0" }}
-              >
-                💬 ¿Dudas o querés que lo armemos por vos?
               </a>
             </div>
           </div>

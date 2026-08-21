@@ -303,7 +303,7 @@ function ModalPlantilla({
               src={previewSrcForModal(t)}
               title={`Preview ${t.nombreDisplay}`}
               scrolling="no"
-              allow="autoplay; encrypted-media"
+              allow="autoplay 'none'"
               style={{
                 width: "390px", height: "844px", border: "none",
                 position: "absolute", top: "50%", left: "50%",
@@ -345,7 +345,7 @@ function ModalPlantilla({
                 src={previewSrcForModal(t)}
                 title={`Preview ${t.nombreDisplay}`}
                 scrolling="no"
-                allow="autoplay; encrypted-media"
+                allow="autoplay 'none'"
                 style={{
                   width: 390, height: 844, border: "none",
                   position: "absolute",
@@ -428,19 +428,19 @@ function ModalPlantilla({
               Personalizar esta invitación →
             </button>
             <a
+              href={`https://wa.me/573057502790?text=${encodeURIComponent(`¡Hola! Me gustaría solicitar la plantilla *${t.nombreDisplay}*. ¿Pueden armarla por mí?`)}`}
+              target="_blank" rel="noopener noreferrer"
+              style={{ width: "100%", padding: "12px 0", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#C49B3A,#A07820)", color: "#fff", fontWeight: 800, fontSize: 14, textAlign: "center", textDecoration: "none", display: "block", boxShadow: "0 4px 16px rgba(196,155,58,0.3)" }}
+            >
+              Solicitar este diseño 💬
+            </a>
+            <a
               href={`${t.baseUrl}/demo`}
               target="_blank"
               rel="noopener noreferrer"
               style={{ width: "100%", padding: "11px 0", borderRadius: 12, border: "1.5px solid #e0d0ea", background: "#fff", color: "#5A1B5E", fontWeight: 700, fontSize: 13, cursor: "pointer", textAlign: "center", textDecoration: "none", display: "block" }}
             >
               Ver demo completo ↗
-            </a>
-            <a
-              href={`https://wa.me/573057502790?text=${encodeURIComponent(`Hola, me interesa la plantilla *${t.nombreDisplay}*. ¿Pueden ayudarme?`)}`}
-              target="_blank" rel="noopener noreferrer"
-              style={{ display: "block", textAlign: "center", fontSize: 12, color: "#7a6890", textDecoration: "none", padding: "4px 0" }}
-            >
-              💬 ¿Dudas o querés que lo armemos por vos?
             </a>
           </div>
           </div>

@@ -4,7 +4,7 @@ import Catalogo from "./components/Catalogo";
 import FormularioConPreview from "./components/FormularioConPreview";
 import FormularioAsistido from "./components/FormularioAsistido";
 import FormularioFree from "./components/FormularioFree";
-import type { TemplateInfo } from "./types";
+import { type TemplateInfo, CATALOGO } from "./types";
 
 function getPath() {
   return window.location.pathname.replace(/\/$/, "") || "/";
@@ -23,6 +23,16 @@ export default function App() {
     const handler = () => setPath(getPath());
     window.addEventListener("popstate", handler);
     return () => window.removeEventListener("popstate", handler);
+  }, []);
+
+  // Auto-select template cuando viene de HomePlantillas (página de categoría)
+  useEffect(() => {
+    const autoId = sessionStorage.getItem("openTemplate");
+    if (autoId) {
+      sessionStorage.removeItem("openTemplate");
+      const t = CATALOGO.find((tmpl) => tmpl.id === autoId);
+      if (t) setSelected(t);
+    }
   }, []);
 
   const isWhatsappMode = window.location.search.includes("contacto=1") || window.location.search.includes("whatsapp=1");
