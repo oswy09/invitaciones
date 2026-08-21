@@ -27,6 +27,7 @@ const WHATSAPP_MENSAJE = "¡Hola! Tengo una duda sobre las invitaciones digitale
 
 interface CatalogoProps {
   onSelect: (template: TemplateInfo) => void;
+  onVerDemo?: (template: TemplateInfo) => void;
   onBack?: () => void;
 }
 
@@ -195,11 +196,13 @@ function ModalPlantilla({
   precioLabel,
   onClose,
   onPersonalizar,
+  onVerDemo,
 }: {
   t: TemplateInfo;
   precioLabel: string;
   onClose: () => void;
   onPersonalizar: () => void;
+  onVerDemo?: () => void;
 }) {
   useEffect(() => {
     function onKey(e: KeyboardEvent) { if (e.key === "Escape") onClose(); }
@@ -430,15 +433,14 @@ function ModalPlantilla({
             <a
               href={`https://wa.me/573057502790?text=${encodeURIComponent(`¡Hola! Me gustaría solicitar la plantilla *${t.nombreDisplay}*. ¿Pueden armarla por mí?`)}`}
               target="_blank" rel="noopener noreferrer"
-              style={{ width: "100%", padding: "12px 0", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#C49B3A,#A07820)", color: "#fff", fontWeight: 800, fontSize: 14, textAlign: "center", textDecoration: "none", display: "block", boxShadow: "0 4px 16px rgba(196,155,58,0.3)" }}
+              style={{ width: "100%", padding: "12px 0", borderRadius: 12, border: "1.5px solid #5A1B5E", background: "transparent", color: "#5A1B5E", fontWeight: 700, fontSize: 14, textAlign: "center", textDecoration: "none", display: "block" }}
             >
               Solicitar este diseño 💬
             </a>
             <a
-              href={`${t.baseUrl}/demo`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ width: "100%", padding: "11px 0", borderRadius: 12, border: "1.5px solid #e0d0ea", background: "#fff", color: "#5A1B5E", fontWeight: 700, fontSize: 13, cursor: "pointer", textAlign: "center", textDecoration: "none", display: "block" }}
+              href={`/demo?id=${t.id}`}
+              style={{ display: "block", textAlign: "center", fontSize: 13, color: "#9b8aa8", textDecoration: "underline", padding: "4px 0", cursor: "pointer" }}
+              onClick={onVerDemo ? (e) => { e.preventDefault(); onClose(); onVerDemo(); } : undefined}
             >
               Ver demo completo ↗
             </a>
@@ -630,7 +632,7 @@ function FiltroCategorias({
 }
 
 // ── Catalogo principal ────────────────────────────────────────────────────────
-export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
+export default function Catalogo({ onSelect, onVerDemo, onBack }: CatalogoProps) {
   const [modalTemplate, setModalTemplate] = useState<TemplateInfo | null>(null);
   const [moneda, setMoneda] = useState<"cop" | "usd">("cop");
   const [categoriaFiltro, setCategoriaFiltro] = useState<CategoriaFiltro>("Todas");
@@ -734,6 +736,7 @@ export default function Catalogo({ onSelect, onBack }: CatalogoProps) {
           precioLabel={precioEnMoneda(modalTemplate)}
           onClose={() => setModalTemplate(null)}
           onPersonalizar={() => { setModalTemplate(null); onSelect(modalTemplate); }}
+          onVerDemo={onVerDemo ? () => onVerDemo(modalTemplate) : undefined}
         />
       )}
 

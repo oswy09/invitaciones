@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import type { TemplateInfo } from "../types";
 import { CATALOGO } from "../types";
 import Catalogo from "./Catalogo";
+import DemoViewer from "./DemoViewer";
 import FormularioConPreview from "./FormularioConPreview";
 import FormularioFree from "./FormularioFree";
 import FormularioAsistido from "./FormularioAsistido";
 
 export default function CatalogoIsland() {
   const [selected, setSelected] = useState<TemplateInfo | null>(null);
+  const [demoTemplate, setDemoTemplate] = useState<TemplateInfo | null>(null);
   const [isAsistido, setIsAsistido] = useState(false);
 
   useEffect(() => {
@@ -37,6 +39,16 @@ export default function CatalogoIsland() {
 
   if (isAsistido) return <FormularioAsistido />;
 
+  if (demoTemplate) {
+    return (
+      <DemoViewer
+        templateId={demoTemplate.id}
+        onPersonalizar={(t) => { setDemoTemplate(null); setSelected(t); }}
+        onBack={() => setDemoTemplate(null)}
+      />
+    );
+  }
+
   if (selected) {
     if (selected.esFree) {
       return (
@@ -57,6 +69,7 @@ export default function CatalogoIsland() {
   return (
     <Catalogo
       onSelect={setSelected}
+      onVerDemo={(t) => setDemoTemplate(t)}
       onBack={() => { window.location.href = "/"; }}
     />
   );

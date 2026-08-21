@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Landing from "./components/Landing";
 import Catalogo from "./components/Catalogo";
+import DemoViewer from "./components/DemoViewer";
 import FormularioConPreview from "./components/FormularioConPreview";
 import FormularioAsistido from "./components/FormularioAsistido";
 import FormularioFree from "./components/FormularioFree";
@@ -51,6 +52,17 @@ export default function App() {
       <FormularioConPreview
         template={selected}
         onBack={() => { setSelected(null); navigate("/plantillas"); }}
+      />
+    );
+  }
+
+  if (path === "/demo") {
+    const id = new URLSearchParams(window.location.search).get("id") ?? "";
+    return (
+      <DemoViewer
+        templateId={id}
+        onPersonalizar={(t) => { setSelected(t); navigate("/plantillas"); }}
+        onBack={() => navigate("/plantillas")}
       />
     );
   }

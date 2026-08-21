@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { TemplateInfo } from "../types";
 import { CATALOGO, DEV_PORT_POR_TEMPLATE } from "../types";
 import { supabase } from "../lib/supabase";
+import DemoViewer from "./DemoViewer";
 
 const BRAND = "#5A1B5E";
 const WHATSAPP_CONTACTO = "573057502790";
@@ -67,8 +68,8 @@ function FeatureIcon({ label, size = 14 }: { label: string; size?: number }) {
 }
 
 // ── Modal ─────────────────────────────────────────────────────────────────────
-function Modal({ t, precioLabel, onClose, onPersonalizar }: {
-  t: TemplateInfo; precioLabel: string; onClose: () => void; onPersonalizar: () => void;
+function Modal({ t, precioLabel, onClose, onPersonalizar, onVerDemo }: {
+  t: TemplateInfo; precioLabel: string; onClose: () => void; onPersonalizar: () => void; onVerDemo?: () => void;
 }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -214,11 +215,15 @@ function Modal({ t, precioLabel, onClose, onPersonalizar }: {
               <a
                 href={`https://wa.me/573057502790?text=${encodeURIComponent(`¡Hola! Me gustaría solicitar la plantilla *${t.nombreDisplay}*. ¿Pueden armarla por mí?`)}`}
                 target="_blank" rel="noopener noreferrer"
-                style={{ width: "100%", padding: "12px 0", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#C49B3A,#A07820)", color: "#fff", fontWeight: 800, fontSize: 14, textAlign: "center", textDecoration: "none", display: "block", boxShadow: "0 4px 16px rgba(196,155,58,0.3)" }}
+                style={{ width: "100%", padding: "12px 0", borderRadius: 12, border: "1.5px solid #5A1B5E", background: "transparent", color: "#5A1B5E", fontWeight: 700, fontSize: 14, textAlign: "center", textDecoration: "none", display: "block" }}
               >
                 Solicitar este diseño 💬
               </a>
-              <a href={`${t.baseUrl}/demo`} target="_blank" rel="noopener noreferrer" style={{ width: "100%", padding: "11px 0", borderRadius: 12, border: "1.5px solid #e0d0ea", background: "#fff", color: BRAND, fontWeight: 700, fontSize: 13, textAlign: "center", textDecoration: "none", display: "block" }}>
+              <a
+                href={`/demo?id=${t.id}`}
+                style={{ display: "block", textAlign: "center", fontSize: 13, color: "#9b8aa8", textDecoration: "underline", padding: "4px 0", cursor: "pointer" }}
+                onClick={(e) => { e.preventDefault(); onClose(); onVerDemo?.(); }}
+              >
                 Ver demo completo ↗
               </a>
             </div>
@@ -342,6 +347,7 @@ interface HomePlantillasProps {
 
 export default function HomePlantillas({ categoria }: HomePlantillasProps) {
   const [modal, setModal] = useState<TemplateInfo | null>(null);
+  const [demoTemplate, setDemoTemplate] = useState<TemplateInfo | null>(null);
   const [moneda, setMoneda] = useState<"cop" | "usd">("cop");
   const [precios, setPrecios] = useState<Precios>({
     "01-dino":    { cop: 87000 },
@@ -377,6 +383,16 @@ export default function HomePlantillas({ categoria }: HomePlantillasProps) {
   function handlePersonalizar(t: TemplateInfo) {
     sessionStorage.setItem("openTemplate", t.id);
     window.location.href = "/plantillas";
+  }
+
+  if (demoTemplate) {
+    return (
+      <DemoViewer
+        templateId={demoTemplate.id}
+        onPersonalizar={(t) => { setDemoTemplate(null); handlePersonalizar(t); }}
+        onBack={() => setDemoTemplate(null)}
+      />
+    );
   }
 
   return (
@@ -430,6 +446,7 @@ export default function HomePlantillas({ categoria }: HomePlantillasProps) {
           precioLabel={precioLabel(modal)}
           onClose={() => setModal(null)}
           onPersonalizar={() => handlePersonalizar(modal)}
+          onVerDemo={() => { setModal(null); setDemoTemplate(modal); }}
         />
       )}
     </div>
