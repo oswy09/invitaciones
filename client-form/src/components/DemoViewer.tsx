@@ -35,7 +35,7 @@ export default function DemoViewer({ templateId, onPersonalizar, onBack }: DemoV
   const hasUrl = !!t.baseUrl;
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: t.gradiente, display: "flex", flexDirection: "column" }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: t.gradiente, display: "flex", flexDirection: "column" }}>
 
       {/* Loading shimmer — se oculta cuando carga */}
       {!loaded && !error && hasUrl && (
