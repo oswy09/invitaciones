@@ -44,15 +44,17 @@ interface CamposBoda {
   recepcionNombre: string; recepcionDireccion: string;
   vestimenta: string; mensajePersonalizado: string; rsvpDeadline: string;
   telefonoContacto: string; whatsappNumero: string; observaciones: string;
+  welcomeText: string;
 }
 
 const BABY0: CamposBaby = { tituloEvento: "", nombreBebe: "", anfitriones: "", fecha: "", hora: "", lugarNombre: "", lugarDireccion: "", vestimenta: "", mensajePersonalizado: "", rsvpDeadline: "", telefonoContacto: "", whatsappNumero: "", observaciones: "" };
-const BODA0: CamposBoda = { tituloEvento: "", nombreNovia: "", nombreNovio: "", fecha: "", hora: "", ceremoniaNombre: "", ceremoniaDireccion: "", recepcionNombre: "", recepcionDireccion: "", vestimenta: "", mensajePersonalizado: "", rsvpDeadline: "", telefonoContacto: "", whatsappNumero: "", observaciones: "" };
+const BODA0: CamposBoda = { tituloEvento: "", nombreNovia: "", nombreNovio: "", fecha: "", hora: "", ceremoniaNombre: "", ceremoniaDireccion: "", recepcionNombre: "", recepcionDireccion: "", vestimenta: "", mensajePersonalizado: "", rsvpDeadline: "", telefonoContacto: "", whatsappNumero: "", observaciones: "", welcomeText: "" };
 
 export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) {
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateInfo | null>(null);
   const [baby, setBaby] = useState<CamposBaby>(BABY0);
   const [boda, setBoda] = useState<CamposBoda>(BODA0);
+  const [fotos, setFotos] = useState<string[]>([]);
   const [cancion, setCancion] = useState<CancionSeleccionada | null>(null);
   const [features, setFeatures] = useState({ muroDeseos: true, rsvp: true, countdown: true, mapa: true, musica: false });
   const [submitting, setSubmitting] = useState(false);
@@ -126,13 +128,18 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
       mensajePersonalizado: (cat === "Boda" ? boda.mensajePersonalizado : baby.mensajePersonalizado) || undefined,
       whatsappNumero,
       features,
+      fotos: cat === "Boda" ? fotos : undefined,
       extra: {
         origen: "formulario_contacto",
         rsvpDeadline: cat === "Boda" ? boda.rsvpDeadline : baby.rsvpDeadline,
         cancionSeleccionada: cancion,
         observaciones: cat === "Boda" ? boda.observaciones : baby.observaciones,
         telefonoContacto,
-        ...(cat === "Boda" && { ceremoniaNombre: boda.ceremoniaNombre, ceremoniaDireccion: boda.ceremoniaDireccion }),
+        ...(cat === "Boda" && { 
+          ceremoniaNombre: boda.ceremoniaNombre, 
+          ceremoniaDireccion: boda.ceremoniaDireccion,
+          welcomeText: boda.welcomeText
+        }),
       },
     };
 
@@ -253,7 +260,9 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
                 <IField label="Título del Evento *" placeholder="Ej: Baby Shower de Martina" value={baby.tituloEvento} onChange={(v) => sb("tituloEvento", v)} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <IField label="Nombre del bebé *" placeholder="Ej: Martina" value={baby.nombreBebe} onChange={(v) => sb("nombreBebe", v)} hint="Nombre que aparecerá en la invitación." />
-                  <IField label="Anfitriones (Opcional)" placeholder="Ej: Sus papitos Sofía y Alejandro" value={baby.anfitriones} onChange={(v) => sb("anfitriones", v)} />
+                  {selectedTemplate?.id !== "01-dino" && selectedTemplate?.id !== "02-stork" && selectedTemplate?.id !== "03-space" && (
+                    <IField label="Anfitriones (Opcional)" placeholder="Ej: Sus papitos Sofía y Alejandro" value={baby.anfitriones} onChange={(v) => sb("anfitriones", v)} />
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <IField label="Fecha *" type="date" value={baby.fecha} onChange={(v) => sb("fecha", v)} />
@@ -269,10 +278,38 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
           {cat === "Boda" && (
             <Section num={2} title="Datos de la Boda">
               <div className="space-y-4">
-                <IField label="Título del Evento *" placeholder="Ej: Matrimonio de Valentina & Santiago" value={boda.tituloEvento} onChange={(v) => sw("tituloEvento", v)} />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <IField label="Nombre de la novia *" placeholder="Ej: Valentina" value={boda.nombreNovia} onChange={(v) => sw("nombreNovia", v)} />
-                  <IField label="Nombre del novio *" placeholder="Ej: Santiago" value={boda.nombreNovio} onChange={(v) => sw("nombreNovio", v)} />
+                <IField 
+                  label="Nombre de los novios *" 
+                  placeholder="Ej: Sofía & Richard" 
+                  value={boda.tituloEvento} 
+                  onChange={(v) => {
+                    sw("tituloEvento", v);
+                    const parts = v.split(/&|\by\b/i).map(s => s.trim());
+                    setBoda(p => ({
+                      ...p,
+                      tituloEvento: v,
+                      nombreNovia: parts[0] || "",
+                      nombreNovio: parts[1] || ""
+                    }));
+                  }} 
+                />
+                <SubidorImagen
+                  label="Foto de portada (Principal)"
+                  value={fotos[0] ?? ""}
+                  onChange={(url) => {
+                    const current = [...fotos];
+                    current[0] = url;
+                    setFotos(current);
+                  }}
+                />
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Texto de nuestra unión</label>
+                  <textarea rows={4}
+                    placeholder="Con la bendición de Dios y de nuestros padres, tenemos el honor de invitarles..."
+                    value={boda.welcomeText}
+                    onChange={(e) => sw("welcomeText", e.target.value)}
+                    className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30 resize-none"
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <IField label="Fecha *" type="date" value={boda.fecha} onChange={(v) => sw("fecha", v)} />
@@ -320,6 +357,25 @@ export default function FormularioAsistido({ onBack }: FormularioAsistidoProps) 
                     value={cat === "Boda" ? boda.rsvpDeadline : baby.rsvpDeadline}
                     onChange={(v) => cat === "Boda" ? sw("rsvpDeadline", v) : sb("rsvpDeadline", v)}
                   />
+                  {cat === "Boda" && (
+                    <div className="space-y-3">
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Nuestros Momentos (4 Fotos)</label>
+                      <div className="grid grid-cols-2 gap-4">
+                        {[1, 2, 3, 4].map((idx) => (
+                          <SubidorImagen
+                            key={idx}
+                            label={`Foto ${idx}`}
+                            value={fotos[idx] ?? ""}
+                            onChange={(url) => {
+                              const current = [...fotos];
+                              current[idx] = url;
+                              setFotos(current);
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Canción de fondo de preferencia (Opcional)</label>
                     <BuscadorCancion value={cancion} onChange={setCancion} />
@@ -418,5 +474,77 @@ function CkFeat({ label, checked, onChange }: { label: string; checked: boolean;
         className="w-4 h-4 rounded text-violet-600 focus:ring-violet-500/20 border-slate-300" />
       <span className="text-xs font-semibold text-slate-700">{label}</span>
     </label>
+  );
+}
+
+function SubidorImagen({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  const [loading, setLoading] = useState(false);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setLoading(true);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+      const filePath = `uploads/${fileName}`;
+
+      let { data, error } = await supabase.storage
+        .from("fotos")
+        .upload(filePath, file);
+
+      if (error) {
+        const fallbackRes = await supabase.storage
+          .from("imagenes")
+          .upload(filePath, file);
+        data = fallbackRes.data;
+        error = fallbackRes.error;
+      }
+
+      if (error) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          onChange(reader.result as string);
+          setLoading(false);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        const bucket = data?.path ? "fotos" : "imagenes";
+        const { data: { publicUrl } } = supabase.storage
+          .from(bucket)
+          .getPublicUrl(filePath);
+        onChange(publicUrl);
+        setLoading(false);
+      }
+    } catch (err: any) {
+      console.error(err);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onChange(reader.result as string);
+        setLoading(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  return (
+    <div className="space-y-1">
+      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">{label}</label>
+      <div className="flex gap-2.5 items-center">
+        <input 
+          type="text" 
+          placeholder="Pegar URL o subir..."
+          value={value} 
+          onChange={(e) => onChange(e.target.value)} 
+          className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-slate-50/30"
+        />
+        <label className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2.5 cursor-pointer text-xs font-bold whitespace-nowrap text-emerald-700 hover:bg-emerald-100/50">
+          {loading ? "Subiendo..." : "📁 Subir"}
+          <input type="file" accept="image/*" style={{ display: "none" }} onChange={handleFileChange} />
+        </label>
+      </div>
+    </div>
   );
 }

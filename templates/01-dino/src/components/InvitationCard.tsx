@@ -249,6 +249,7 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
   const songYtId = cancionPersonalizada?.youtubeId ?? null;
 
   const [isPlaying, setIsPlaying] = useState(false);
+  const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [ytPlaying, setYtPlaying] = useState(false);
   const [audioObj] = useState(() => {
     const audio = new Audio(BACKGROUND_MUSIC_URL);
@@ -1048,11 +1049,52 @@ export default function InvitationCard({ details, onClose, isOpened, pagado = tr
             {/* Hanging Clothesline Illustration in gorgeous shades of blue */}
             <BabyHangingClothes />
 
-            <div className="space-y-3 max-w-md">
+            <div className="space-y-3 max-w-md w-full">
               <h3 className="font-serif-lux text-3xl md:text-4xl text-stone-850 font-bold tracking-wide">{String(details.extra?.txtSugerenciaRegalo || "Sugerencia de regalo")}</h3>
-              <p className="font-serif-lux text-base md:text-lg text-[#2F4554] leading-relaxed max-w-md mx-auto">
-                {String(details.extra?.txtNotaRegalo || "¡Tu cariño es nuestro mejor regalo! Si quieres complementarlo con un detalle, te sugerimos ropa para el bebé en la talla que desees.")}
-              </p>
+              {details.extra?.tipoRegalo !== "lista" && (
+                <p className="font-serif-lux text-base md:text-lg text-[#2F4554] leading-relaxed max-w-md mx-auto">
+                  {String(details.extra?.txtNotaRegalo || "¡Tu cariño es nuestro mejor regalo! Si quieres complementarlo con un detalle, te sugerimos ropa para el bebé en la talla que desees.")}
+                </p>
+              )}
+
+              {/* Lista de regalos en tiempo real para Dino */}
+              {details.extra?.tipoRegalo === "lista" && details.giftRegistry && details.giftRegistry.length > 0 && (
+                <div className="w-full flex flex-col gap-2.5 mt-4 max-w-xs sm:max-w-sm mx-auto">
+                  {details.giftRegistry
+                    .filter(item => item.shopName?.trim() || item.code?.trim())
+                    .map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between w-full p-3 bg-white/70 border border-[#A5BFD2]/35 rounded-xl shadow-2xs hover:border-[#A5BFD2]/60 transition-all text-left"
+                      >
+                        <div className="flex-1 min-w-0 pr-2">
+                          <span className="font-serif-lux font-extrabold text-[#9B7A46] text-xs uppercase tracking-wider block">
+                            {item.shopName}
+                          </span>
+                          {item.code && (
+                            <span className="text-xs font-semibold text-stone-700 mt-0.5 block truncate leading-tight">
+                              {item.code}
+                            </span>
+                          )}
+                        </div>
+                        {item.code && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              navigator.clipboard.writeText(item.code);
+                              setCopiedIdx(idx);
+                              setTimeout(() => setCopiedIdx(null), 2000);
+                            }}
+                            className="py-1 px-3 rounded-lg bg-[#D1E1EC]/60 hover:bg-[#D1E1EC]/85 text-[10px] text-[#2F4554] font-bold font-serif-lux transition-all cursor-pointer shadow-3xs animate-fade-in"
+                          >
+                            {copiedIdx === idx ? "¡Copiado!" : "Copiar"}
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              )}
+
               {details.extra?.giftRegistryUrl && (
                 <a
                   href={String(details.extra.giftRegistryUrl)}

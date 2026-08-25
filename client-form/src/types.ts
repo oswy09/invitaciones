@@ -177,14 +177,15 @@ export function datosEjemplo(templateId: string): InvitationData {
   const fecha = new Date();
   fecha.setDate(fecha.getDate() + 30);
   const fechaISO = fecha.toISOString().slice(0, 10);
+  const esBoda = templateId === "04-Moderna";
 
   return {
     eventoId: "preview",
     templateId,
     pagado: false,
-    tituloEvento: "Baby Shower de Sofía",
-    nombresPrincipales: ["Sofía"],
-    anfitriones: "Familia Pérez",
+    tituloEvento: esBoda ? "Sofía & Richard" : "Baby Shower de Sofía",
+    nombresPrincipales: esBoda ? ["Sofía", "Richard"] : ["Sofía"],
+    anfitriones: esBoda ? "" : "Familia Pérez",
     fecha: fechaISO,
     hora: "15:00",
     fechaTexto: fechaTextoDe(fecha),
@@ -203,5 +204,16 @@ export function datosEjemplo(templateId: string): InvitationData {
       { tienda: "👕 Ropita de algodón (3-6 meses)", codigo: "" },
       { tienda: "🧸 Juguetes de estimulación", codigo: "" },
     ] : [],
+    extra: templateId === "01-dino" ? {
+      txtIntro: "Un pequeño príncipe está por aterrizar...",
+      tipoRegalo: "carino",
+      txtNotaRegalo: "¡Tu cariño es nuestro mejor regalo! Si quieres complementarlo con un detalle, te sugerimos ropa para el bebé en la talla que desees."
+    } : templateId === "02-stork" ? {
+      tipoRegalo: "carino",
+      txtNotaRegalo: "¡Tu cariño es nuestro mejor regalo! Ropa para bebé en cualquier talla.",
+      txtFooter: "Elaborado con amor para el Baby Shower de Thomas"
+    } : esBoda ? {
+      welcomeText: "Con la bendición de Dios y de nuestros padres, tenemos el honor de invitarles a celebrar la unión de nuestras vidas en el sagrado vínculo del matrimonio. Su presencia hará de este día un momento inolvidable."
+    } : {}
   };
 }

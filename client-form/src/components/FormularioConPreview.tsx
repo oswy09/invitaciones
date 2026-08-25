@@ -46,6 +46,93 @@ function Campo({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
+interface SubidorImagenProps {
+  label: string;
+  value: string;
+  onChange: (url: string) => void;
+}
+
+function SubidorImagen({ label, value, onChange }: SubidorImagenProps) {
+  const [loading, setLoading] = useState(false);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setLoading(true);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+      const filePath = `uploads/${fileName}`;
+
+      let { data, error } = await supabase.storage
+        .from("fotos")
+        .upload(filePath, file);
+
+      if (error) {
+        const fallbackRes = await supabase.storage
+          .from("imagenes")
+          .upload(filePath, file);
+        data = fallbackRes.data;
+        error = fallbackRes.error;
+      }
+
+      if (error) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          onChange(reader.result as string);
+          setLoading(false);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        const bucket = data?.path ? "fotos" : "imagenes";
+        const { data: { publicUrl } } = supabase.storage
+          .from(bucket)
+          .getPublicUrl(filePath);
+        onChange(publicUrl);
+        setLoading(false);
+      }
+    } catch (err: any) {
+      console.error(err);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onChange(reader.result as string);
+        setLoading(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  return (
+    <Campo label={label}>
+      <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <input 
+          type="text" 
+          style={{ ...INPUT_STYLE, flex: 1 }} 
+          placeholder="Pegar URL o subir imagen..."
+          value={value} 
+          onChange={(e) => onChange(e.target.value)} 
+        />
+        <label style={{
+          backgroundColor: "#f0fdf4",
+          border: "1px solid #bbf7d0",
+          borderRadius: 8,
+          padding: "8px 12px",
+          cursor: "pointer",
+          fontSize: 12,
+          fontWeight: "bold",
+          whiteSpace: "nowrap",
+          color: "#166534"
+        }}>
+          {loading ? "Subiendo..." : "📁 Subir"}
+          <input type="file" accept="image/*" style={{ display: "none" }} onChange={handleFileChange} />
+        </label>
+      </div>
+    </Campo>
+  );
+}
+
 // ── Picker de hora ─────────────────────────────────────────────────────────
 const HORAS_PRESET = [
   "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
@@ -120,6 +207,20 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
   const [showHint, setShowHint] = useState(true);
   const [playingYtId, setPlayingYtId] = useState<string | null>(null);
   const iframeSrcRef = useRef<string>("");
+  const [rawRegalosText, setRawRegalosText] = useState("");
+
+  // Synchronize raw text for gifts textarea to avoid typing/separators/cursor issues
+  useEffect(() => {
+    const currentSerialized = (draft.registroRegalos || []).map(r => r.codigo ? `${r.tienda} - ${r.codigo}` : r.tienda).join("\n");
+    const parsedRegalos = rawRegalosText.split("\n").map(line => {
+      const parts = line.split("-");
+      return { tienda: parts[0]?.trim() || "", codigo: parts[1]?.trim() || "" };
+    });
+    const match = JSON.stringify(parsedRegalos) === JSON.stringify(draft.registroRegalos || []);
+    if (!match) {
+      setRawRegalosText(currentSerialized);
+    }
+  }, [draft.registroRegalos]);
 
   const localPort = DEV_PORT_POR_TEMPLATE[template.id];
   const templateBaseUrl =
@@ -319,22 +420,70 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
               </p>
             </div>
           )}
-          <Campo label="Título del evento *">
-            <input id="input-tituloEvento" style={INPUT_STYLE} placeholder="Baby Shower de Sofía..."
-              value={draft.tituloEvento} onChange={(e) => update("tituloEvento", e.target.value)} />
+          {template.id === "01-dino" && (
+            <Campo label="Frase de portada">
+              <input id="input-extra-txtIntro" style={INPUT_STYLE} placeholder="Ej: Un pequeño príncipe está por aterrizar..."
+                value={(draft.extra?.txtIntro as string) ?? ""}
+                onChange={(e) => update("extra", { ...draft.extra, txtIntro: e.target.value })} />
+            </Campo>
+          )}
+          <Campo label={template.categoria === "Boda" ? "Nombre de novios *" : "Título del evento *"}>
+            <input 
+              id="input-tituloEvento" 
+              style={INPUT_STYLE} 
+              placeholder={template.categoria === "Boda" ? "Ej: Sofía & Richard" : "Baby Shower de Sofía..."}
+              value={draft.tituloEvento} 
+              onChange={(e) => {
+                const val = e.target.value;
+                update("tituloEvento", val);
+                if (template.categoria === "Boda") {
+                  const parts = val.split(/&|\by\b/i).map(s => s.trim());
+                  const bride = parts[0] || "";
+                  const groom = parts[1] || "";
+                  update("nombresPrincipales", [bride, groom]);
+                }
+              }} 
+            />
           </Campo>
-          <Campo label="Nombre principal *">
-            <input id="input-nombresPrincipales" style={INPUT_STYLE} placeholder="Ej: Sofía"
-              value={draft.nombresPrincipales[0] ?? ""}
-              onChange={(e) => update("nombresPrincipales", [e.target.value])} />
-          </Campo>
-          <Campo label="Anfitriones">
-            <input id="input-anfitriones" style={INPUT_STYLE} placeholder="Ej: Familia Pérez"
-              value={draft.anfitriones ?? ""} onChange={(e) => update("anfitriones", e.target.value)} />
-          </Campo>
-          <Campo label="Mensaje de bienvenida">
+          {template.categoria === "Boda" && (
+            <SubidorImagen 
+              label="Foto de portada (Principal)"
+              value={draft.fotos?.[0] ?? ""}
+              onChange={(url) => {
+                const current = [...(draft.fotos ?? [])];
+                current[0] = url;
+                update("fotos", current);
+              }}
+            />
+          )}
+          {template.categoria !== "Boda" && (
+            <Campo label="Nombre principal *">
+              <input id="input-nombresPrincipales" style={INPUT_STYLE} placeholder="Ej: Sofía"
+                value={draft.nombresPrincipales[0] ?? ""}
+                onChange={(e) => update("nombresPrincipales", [e.target.value])} />
+            </Campo>
+          )}
+          {template.id !== "01-dino" && template.id !== "02-stork" && template.id !== "03-space" && template.categoria !== "Boda" && (
+            <Campo label="Anfitriones">
+              <input id="input-anfitriones" style={INPUT_STYLE} placeholder="Ej: Familia Pérez"
+                value={draft.anfitriones ?? ""} onChange={(e) => update("anfitriones", e.target.value)} />
+            </Campo>
+          )}
+          {template.categoria === "Boda" && (
+            <Campo label="Texto de nuestra unión">
+              <textarea 
+                id="input-extra-welcomeText" 
+                style={{ ...INPUT_STYLE, resize: "vertical" }} 
+                rows={4}
+                placeholder="Con la bendición de Dios y de nuestros padres, tenemos el honor..."
+                value={(draft.extra?.welcomeText as string) ?? ""} 
+                onChange={(e) => update("extra", { ...draft.extra, welcomeText: e.target.value })} 
+              />
+            </Campo>
+          )}
+          <Campo label={template.categoria === "Boda" ? "Frase de portada / invitación" : "Mensaje de bienvenida"}>
             <textarea id="input-mensajePersonalizado" style={{ ...INPUT_STYLE, resize: "none" }} rows={3}
-              placeholder="¡Te invitamos a celebrar con nosotros!"
+              placeholder={template.categoria === "Boda" ? "Ej: Acompáñanos a celebrar nuestro matrimonio" : "¡Te invitamos a celebrar con nosotros!"}
               value={draft.mensajePersonalizado ?? ""} onChange={(e) => update("mensajePersonalizado", e.target.value)} />
           </Campo>
         </>
@@ -357,7 +506,7 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
             <input id="input-lugar-direccion" style={INPUT_STYLE} placeholder="Calle 80 #12-34, Bogotá"
               value={draft.lugar.direccion} onChange={(e) => updateLugar("direccion", e.target.value)} />
           </Campo>
-          {template.id !== "03-space" && (
+          {template.categoria === "Boda" && (
             <Campo label="Vestimenta (opcional)">
               <input id="input-vestimenta" style={INPUT_STYLE} placeholder="Ej: Azul pastel y blanco"
                 value={draft.vestimenta ?? ""} onChange={(e) => update("vestimenta", e.target.value)} />
@@ -368,26 +517,137 @@ export default function FormularioConPreview({ template, onBack }: FormularioCon
 
       {paso === 2 && (
         <>
-          <Campo label="Lista de Regalos (escribe un regalo por línea)">
-            <textarea
-              style={{ ...INPUT_STYLE, resize: "vertical" }}
-              rows={4}
-              placeholder="Ej:&#10;🍼 Kit de Lactancia (Teteros o platos)&#10;👶 Pañales (Tallas Etapa 1, 2 o 3)&#10;👕 Ropita de algodón (3-6 meses)"
-              value={(draft.registroRegalos || []).map(r => r.tienda).join("\n")}
-              onChange={(e) => {
-                const lines = e.target.value.split("\n");
-                const newRegalos = lines.map(line => ({ tienda: line, codigo: "" }));
-                update("registroRegalos", newRegalos);
-              }}
-            />
-          </Campo>
+          {template.categoria !== "Boda" ? (
+            <>
+              <Campo label="Opción de regalos">
+                <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      update("extra", { ...draft.extra, tipoRegalo: "carino", txtNotaRegalo: "¡Tu cariño es nuestro mejor regalo! Si quieres complementarlo con un detalle, te sugerimos ropa para el bebé en la talla que desees." });
+                      update("registroRegalos", []);
+                    }}
+                    style={{
+                      flex: 1, padding: "8px 10px", borderRadius: 8,
+                      border: `1.5px solid ${(draft.extra?.tipoRegalo ?? "carino") === "carino" ? BRAND : "#e8dcef"}`,
+                      background: (draft.extra?.tipoRegalo ?? "carino") === "carino" ? "#f0e8f8" : "#faf8ff",
+                      color: (draft.extra?.tipoRegalo ?? "carino") === "carino" ? BRAND : "#555",
+                      fontSize: 11, fontWeight: (draft.extra?.tipoRegalo ?? "carino") === "carino" ? 700 : 500, cursor: "pointer",
+                    }}
+                  >
+                    💝 Cariño / Lluvia de sobres
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      update("extra", { ...draft.extra, tipoRegalo: "lista", txtNotaRegalo: "Su presencia es nuestro mejor regalo. Si desean tener un detalle, les compartimos nuestra lista de regalos:" });
+                      if (!draft.registroRegalos || draft.registroRegalos.length === 0) {
+                        update("registroRegalos", [
+                          { tienda: "🍼 Kit de Lactancia", codigo: "Teteros o platos" },
+                          { tienda: "👶 Pañales", codigo: "Etapa 1, 2 o 3" }
+                        ]);
+                      }
+                    }}
+                    style={{
+                      flex: 1, padding: "8px 10px", borderRadius: 8,
+                      border: `1.5px solid draft.extra?.tipoRegalo === "lista" ? BRAND : "#e8dcef"`,
+                      borderColor: draft.extra?.tipoRegalo === "lista" ? BRAND : "#e8dcef",
+                      background: draft.extra?.tipoRegalo === "lista" ? "#f0e8f8" : "#faf8ff",
+                      color: draft.extra?.tipoRegalo === "lista" ? BRAND : "#555",
+                      fontSize: 11, fontWeight: draft.extra?.tipoRegalo === "lista" ? 700 : 500, cursor: "pointer",
+                    }}
+                  >
+                    📋 Crear lista de regalos
+                  </button>
+                </div>
+              </Campo>
+
+              {(draft.extra?.tipoRegalo ?? "carino") === "carino" ? (
+                <Campo label="Mensaje de agradecimiento para regalos">
+                  <textarea
+                    style={{ ...INPUT_STYLE, resize: "none" }}
+                    rows={3}
+                    value={(draft.extra?.txtNotaRegalo as string) ?? "¡Tu cariño es nuestro mejor regalo! Si quieres complementarlo con un detalle, te sugerimos ropa para el bebé en la talla que desees."}
+                    onChange={(e) => update("extra", { ...draft.extra, txtNotaRegalo: e.target.value })}
+                  />
+                </Campo>
+              ) : (
+                <>
+                  <Campo label="Mensaje introductorio para la lista">
+                    <textarea
+                      style={{ ...INPUT_STYLE, resize: "none" }}
+                      rows={2}
+                      value={(draft.extra?.txtNotaRegalo as string) ?? "Su presencia es nuestro mejor regalo. Si desean tener un detalle, les compartimos nuestra lista de regalos:"}
+                      onChange={(e) => update("extra", { ...draft.extra, txtNotaRegalo: e.target.value })}
+                    />
+                  </Campo>
+                  <Campo label="Lista de Regalos (Tienda / Regalo - Código / Detalle)">
+                    <p style={{ fontSize: 10, color: "#6b5c7a", marginBottom: 6, lineHeight: 1.4 }}>
+                      Escribe en cada línea el nombre de la tienda o regalo, y opcionalmente su código/detalle separado por un guión (-).
+                      <br/>Ej: <i>Amazon - Pañales Etapa 2</i> o simplemente <i>Kit de lactancia</i>
+                    </p>
+                    <textarea
+                      style={{ ...INPUT_STYLE, resize: "vertical" }}
+                      rows={5}
+                      placeholder="Ej:&#10;Baby Center - Teteros Avent&#10;Pañales Huggies - Etapa 2&#10;Ropita de algodón"
+                      value={rawRegalosText}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setRawRegalosText(val);
+                        const lines = val.split("\n");
+                        const newRegalos = lines.map(line => {
+                          const parts = line.split("-");
+                          const tienda = parts[0]?.trim() || "";
+                          const codigo = parts[1]?.trim() || "";
+                          return { tienda, codigo };
+                        });
+                        update("registroRegalos", newRegalos);
+                      }}
+                    />
+                  </Campo>
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <h4 style={{ fontSize: 12, fontWeight: 700, color: "#4f375a", margin: "10px 0 8px 0", textTransform: "uppercase", letterSpacing: "0.05em" }}>Nuestros Momentos (4 Fotos)</h4>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 15 }}>
+                {[1, 2, 3, 4].map((idx) => (
+                  <SubidorImagen
+                    key={idx}
+                    label={`Foto ${idx}`}
+                    value={draft.fotos?.[idx] ?? ""}
+                    onChange={(url) => {
+                      const current = [...(draft.fotos ?? [])];
+                      current[idx] = url;
+                      update("fotos", current);
+                    }}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+
+          {template.id === "02-stork" && (
+            <Campo label="Mensaje de pie de página (Footer)">
+              <input id="input-extra-txtFooter" style={INPUT_STYLE} placeholder="Ej: Elaborado con amor para el Baby Shower de Danna"
+                value={(draft.extra?.txtFooter as string) ?? ""}
+                onChange={(e) => update("extra", { ...draft.extra, txtFooter: e.target.value })} />
+            </Campo>
+          )}
+
           <Campo label="Canción de fondo (opcional)">
             <BuscadorCancion value={cancionSeleccionada} onChange={updateCancion}
               onPlay={(id) => setPlayingYtId(id)} />
           </Campo>
-          <Campo label="WhatsApp para RSVP">
+          <Campo label="WhatsApp para RSVP (Responder por favor)">
             <input id="input-whatsappNumero" style={INPUT_STYLE} placeholder="573000000000"
               value={draft.whatsappNumero ?? ""} onChange={(e) => update("whatsappNumero", e.target.value)} />
+          </Campo>
+          <Campo label="Fecha límite de confirmación (RSVP)">
+            <input id="input-extra-rsvpDeadline" style={INPUT_STYLE} placeholder="Ej: 20 de Septiembre"
+              value={(draft.extra?.rsvpDeadline as string) ?? ""}
+              onChange={(e) => update("extra", { ...draft.extra, rsvpDeadline: e.target.value })} />
           </Campo>
         </>
       )}

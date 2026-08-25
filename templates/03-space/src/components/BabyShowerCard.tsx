@@ -1234,12 +1234,14 @@ export default function BabyShowerCard({ initialAudioSynth, previewDetails, prev
           <div className="w-full py-4 flex flex-col items-center mb-6 z-20">
             <Gift className="w-5.5 h-5.5 text-pink-650 mb-1.5 animate-bounce" style={{ animationDuration: '3s' }} />
             <h4 className="font-sans font-black text-indigo-950 text-sm uppercase tracking-wider mb-1 text-center">{details.extra?.txtSugerenciaRegalo || "Lista de Regalos"}</h4>
-            <p className="text-[11px] text-slate-700 text-center mb-4 max-w-[340px] font-bold leading-normal">
-              {details.extra?.txtNotaRegalo || `Su presencia en este brunch es nuestro mayor regalo. Si desean tener un lindo detalle con ${details.babyName}, les compartimos nuestra lista sugerida:`}
-            </p>
+            {details.extra?.tipoRegalo !== "lista" && (
+              <p className="text-[11px] text-slate-700 text-center mb-4 max-w-[340px] font-bold leading-normal">
+                {details.extra?.txtNotaRegalo || `Su presencia en este brunch es nuestro mayor regalo. Si desean tener un lindo detalle con ${details.babyName}, les compartimos nuestra lista sugerida:`}
+              </p>
+            )}
             
             <div className="w-full flex flex-col gap-2.5 mt-1">
-              {details.giftRegistry
+              {details.extra?.tipoRegalo === "lista" && details.giftRegistry
                 .filter(item => item.shopName?.trim() || item.code?.trim())
                 .map((item, idx) => (
                 <div 

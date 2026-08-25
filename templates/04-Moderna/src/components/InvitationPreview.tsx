@@ -437,7 +437,7 @@ export default function InvitationPreview({
           >
             <div className="relative w-full h-full rounded-[26px] overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=800"
+                src={data.fotos?.[0] || "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=800"}
                 alt="Nuestros Momentos - Pareja de novios"
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
@@ -635,39 +635,7 @@ export default function InvitationPreview({
               "{data.welcomeText}"
             </p>
 
-            <div className="w-12 h-[1px] bg-[#c4a47c]/30 my-8" />
 
-            {/* Tradicionales Nombres de Padres */}
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 text-center mt-4">
-              <div>
-                <p className="text-[10px] tracking-widest text-stone-400 uppercase font-wedding-sans font-semibold mb-2">
-                  PADRES DE LA NOVIA
-                </p>
-                <p className="text-sm font-wedding-heading font-medium" style={{ color: theme.textDark }}>
-                  {data.brideParents || 'Nombres de los padres'}
-                </p>
-              </div>
-              
-              <div>
-                <p className="text-[10px] tracking-widest text-stone-400 uppercase font-wedding-sans font-semibold mb-2">
-                  PADRES DEL NOVIO
-                </p>
-                <p className="text-sm font-wedding-heading font-medium" style={{ color: theme.textDark }}>
-                  {data.groomParents || 'Nombres de los padres'}
-                </p>
-              </div>
-            </div>
-
-            {data.godparents && (
-              <div className="mt-8 text-center">
-                <p className="text-[10px] tracking-widest text-stone-400 uppercase font-wedding-sans font-semibold mb-2">
-                  NUESTROS PADRINOS DE HONOR
-                </p>
-                <p className="text-sm font-wedding-heading font-medium italic" style={{ color: theme.textDark }}>
-                  {data.godparents}
-                </p>
-              </div>
-            )}
           </motion.div>
         </section>
       )}
@@ -929,120 +897,6 @@ export default function InvitationPreview({
         </section>
       )}
 
-      {/* ==================== 6. GIFT TABLE SECTION ==================== */}
-      {data.showGiftTable && (
-        <section className="relative px-6 py-20 bg-white/40 border-t border-b border-stone-200/40 text-center flex flex-col items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.8 }}
-            className="flex flex-col items-center w-full max-w-lg"
-          >
-            <div className="p-3.5 rounded-full mb-4 mx-auto" style={{ backgroundColor: theme.secondary, color: theme.primary }}>
-              <Gift size={24} />
-            </div>
-
-            <h3 className="text-2xl font-wedding-heading tracking-wide mb-3" style={{ color: theme.textDark }}>
-              MESA DE REGALOS
-            </h3>
-
-            <p className="text-xs text-stone-600 font-serif italic max-w-md leading-relaxed mb-8 px-4 mx-auto">
-              {data.giftTableText}
-            </p>
-          </motion.div>
-
-          <div className="w-full max-w-lg grid grid-cols-1 sm:grid-cols-2 gap-6 px-2">
-            
-            {/* Gift Registries (Amazon / Liverpool) */}
-            {(data.giftRegistryAmazon || data.giftRegistryLiverpool) && (
-              <div className="p-6 bg-white border border-stone-150 rounded-2xl flex flex-col items-center justify-center">
-                <p className="text-[10px] tracking-widest text-stone-400 font-wedding-sans uppercase mb-4">
-                  TIENDAS Y MESAS
-                </p>
-
-                {data.giftRegistryAmazon && (
-                  <div className="flex items-center justify-between w-full border-b border-stone-100 py-3 text-xs">
-                    <span className="font-semibold text-stone-700">Amazon Wishlist</span>
-                    <button
-                      onClick={() => copyToClipboard(data.giftRegistryAmazon, 'account')}
-                      className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100/50 rounded-full text-[10px] font-bold uppercase transition"
-                    >
-                      {copiedText === 'account' ? <Check size={11} /> : <Copy size={11} />}
-                      Código: {data.giftRegistryAmazon}
-                    </button>
-                  </div>
-                )}
-
-                {data.giftRegistryLiverpool && (
-                  <div className="flex items-center justify-between w-full py-3 text-xs">
-                    <span className="font-semibold text-stone-700">Liverpool</span>
-                    <button
-                      onClick={() => copyToClipboard(data.giftRegistryLiverpool, 'account')}
-                      className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100/50 rounded-full text-[10px] font-bold uppercase transition"
-                    >
-                      Código: {data.giftRegistryLiverpool}
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Bank Transfers */}
-            {(data.bankAccountNumber || data.clabe) && (
-              <div className="p-6 bg-white border border-stone-150 rounded-2xl text-left">
-                <div className="text-center mb-3">
-                  <Landmark className="mx-auto text-stone-400" size={20} />
-                  <p className="text-[10px] tracking-widest text-stone-400 font-wedding-sans uppercase mt-1">
-                    TRANSFERENCIA BANCARIA
-                  </p>
-                </div>
-
-                <div className="space-y-2.5 text-xs text-stone-600">
-                  <div className="flex justify-between border-b border-stone-50 pb-1.5">
-                    <span>Banco:</span>
-                    <strong className="text-stone-800">{data.bankName || 'Bancomer'}</strong>
-                  </div>
-                  <div className="flex justify-between border-b border-stone-50 pb-1.5">
-                    <span>Titular:</span>
-                    <strong className="text-stone-800 text-right truncate max-w-[150px]">{data.bankAccountOwner || 'Nombres'}</strong>
-                  </div>
-                  
-                  {data.bankAccountNumber && (
-                    <div className="flex items-center justify-between border-b border-stone-50 pb-1.5">
-                      <span>Cuenta:</span>
-                      <button
-                        onClick={() => copyToClipboard(data.bankAccountNumber, 'account')}
-                        className="flex items-center gap-1 font-mono text-stone-800 hover:text-[#c4a47c] transition font-bold"
-                        title="Copiar Cuenta"
-                      >
-                        {data.bankAccountNumber}
-                        {copiedText === 'account' ? <Check size={11} className="text-green-600" /> : <Copy size={11} />}
-                      </button>
-                    </div>
-                  )}
-
-                  {data.clabe && (
-                    <div className="flex items-center justify-between pb-1.5">
-                      <span>CLABE:</span>
-                      <button
-                        onClick={() => copyToClipboard(data.clabe, 'clabe')}
-                        className="flex items-center gap-1 font-mono text-stone-800 hover:text-[#c4a47c] transition font-bold"
-                        title="Copiar CLABE"
-                      >
-                        {data.clabe}
-                        {copiedText === 'clabe' ? <Check size={11} className="text-green-600" /> : <Copy size={11} />}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-          </div>
-        </section>
-      )}
-
       {/* ==================== 7. PHOTO GALLERY ==================== */}
       {data.showGallery && (
         <section className="relative px-6 py-20 text-center flex flex-col items-center">
@@ -1063,25 +917,25 @@ export default function InvitationPreview({
             <div className="max-w-2xl w-full grid grid-cols-2 sm:grid-cols-3 gap-6 px-2">
               {[
                 { 
-                  src: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800', 
+                  src: data.fotos?.[1] || 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800', 
                   span: 'col-span-2 sm:col-span-2 aspect-[4/3] sm:aspect-video', 
                   caption: 'Donde comenzó nuestro siempre...', 
                   rotate: '-rotate-1 hover:rotate-0'
                 },
                 { 
-                  src: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=800', 
+                  src: data.fotos?.[2] || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=800', 
                   span: 'col-span-1 aspect-[3/4] sm:aspect-auto sm:h-auto', 
                   caption: 'Risas y complicidad', 
                   rotate: 'rotate-2 hover:rotate-0'
                 },
                 { 
-                  src: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=800', 
+                  src: data.fotos?.[3] || 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=800', 
                   span: 'col-span-1 aspect-[3/4] sm:aspect-auto sm:h-auto', 
                   caption: 'Tus ojos, mi hogar', 
                   rotate: '-rotate-2 hover:rotate-0'
                 },
                 { 
-                  src: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&q=80&w=800', 
+                  src: data.fotos?.[4] || 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&q=80&w=800', 
                   span: 'col-span-2 sm:col-span-2 aspect-[4/3] sm:aspect-video', 
                   caption: 'Promesas de amor sincero', 
                   rotate: 'rotate-1 hover:rotate-0'
@@ -1136,7 +990,7 @@ export default function InvitationPreview({
                 ¿Nos acompañarás?
               </h3>
               <p className="text-xs text-stone-500 font-serif italic mt-1">
-                Por favor, confirma tu asistencia antes del 30 de Noviembre
+                {data.rsvpDeadline ? `Por favor, confirma tu asistencia antes del ${data.rsvpDeadline}` : "Por favor, confirma tu asistencia"}
               </p>
               <div className="w-12 h-[1px] bg-[#c4a47c]/30 mx-auto my-3" />
             </div>

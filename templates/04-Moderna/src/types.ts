@@ -65,6 +65,7 @@ export interface InvitationData {
   brideParents: string; // e.g., "María López & Roberto García"
   groomParents: string; // e.g., "Helena Smith & John Doe"
   godparents: string;   // e.g., "Patricia García & Antonio Pérez"
+  rsvpDeadline?: string;
 }
 
 export interface RSVPResponse {

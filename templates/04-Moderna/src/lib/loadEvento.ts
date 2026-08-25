@@ -72,6 +72,7 @@ function fromCoreData(core: Record<string, unknown>): InvitationData {
     brideParents: (extra.brideParents as string) || DEFAULT_INVITATION.brideParents,
     groomParents: (extra.groomParents as string) || DEFAULT_INVITATION.groomParents,
     godparents: (extra.godparents as string) || DEFAULT_INVITATION.godparents,
+    rsvpDeadline: (extra.rsvpDeadline as string) || undefined,
 
     // Section toggles
     showCountdown: (extra.showCountdown as boolean) ?? DEFAULT_INVITATION.showCountdown,
@@ -83,6 +84,7 @@ function fromCoreData(core: Record<string, unknown>): InvitationData {
     showGallery: (extra.showGallery as boolean) ?? DEFAULT_INVITATION.showGallery,
     showRSVP: (extra.showRSVP as boolean) ?? DEFAULT_INVITATION.showRSVP,
     showGuestbook: (extra.showGuestbook as boolean) ?? DEFAULT_INVITATION.showGuestbook,
+    fotos: (core.fotos as string[]) || undefined,
   };
 }
 

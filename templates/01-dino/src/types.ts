@@ -29,6 +29,7 @@ export interface BabyShowerDetails {
   locationMapUrl: string; // Google Maps URL
   giftRegistryUrl?: string; // Gift registry website or details
   giftRegistryStore?: string; // Amazon / Liverpool etc
+  giftRegistry?: { shopName: string; code: string }[];
   rsvpDeadline: string; // "2026-06-30"
   dressCode: string; // "Azul pastel, beige y blanco"
   whatsappNumber?: string; // dígitos, ej: "573154384042"
@@ -127,6 +128,7 @@ export function fromInvitationData(data: InvitationData): BabyShowerDetails {
     locationMapUrl: data.lugar.mapUrl,
     giftRegistryStore: registro?.tienda,
     giftRegistryUrl: registro?.url,
+    giftRegistry: (data.registroRegalos ?? []).map(r => ({ shopName: r.tienda, code: r.codigo || "" })),
     rsvpDeadline,
     dressCode: data.vestimenta ?? "",
     whatsappNumber: data.whatsappNumero?.replace(/[^+\d]/g, ""),

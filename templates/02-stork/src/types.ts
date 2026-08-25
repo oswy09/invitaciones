@@ -7,6 +7,7 @@ export interface StorkDetails {
   whatsappNumber: string; // solo dígitos, ej: "573154384042"
   welcomeMessage?: string;
   tituloEvento?: string;
+  giftRegistry?: { shopName: string; code: string }[];
   extra?: Record<string, unknown>; // Campo para textos y configuraciones personalizadas del admin
 }
 
@@ -54,6 +55,7 @@ export function fromInvitationData(data: InvitationData): StorkDetails {
     whatsappNumber: (data.whatsappNumero ?? "").replace(/[^+\d]/g, ""),
     welcomeMessage: data.mensajePersonalizado || "¡Acompáñanos a compartir una mañana especial al aire libre, llena de amor, buenos momentos y bendiciones!",
     tituloEvento: data.tituloEvento || "Baby Shower",
+    giftRegistry: (data.registroRegalos ?? []).map(r => ({ shopName: r.tienda, code: r.codigo || "" })),
     extra: data.extra,
   };
 }

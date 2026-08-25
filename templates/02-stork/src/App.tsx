@@ -67,6 +67,7 @@ export default function App() {
 
   // RSVP Form States
   const [rsvpName, setRsvpName] = useState('');
+  const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [attending, setAttending] = useState(true);
   const [companions, setCompanions] = useState(0);
 
@@ -288,9 +289,11 @@ export default function App() {
                 <h3 className="text-[24px] sm:text-[28px] font-black text-slate-800 font-fredoka tracking-wide leading-tight">{String(details.extra?.txtSugerenciaRegalo || `¿Qué le puedes regalar a ${details.babyName}?`)}</h3>
               </div>
               
-              <p className="text-[20px] sm:text-[22px] text-slate-800 font-cormorant italic font-semibold leading-relaxed mb-4 text-center max-w-[500px]">
-                {String(details.extra?.txtNotaRegalo || "¡Tu cariño es nuestro mejor regalo! Ropa para bebé en cualquier talla.")}
-              </p>
+              {details.extra?.tipoRegalo !== "lista" && (
+                <p className="text-[20px] sm:text-[22px] text-slate-800 font-cormorant italic font-semibold leading-relaxed mb-4 text-center max-w-[500px]">
+                  {String(details.extra?.txtNotaRegalo || "¡Tu cariño es nuestro mejor regalo! Ropa para bebé en cualquier talla.")}
+                </p>
+              )}
 
               {details.extra?.giftRegistryUrl && (
                 <a
@@ -302,6 +305,44 @@ export default function App() {
                   <Gift className="w-4 h-4 text-white" />
                   <span>Ver mesa de regalos ↗</span>
                 </a>
+              )}
+
+              {/* Gift list rendering in Stork style */}
+              {details.extra?.tipoRegalo === "lista" && details.giftRegistry && details.giftRegistry.length > 0 && (
+                <div className="w-full flex flex-col gap-2.5 mt-2 mb-4 max-w-[340px] mx-auto text-left">
+                  {details.giftRegistry
+                    .filter(item => item.shopName?.trim() || item.code?.trim())
+                    .map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between w-full p-3 bg-white/80 border border-sky-100 rounded-2xl shadow-2xs hover:border-sky-200 transition-all"
+                      >
+                        <div className="flex-1 min-w-0 pr-2">
+                          <span className="font-fredoka font-bold text-sky-600 text-xs uppercase tracking-wider block">
+                            {item.shopName}
+                          </span>
+                          {item.code && (
+                            <span className="text-sm font-semibold text-slate-700 mt-0.5 block truncate leading-tight">
+                              {item.code}
+                            </span>
+                          )}
+                        </div>
+                        {item.code && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              navigator.clipboard.writeText(item.code);
+                              setCopiedIdx(idx);
+                              setTimeout(() => setCopiedIdx(null), 2000);
+                            }}
+                            className="py-1 px-3.5 rounded-xl bg-sky-50 hover:bg-sky-100/75 border border-sky-200 text-[10px] text-sky-700 font-bold font-fredoka transition-all cursor-pointer shadow-3xs"
+                          >
+                            {copiedIdx === idx ? "¡Copiado!" : "Copiar"}
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                </div>
               )}
 
               {/* Beautiful Animated Clothes Stork Image requested */}
@@ -567,7 +608,7 @@ export default function App() {
           {/* Elegant Footer */}
           <footer className="mt-14 text-center py-6 select-all flex flex-col items-center justify-center relative z-25">
             <p className="font-bold text-[19px] text-slate-700 font-cormorant italic leading-relaxed text-center whitespace-pre-line">
-              Elaborado con amor para el Baby Shower de {details.babyName}
+              {String(details.extra?.txtFooter || `Elaborado con amor para el Baby Shower de ${details.babyName}`)}
             </p>
           </footer>
 
