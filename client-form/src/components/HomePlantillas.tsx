@@ -428,14 +428,14 @@ export default function HomePlantillas({ categoria }: HomePlantillasProps) {
       {/* Mobile list */}
       <div className="hp-mobile">
         {filteredCatalog.map((t) => (
-          <MobileCard key={t.id} t={t} onSelect={() => setModal(t)} precioLabel={precioLabel(t)} />
+          <MobileCard key={t.id} t={t} onSelect={() => { if (t.baseUrl) setModal(t); }} precioLabel={precioLabel(t)} />
         ))}
       </div>
 
       {/* Desktop grid */}
       <div className="hp-desktop">
         {filteredCatalog.map((t) => (
-          <DesktopCard key={t.id} t={t} onSelect={() => setModal(t)} precioLabel={precioLabel(t)} />
+          <DesktopCard key={t.id} t={t} onSelect={() => { if (t.baseUrl) setModal(t); }} precioLabel={precioLabel(t)} />
         ))}
       </div>
 

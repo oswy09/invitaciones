@@ -466,12 +466,12 @@ function TemplateCard({
 
   return (
     <article
-      onClick={() => onSelect(t)}
-      onMouseEnter={() => setHovered(true)}
+      onClick={() => { if (t.baseUrl) onSelect(t); }}
+      onMouseEnter={() => { if (t.baseUrl) setHovered(true); }}
       onMouseLeave={() => setHovered(false)}
       style={{
         backgroundColor: "white", borderRadius: "1rem", overflow: "hidden",
-        display: "flex", flexDirection: "column", cursor: "pointer",
+        display: "flex", flexDirection: "column", cursor: t.baseUrl ? "pointer" : "default",
         transform: hovered ? "translateY(-8px)" : "translateY(0)",
         boxShadow: hovered
           ? "0 20px 48px rgba(90,27,94,0.18), 0 4px 12px rgba(90,27,94,0.08)"
@@ -540,11 +540,13 @@ function MobileCard({
   return (
     <button
       type="button"
-      onClick={() => onSelect(t)}
+      onClick={() => { if (t.baseUrl) onSelect(t); }}
+      disabled={!t.baseUrl}
       style={{
         display: "flex", flexDirection: "row", alignItems: "center",
         background: "#fff", border: "1px solid #ede0f5",
-        borderRadius: 16, cursor: "pointer",
+        borderRadius: 16, cursor: t.baseUrl ? "pointer" : "default",
+        opacity: t.baseUrl ? 1 : 0.85,
         boxShadow: "0 2px 10px rgba(90,27,94,0.07)",
         width: "100%", padding: 8,
         gap: 10, textAlign: "left",
