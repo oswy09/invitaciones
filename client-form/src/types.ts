@@ -142,7 +142,7 @@ export const CATALOGO: TemplateInfo[] = [
     emoji: "⚽",
     categoria: "Cumpleaños",
     baseUrl: "",
-    previewImg: "https://res.cloudinary.com/ddqbnr9vo/image/upload/v1787688638/green-gramm_wllneo.jpg",
+    previewImg: "https://res.cloudinary.com/ddqbnr9vo/image/upload/v1785889536/edit-this-cartoon-soccer-player-image-add-a-colorf_cdbven.webp",
     gradiente: "linear-gradient(to bottom, #0d2e0d, #1a4a1a)",
     textColor: "#c8f5a0",
     features: [
