@@ -682,7 +682,7 @@ export default function Catalogo({ onSelect, onVerDemo, onBack }: CatalogoProps)
           Elige tu diseño
         </h1>
         <p style={{ fontSize: 14, color: "#7a6890", margin: "0 0 18px", lineHeight: 1.6 }}>
-          Selecciona una plantilla, personalízala con tus datos y compártela por WhatsApp.
+          Personaliza tu plantilla preferida en pocos clics y compártela con tus invitados. Si prefieres una experiencia sin complicaciones, nosotros nos encargamos del montaje o creamos un diseño exclusivo 100% a medida para tu evento.
         </p>
 
         {/* Toggle COP/USD */}

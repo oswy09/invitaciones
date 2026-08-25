@@ -79,9 +79,12 @@ export default function Landing({ onVerPlantillas }: { onVerPlantillas: () => vo
 
         {/* PLANTILLAS PREVIEW */}
         <section aria-label="Muestra de plantillas" className="px-6 pb-20 max-w-4xl mx-auto">
-          <h2 className="text-center text-2xl font-bold mb-10" style={{ fontFamily: "'Playfair Display', serif", color: "#5A1B5E" }}>
+          <h2 className="text-center text-2xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif", color: "#5A1B5E" }}>
             Nuestras plantillas
           </h2>
+          <p className="text-center text-sm mb-10 max-w-xl mx-auto" style={{ color: "#7a6890", lineHeight: 1.6 }}>
+            Personaliza tu plantilla preferida en pocos clics y compártela con tus invitados. Si prefieres una experiencia sin complicaciones, nosotros nos encargamos del montaje o creamos un diseño exclusivo 100% a medida para tu evento.
+          </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {EVENTOS.map((e) => (
               <div
