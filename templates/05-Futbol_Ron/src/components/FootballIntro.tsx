@@ -66,7 +66,7 @@ export default function FootballIntro() {
           position: relative;
           width: 100%; height: 100%;
           overflow: hidden;
-          background: #000;
+          background: url('https://res.cloudinary.com/ddqbnr9vo/image/upload/v1787688638/green-gramm_wllneo.jpg') center/cover no-repeat;
         }
         @media (min-width: 641px) {
           .fb-phone {
@@ -74,8 +74,7 @@ export default function FootballIntro() {
             height: min(780px, 90vh);
             border-radius: 36px;
             box-shadow:
-              0 0 0 2px #6a7d62,
-              0 0 0 5px #889C80,
+              0 0 0 4px #1e5a10,
               0 32px 80px rgba(0,0,0,0.5),
               inset 0 0 0 1px rgba(255,255,255,0.08);
           }
@@ -128,7 +127,7 @@ export default function FootballIntro() {
               {/* fondo imagen */}
               <div style={{
                 position: 'absolute', inset: 0,
-                backgroundImage: 'url(https://res.cloudinary.com/ddqbnr9vo/image/upload/v1785887622/fondo-grama_wwopta.png)',
+                backgroundImage: 'url(https://res.cloudinary.com/ddqbnr9vo/image/upload/v1787688638/green-gramm_wllneo.jpg)',
                 backgroundSize: 'cover', backgroundPosition: 'center',
               }} />
 
@@ -205,6 +204,33 @@ export default function FootballIntro() {
               opacity: phase === 'ball' ? 1 : 0, transition: 'opacity 0.5s ease', pointerEvents: 'none',
             }}
           />
+          {/* Texto sobre el video del balón */}
+          {phase === 'ball' && (
+            <div style={{
+              position: 'absolute', top: '14%', left: 0, right: 0, zIndex: 10,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+              pointerEvents: 'none',
+              animation: 'fadeUp 0.7s ease both',
+            }}>
+              <span style={{
+                fontFamily: "'Anton','Impact',sans-serif",
+                fontSize: 'clamp(28px,8vw,44px)',
+                color: '#FFFF55',
+                textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1.05,
+                textShadow: '0 3px 0 rgba(0,0,0,0.7), 0 0 28px rgba(255,255,60,0.5)',
+                textAlign: 'center', padding: '0 20px',
+                animation: 'shimmer 2.4s ease-in-out infinite',
+              }}>¡Cumplo 7 años</span>
+              <span style={{
+                fontFamily: "'Anton','Impact',sans-serif",
+                fontSize: 'clamp(22px,6.5vw,36px)',
+                color: '#fff',
+                textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.1,
+                textShadow: '0 3px 0 rgba(0,0,0,0.8)',
+                textAlign: 'center', padding: '0 20px',
+              }}>y te quiero invitar!</span>
+            </div>
+          )}
 
           {/* ══ IMAGEN JUGADOR (webp animado) ══ */}
           {phase === 'player' && (
@@ -231,21 +257,21 @@ export default function FootballIntro() {
             }}>
               <span style={{
                 fontFamily: "'Anton', 'Impact', sans-serif",
-                fontSize: 'clamp(28px, 8vw, 44px)',
+                fontSize: 'clamp(26px, 7.5vw, 40px)',
                 fontWeight: 900, color: '#FFFF55',
                 textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.05,
                 textShadow: '0 3px 0 rgba(0,0,0,0.7), 0 0 30px rgba(255,255,60,0.5)',
                 textAlign: 'center',
                 animation: 'shimmer 2.5s ease-in-out infinite',
-              }}>¡Te invito a</span>
+              }}>¡A disfrutar de</span>
               <span style={{
                 fontFamily: "'Anton', 'Impact', sans-serif",
-                fontSize: 'clamp(34px, 10vw, 54px)',
+                fontSize: 'clamp(30px, 9vw, 50px)',
                 fontWeight: 900, color: '#fff',
                 textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1,
                 textShadow: '0 3px 0 rgba(0,0,0,0.8)',
                 textAlign: 'center',
-              }}>MI CUMPLE!</span>
+              }}>mi fiesta de cumple!</span>
             </div>
           )}
 

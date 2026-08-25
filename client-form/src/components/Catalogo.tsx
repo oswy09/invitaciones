@@ -496,6 +496,11 @@ function TemplateCard({
         <span style={{ position: "absolute", top: 12, right: 12, zIndex: 2, fontSize: "0.6rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", padding: "4px 10px", borderRadius: "4px", backgroundColor: "rgba(0,0,0,0.55)", color: "white", backdropFilter: "blur(4px)" }}>
           {t.categoria}
         </span>
+        {!t.baseUrl && (
+          <span style={{ position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", zIndex: 2, fontSize: "0.6rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", padding: "5px 14px", borderRadius: "999px", background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "#fff", whiteSpace: "nowrap", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>
+            ⏳ Próximamente
+          </span>
+        )}
       </div>
 
       <div style={{ display: "flex", flex: 1, padding: "1rem" }}>

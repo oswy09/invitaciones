@@ -135,6 +135,26 @@ export const CATALOGO: TemplateInfo[] = [
     precioDefault: { cop: 80000, usd: 22 },
   },
   {
+    id: "05-futbol-cumple",
+    nombre: "Fútbol",
+    nombreDisplay: "Cumpleaños Futbolero",
+    descripcion: "Carta de jugador estilo Mundial con intro animada, grama y datos del evento",
+    emoji: "⚽",
+    categoria: "Cumpleaños",
+    baseUrl: "",
+    previewImg: "https://res.cloudinary.com/ddqbnr9vo/image/upload/v1787688638/green-gramm_wllneo.jpg",
+    gradiente: "linear-gradient(to bottom, #0d2e0d, #1a4a1a)",
+    textColor: "#c8f5a0",
+    features: [
+      { emoji: "🏟️", label: "Intro animada con video de balón" },
+      { emoji: "🃏", label: "Carta de jugador estilo Mundial" },
+      { emoji: "⚽", label: "Globo balón flotante decorativo" },
+      { emoji: "🎵", label: "Sonido de estadio de fondo" },
+      { emoji: "✅", label: "Confirmación de asistencia" },
+    ],
+    precioDefault: { cop: 70000, usd: 20 },
+  },
+  {
     id: "free-01-cumple",
     nombre: "Cumple Free",
     nombreDisplay: "Cumpleaños Festivo",
@@ -159,7 +179,8 @@ export const DEV_PORT_POR_TEMPLATE: Record<string, number> = {
   "02-stork":       3102,
   "03-space":       3103,
   "04-Moderna":     3104,
-  "free-01-cumple": 3105,
+  "free-01-cumple":      3105,
+  "05-futbol-cumple":    3106,
 };
 
 const DIAS_SEMANA = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface Props {
   nombre:  string;
@@ -10,29 +10,35 @@ const STATS = [
   { key: 'REG', val: 97 }, { key: 'DEF', val: 55 }, { key: 'FIS', val: 84 },
 ];
 
-// Banderines: alternando colores Portugal (verde, rojo, verde, rojo…)
 const FLAG_COLORS = ['#006600','#DA291C','#006600','#DA291C','#006600','#DA291C','#006600','#DA291C','#006600','#DA291C','#006600','#DA291C'];
 
-export default function FifaCard({ nombre, evento }: Props) {
-  const [photo, setPhoto] = useState<string | null>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
+// Imagen de niño con uniforme de fútbol (Cloudinary)
+const IMG_JUGADOR = 'https://res.cloudinary.com/ddqbnr9vo/image/upload/v1785889536/edit-this-cartoon-soccer-player-image-add-a-colorf_cdbven.webp';
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => setPhoto(ev.target?.result as string);
-    reader.readAsDataURL(file);
-  };
+// Sonido de estadio (barras) — loop
+const AUDIO_ESTADIO = 'https://res.cloudinary.com/ddqbnr9vo/video/upload/v1785876951/Bal%C3%B3n_de_f%C3%BAtbo_stp8ed.mp4';
+
+export default function FifaCard({ nombre, evento }: Props) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = 0.18;
+    audio.play().catch(() => {});
+    return () => { audio.pause(); };
+  }, []);
 
   return (
     <>
+      <audio ref={audioRef} src={AUDIO_ESTADIO} loop preload="auto" style={{ display:'none' }} />
+
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 
         .fc-root {
           position: absolute; inset: 0; z-index: 25; overflow-y: auto;
-          background: linear-gradient(160deg, #0a1a0a 0%, #0d200d 100%);
+          background: radial-gradient(ellipse at 50% 30%, #1a4a1a 0%, #0d2e0d 40%, #071507 100%);
           display: flex; flex-direction: column; align-items: center;
           padding: 0 16px 28px;
           animation: fcIn 0.6s ease both;
@@ -42,6 +48,16 @@ export default function FifaCard({ nombre, evento }: Props) {
           to   { opacity:1; transform:translateY(0); }
         }
 
+        /* Líneas de campo de fútbol al fondo */
+        .fc-root::before {
+          content: '';
+          position: fixed; inset: 0; z-index: 0; pointer-events: none;
+          background-image:
+            linear-gradient(to bottom, transparent 48%, rgba(255,255,255,0.04) 49%, rgba(255,255,255,0.04) 51%, transparent 52%),
+            radial-gradient(ellipse 60% 30% at 50% 50%, transparent 58%, rgba(255,255,255,0.04) 59%, rgba(255,255,255,0.04) 61%, transparent 62%);
+        }
+        .fc-root > * { position: relative; z-index: 1; }
+
         /* ═══ BANDERINES ═══ */
         .fc-banner-row {
           width: 100%; position: relative; height: 56px; flex-shrink: 0;
@@ -49,7 +65,7 @@ export default function FifaCard({ nombre, evento }: Props) {
         }
         .fc-rope {
           position: absolute; top: 14px; left: -8px; right: -8px;
-          height: 2px; background: rgba(180,140,60,0.7);
+          height: 2px; background: rgba(255,255,255,0.35);
           border-radius: 1px;
         }
         .fc-flags {
@@ -70,93 +86,92 @@ export default function FifaCard({ nombre, evento }: Props) {
           50%      { transform: rotate(6deg); }
         }
 
-        /* ═══ GLOBO BALÓN ═══ */
+        /* ═══ GLOBO BALÓN MEJORADO ═══ */
         .fc-balloon {
-          position: absolute; right: 18px; top: 56px; z-index: 5;
+          position: absolute; right: 12px; top: 52px; z-index: 5;
           display: flex; flex-direction: column; align-items: center;
-          animation: balloonFloat 4s ease-in-out infinite;
+          animation: balloonFloat 4.5s ease-in-out infinite;
+          filter: drop-shadow(0 6px 16px rgba(0,0,0,0.5));
         }
         .fc-balloon-ball {
-          font-size: 44px; line-height: 1;
-          filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+          width: 54px; height: 54px;
+          background: radial-gradient(circle at 35% 32%, #fff 0%, #e8e8e8 18%, #222 60%, #111 100%);
+          border-radius: 50%;
+          box-shadow: 0 0 0 3px rgba(255,255,255,0.15), 0 6px 18px rgba(0,0,0,0.6);
+          position: relative; overflow: hidden;
+        }
+        .fc-balloon-ball::before {
+          content: '';
+          position: absolute; inset: 0;
+          background: url("data:image/svg+xml,%3Csvg viewBox='0 0 54 54' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M27 8 L22 18 L32 18 Z' fill='rgba(0,0,0,0.7)'/%3E%3Cpath d='M16 20 L8 28 L17 34 L22 22 Z' fill='rgba(0,0,0,0.7)'/%3E%3Cpath d='M38 20 L46 28 L37 34 L32 22 Z' fill='rgba(0,0,0,0.7)'/%3E%3Cpath d='M18 38 L27 46 L36 38 L32 28 L22 28 Z' fill='rgba(0,0,0,0.7)'/%3E%3C/svg%3E") center/cover no-repeat;
+        }
+        .fc-balloon-ball::after {
+          content: '';
+          position: absolute; top: 8px; left: 12px; width: 16px; height: 10px;
+          background: rgba(255,255,255,0.28); border-radius: 50%; transform: rotate(-30deg);
         }
         .fc-balloon-string {
-          width: 1.5px; height: 52px;
-          background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
-          margin-top: 2px;
+          width: 2px; height: 60px;
+          background: linear-gradient(to bottom, rgba(255,255,255,0.55), transparent);
+          margin-top: 3px; border-radius: 1px;
         }
         @keyframes balloonFloat {
-          0%,100% { transform: translateY(0) rotate(3deg); }
-          50%      { transform: translateY(-14px) rotate(-3deg); }
+          0%,100% { transform: translateY(0) rotate(4deg); }
+          50%      { transform: translateY(-18px) rotate(-4deg); }
         }
 
-        /* ═══ CARTA FIFA ═══ */
+        /* ═══ CARTA MUNDIAL — azul oscuro / plata ═══ */
         .fc-card {
-          position: relative; cursor: pointer;
+          position: relative;
           width: min(268px, 75vw);
           aspect-ratio: 0.72; border-radius: 16px; overflow: hidden;
           background: linear-gradient(155deg,
-            #b8860b 0%, #f5d060 18%, #c8960a 35%,
-            #f0c840 52%, #b07808 68%, #e8c030 82%, #906005 100%);
+            #0a1628 0%, #1a2e50 15%,
+            #0d1e40 32%, #1c3060 50%,
+            #0a1628 65%, #162848 82%, #0a1628 100%);
           box-shadow:
-            0 0 0 2px #f0d060,
-            0 0 0 4px rgba(180,130,10,0.5),
-            0 0 28px rgba(240,200,40,0.5),
-            0 0 70px rgba(240,200,40,0.15),
-            inset 0 0 30px rgba(0,0,0,0.2);
+            0 0 0 2px rgba(180,210,255,0.4),
+            0 0 0 4px rgba(80,140,220,0.2),
+            0 0 32px rgba(80,140,220,0.35),
+            0 0 80px rgba(80,140,220,0.1),
+            inset 0 0 40px rgba(0,0,0,0.3);
           flex-shrink: 0;
           margin-bottom: 16px;
         }
         .fc-card::before {
           content: ''; position: absolute; inset: 0; z-index: 0;
-          background: repeating-linear-gradient(
-            -55deg, transparent, transparent 3px,
-            rgba(255,255,255,0.04) 3px, rgba(255,255,255,0.04) 6px);
+          background:
+            repeating-linear-gradient(-55deg, transparent, transparent 3px, rgba(255,255,255,0.03) 3px, rgba(255,255,255,0.03) 6px),
+            radial-gradient(ellipse at 50% 0%, rgba(100,160,255,0.12) 0%, transparent 70%);
         }
         .fc-card::after {
           content: ''; position: absolute; top:0; left:0; right:0; height:40%;
-          background: linear-gradient(to bottom, rgba(255,255,255,0.16), transparent);
+          background: linear-gradient(to bottom, rgba(150,200,255,0.12), transparent);
           z-index: 0; border-radius: 16px 16px 0 0;
         }
         .fc-inner { position:relative; z-index:1; height:100%; display:flex; flex-direction:column; }
 
         .fc-top { padding:8px 10px 0; display:flex; justify-content:space-between; align-items:flex-start; }
-        .fc-rating { font-family:'Anton','Impact',sans-serif; font-size:clamp(30px,9vw,46px); color:#1a0a00; line-height:1; }
-        .fc-pos    { font-family:'Anton','Impact',sans-serif; font-size:clamp(11px,3.5vw,16px); color:#1a0a00; }
+        .fc-rating { font-family:'Anton','Impact',sans-serif; font-size:clamp(30px,9vw,46px); color:#e8f0ff; line-height:1; text-shadow: 0 0 12px rgba(100,180,255,0.5); }
+        .fc-pos    { font-family:'Anton','Impact',sans-serif; font-size:clamp(11px,3.5vw,16px); color:rgba(180,210,255,0.85); }
         .fc-flag-emoji { font-size:clamp(16px,4.5vw,22px); }
-        .fc-edition { font-size:8px; font-weight:800; letter-spacing:0.14em; color:rgba(26,10,0,0.6); text-transform:uppercase; }
+        .fc-edition { font-size:8px; font-weight:800; letter-spacing:0.14em; color:rgba(150,200,255,0.55); text-transform:uppercase; }
 
-        .fc-photo-wrap { flex:1; display:flex; align-items:flex-end; justify-content:center; overflow:hidden; padding:0 10px; }
-        .fc-photo { width:100%; height:100%; object-fit:cover; object-position:center top; border-radius:4px 4px 0 0; }
-        .fc-placeholder {
-          width:82%; height:88%; display:flex; flex-direction:column;
-          align-items:center; justify-content:center; gap:6px;
-          border:2px dashed rgba(26,10,0,0.3); border-radius:8px; background:rgba(0,0,0,0.1);
-        }
-        .fc-placeholder span:first-child { font-size:30px; opacity:0.45; }
-        .fc-placeholder span:last-child  { font-size:10px; font-weight:700; letter-spacing:0.1em; color:rgba(26,10,0,0.55); text-transform:uppercase; text-align:center; line-height:1.3; }
+        .fc-photo-wrap { flex:1; display:flex; align-items:flex-end; justify-content:center; overflow:hidden; padding:0 6px; }
+        .fc-photo { width:100%; height:100%; object-fit:cover; object-position:center top; }
 
-        .fc-name { font-family:'Anton','Impact',sans-serif; font-size:clamp(15px,5vw,22px); color:#1a0a00; letter-spacing:0.06em; text-transform:uppercase; text-align:center; padding:3px 6px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .fc-name { font-family:'Anton','Impact',sans-serif; font-size:clamp(15px,5vw,22px); color:#e8f0ff; letter-spacing:0.06em; text-transform:uppercase; text-align:center; padding:3px 6px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 0 8px rgba(100,180,255,0.4); }
 
-        .fc-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; padding:5px 8px 8px; background:linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.28)); border-top:1px solid rgba(26,10,0,0.18); margin-top:3px; }
+        .fc-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; padding:5px 8px 8px; background:linear-gradient(to bottom, rgba(0,10,30,0.4), rgba(0,10,30,0.6)); border-top:1px solid rgba(100,160,255,0.2); margin-top:3px; }
         .fc-stat  { display:flex; flex-direction:column; align-items:center; gap:1px; }
-        .fc-stat-val { font-family:'Anton','Impact',sans-serif; font-size:clamp(13px,3.8vw,18px); color:#1a0a00; line-height:1; }
-        .fc-stat-key { font-size:7px; font-weight:800; letter-spacing:0.1em; color:rgba(26,10,0,0.6); text-transform:uppercase; }
-
-        /* ═══ BOTÓN FOTO ═══ */
-        .fc-upload-btn {
-          padding:9px 22px; border-radius:999px;
-          border:1.5px solid #f0d060; background:rgba(240,208,60,0.1);
-          color:#f0d060; font-family:'Anton','Impact',sans-serif;
-          font-size:13px; letter-spacing:0.1em; text-transform:uppercase;
-          cursor:pointer; margin-bottom:18px;
-        }
+        .fc-stat-val { font-family:'Anton','Impact',sans-serif; font-size:clamp(13px,3.8vw,18px); color:#c8e0ff; line-height:1; }
+        .fc-stat-key { font-size:7px; font-weight:800; letter-spacing:0.1em; color:rgba(150,200,255,0.6); text-transform:uppercase; }
 
         /* ═══ DATOS DEL EVENTO ═══ */
         .fc-event-card {
           width:100%; max-width:320px;
           background:rgba(255,255,255,0.05);
-          border:1.5px solid rgba(255,255,80,0.2);
+          border:1.5px solid rgba(100,180,255,0.2);
           border-radius:18px; padding:16px 18px;
           display:flex; flex-direction:column; gap:12px;
           margin-bottom:16px;
@@ -164,12 +179,12 @@ export default function FifaCard({ nombre, evento }: Props) {
         .fc-event-title {
           font-family:'Anton','Impact',sans-serif;
           font-size:clamp(11px,3vw,13px); letter-spacing:0.2em;
-          color:rgba(255,255,80,0.75); text-transform:uppercase;
+          color:rgba(150,210,255,0.8); text-transform:uppercase;
           text-align:center; margin-bottom:2px;
         }
         .fc-event-row { display:flex; align-items:flex-start; gap:12px; }
         .fc-event-icon { font-size:18px; line-height:1; margin-top:2px; flex-shrink:0; }
-        .fc-event-label { font-size:9px; font-weight:800; letter-spacing:0.18em; color:rgba(255,255,80,0.65); text-transform:uppercase; margin:0 0 2px; font-family:sans-serif; }
+        .fc-event-label { font-size:9px; font-weight:800; letter-spacing:0.18em; color:rgba(150,210,255,0.65); text-transform:uppercase; margin:0 0 2px; font-family:sans-serif; }
         .fc-event-val   { font-size:clamp(13px,3.5vw,15px); color:#fff; font-weight:600; margin:0; font-family:sans-serif; }
         .fc-event-nota  { font-size:clamp(12px,3vw,13px); color:rgba(255,255,255,0.6); text-align:center; font-family:sans-serif; font-style:italic; }
 
@@ -202,10 +217,10 @@ export default function FifaCard({ nombre, evento }: Props) {
           </div>
         </div>
 
-        {/* ── Globo balón (flotando arriba-derecha) ── */}
+        {/* ── Globo balón ── */}
         <div style={{ position:'relative', width:'100%', maxWidth:320, height:0 }}>
           <div className="fc-balloon">
-            <div className="fc-balloon-ball">⚽</div>
+            <div className="fc-balloon-ball" />
             <div className="fc-balloon-string" />
           </div>
         </div>
@@ -213,32 +228,26 @@ export default function FifaCard({ nombre, evento }: Props) {
         {/* ── Label ── */}
         <p style={{
           fontFamily:"'Anton','Impact',sans-serif", fontSize:'clamp(11px,3vw,13px)',
-          color:'rgba(255,255,80,0.7)', letterSpacing:'0.2em',
+          color:'rgba(150,210,255,0.8)', letterSpacing:'0.2em',
           textTransform:'uppercase', marginBottom:10, textAlign:'center',
         }}>⭐ Tu carta de jugador ⭐</p>
 
-        {/* ── Carta FIFA ── */}
-        <div className="fc-card" onClick={() => fileRef.current?.click()}>
+        {/* ── Carta Mundial ── */}
+        <div className="fc-card">
           <div className="fc-inner">
             <div className="fc-top">
               <div>
-                <div className="fc-rating">99</div>
+                <div className="fc-rating">7</div>
                 <div className="fc-pos">DEL</div>
               </div>
               <div style={{ textAlign:'right' }}>
                 <div className="fc-flag-emoji">🇨🇴</div>
-                <div className="fc-edition">Birthday Ed.</div>
+                <div className="fc-edition">World Cup Ed.</div>
               </div>
             </div>
 
             <div className="fc-photo-wrap">
-              {photo
-                ? <img src={photo} alt="jugador" className="fc-photo" />
-                : <div className="fc-placeholder">
-                    <span>📸</span>
-                    <span>Toca para<br/>subir tu foto</span>
-                  </div>
-              }
+              <img src={IMG_JUGADOR} alt="jugador" className="fc-photo" />
             </div>
 
             <div className="fc-name">{nombre}</div>
@@ -253,13 +262,6 @@ export default function FifaCard({ nombre, evento }: Props) {
             </div>
           </div>
         </div>
-
-        {/* ── Botón foto ── */}
-        <button className="fc-upload-btn" onClick={() => fileRef.current?.click()}>
-          📷 {photo ? 'Cambiar foto' : 'Subir foto'}
-        </button>
-        <input ref={fileRef} type="file" accept="image/*"
-          style={{ display:'none' }} onChange={handleFile} />
 
         {/* ── Datos del evento ── */}
         <div className="fc-event-card">
