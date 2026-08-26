@@ -60,6 +60,17 @@ export const CATALOGO_ADMIN: PlantillaAdmin[] = [
     barColor: "bg-rose-400",
   },
   {
+    id: "05-futbol-cumple",
+    nombre: "Cumpleaños Futbolero",
+    emoji: "⚽",
+    descripcion: "Carta de jugador estilo Mundial, intro animada, grama (en desarrollo)",
+    categoria: "Cumpleaños",
+    baseUrl: "",
+    precioDefault: { cop: 70000, usd: 20 },
+    colorChip: "bg-green-50 text-green-700",
+    barColor: "bg-green-500",
+  },
+  {
     id: "free-01-cumple",
     nombre: "Cumpleaños Festivo",
     emoji: "🎂",
