@@ -159,7 +159,7 @@ export const CATALOGO: TemplateInfo[] = [
     descripcion: "Carta de jugador estilo Mundial con intro animada, grama y datos del evento",
     emoji: "⚽",
     categoria: "Cumpleaños",
-    baseUrl: "https://futbol.celebrarte.com.co",
+    baseUrl: "",  // WIP — no publicada aún
     previewImg: "https://res.cloudinary.com/ddqbnr9vo/image/upload/v1785889536/edit-this-cartoon-soccer-player-image-add-a-colorf_cdbven.webp",
     gradiente: "linear-gradient(to bottom, #0d2e0d, #1a4a1a)",
     textColor: "#c8f5a0",
