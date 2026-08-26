@@ -239,16 +239,17 @@ function DesktopCard({ t, onSelect, precioLabel }: { t: TemplateInfo; onSelect: 
   const [hovered, setHovered] = useState(false);
   return (
     <article
-      onClick={onSelect}
-      onMouseEnter={() => setHovered(true)}
+      onClick={() => { if (t.baseUrl) onSelect(); }}
+      onMouseEnter={() => { if (t.baseUrl) setHovered(true); }}
       onMouseLeave={() => setHovered(false)}
       className="js-card"
       style={{
         backgroundColor: "white", borderRadius: "1rem", overflow: "hidden",
-        display: "flex", flexDirection: "column", cursor: "pointer",
+        display: "flex", flexDirection: "column", cursor: t.baseUrl ? "pointer" : "default",
         transform: hovered ? "translateY(-8px)" : "none",
         boxShadow: hovered ? "0 20px 48px rgba(90,27,94,0.18), 0 4px 12px rgba(90,27,94,0.08)" : "0 2px 8px rgba(90,27,94,0.07)",
         transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)", border: "1px solid #EDD5E8",
+        opacity: t.baseUrl ? 1 : 0.85,
       }}
     >
       <div style={{ height: 240, background: t.gradiente, position: "relative", overflow: "hidden", flexShrink: 0 }}>
@@ -265,6 +266,11 @@ function DesktopCard({ t, onSelect, precioLabel }: { t: TemplateInfo; onSelect: 
         <span style={{ position: "absolute", top: 12, right: 12, zIndex: 2, fontSize: "0.6rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", padding: "4px 10px", borderRadius: 4, backgroundColor: "rgba(0,0,0,0.55)", color: "white", backdropFilter: "blur(4px)" }}>
           {t.categoria}
         </span>
+        {!t.baseUrl && (
+          <span style={{ position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", zIndex: 2, fontSize: "0.6rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", padding: "5px 14px", borderRadius: "999px", background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "#fff", whiteSpace: "nowrap", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>
+            ⏳ Próximamente
+          </span>
+        )}
       </div>
 
       <div style={{ display: "flex", flex: 1, padding: "1rem" }}>
@@ -286,8 +292,19 @@ function DesktopCard({ t, onSelect, precioLabel }: { t: TemplateInfo; onSelect: 
       </div>
 
       <div style={{ padding: "0 1rem 1rem" }}>
-        <div style={{ width: "100%", fontWeight: 700, fontSize: "0.875rem", padding: "0.7rem 0", borderRadius: "0.875rem", textAlign: "center", backgroundColor: hovered ? "#3A1140" : BRAND, color: "#F8F5F0", transition: "background-color 0.22s ease" }}>
-          Ver plantilla →
+        <div style={{
+          width: "100%",
+          fontWeight: 700,
+          fontSize: "0.875rem",
+          padding: "0.7rem 0",
+          borderRadius: "0.875rem",
+          textAlign: "center",
+          backgroundColor: !t.baseUrl ? "#E5E7EB" : (hovered ? "#3A1140" : BRAND),
+          color: !t.baseUrl ? "#9CA3AF" : "#F8F5F0",
+          transition: "background-color 0.22s ease",
+          cursor: t.baseUrl ? "pointer" : "default"
+        }}>
+          {t.baseUrl ? "Ver plantilla →" : "Próximamente"}
         </div>
       </div>
     </article>
@@ -299,12 +316,14 @@ function MobileCard({ t, onSelect, precioLabel }: { t: TemplateInfo; onSelect: (
   return (
     <button
       type="button"
-      onClick={onSelect}
+      onClick={() => { if (t.baseUrl) onSelect(); }}
+      disabled={!t.baseUrl}
       className="js-card"
       style={{
         display: "flex", flexDirection: "row", alignItems: "center",
-        background: "#fff", border: "1px solid #ede0f5",
-        borderRadius: 16, cursor: "pointer",
+        background: t.baseUrl ? "#fff" : "#fafafa", border: "1px solid #ede0f5",
+        borderRadius: 16, cursor: t.baseUrl ? "pointer" : "default",
+        opacity: t.baseUrl ? 1 : 0.6,
         boxShadow: "0 2px 10px rgba(90,27,94,0.07)",
         width: "100%", padding: 8, gap: 10, textAlign: "left",
         WebkitTapHighlightColor: "transparent",
@@ -331,8 +350,13 @@ function MobileCard({ t, onSelect, precioLabel }: { t: TemplateInfo; onSelect: (
         <p style={{ margin: "2px 0 0", fontSize: 12, fontWeight: 800, color: t.esFree ? "#16a34a" : "#3A1140" }}>{precioLabel}</p>
       </div>
 
-      <div style={{ width: 26, height: 26, borderRadius: "50%", border: "1px solid #e6d7ef", display: "flex", alignItems: "center", justifyContent: "center", color: BRAND, fontSize: 16, fontWeight: 900, flexShrink: 0 }}>
-        ›
+      <div style={{
+        width: 26, height: 26, borderRadius: "50%", border: t.baseUrl ? "1px solid #e6d7ef" : "1px solid #d1d5db",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        color: t.baseUrl ? BRAND : "#9ca3af", fontSize: t.baseUrl ? 16 : 12, fontWeight: 900, flexShrink: 0,
+        backgroundColor: t.baseUrl ? "transparent" : "#f3f4f6",
+      }}>
+        {t.baseUrl ? "›" : "🔒"}
       </div>
     </button>
   );

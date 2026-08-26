@@ -525,8 +525,20 @@ function TemplateCard({
       </div>
 
       <div style={{ padding: "0 1rem 1rem" }}>
-        <div style={{ width: "100%", fontWeight: 700, fontSize: "0.875rem", padding: "0.7rem 0", borderRadius: "0.875rem", textAlign: "center", backgroundColor: hovered ? "#3A1140" : "#5A1B5E", color: "#F8F5F0", transition: "background-color 0.22s ease", letterSpacing: "0.01em" }}>
-          Ver plantilla →
+        <div style={{
+          width: "100%",
+          fontWeight: 700,
+          fontSize: "0.875rem",
+          padding: "0.7rem 0",
+          borderRadius: "0.875rem",
+          textAlign: "center",
+          backgroundColor: !t.baseUrl ? "#E5E7EB" : (hovered ? "#3A1140" : "#5A1B5E"),
+          color: !t.baseUrl ? "#9CA3AF" : "#F8F5F0",
+          transition: "background-color 0.22s ease",
+          letterSpacing: "0.01em",
+          cursor: t.baseUrl ? "pointer" : "default"
+        }}>
+          {t.baseUrl ? "Ver plantilla →" : "Próximamente"}
         </div>
       </div>
     </article>
@@ -544,16 +556,16 @@ function MobileCard({
       disabled={!t.baseUrl}
       style={{
         display: "flex", flexDirection: "row", alignItems: "center",
-        background: "#fff", border: "1px solid #ede0f5",
+        background: t.baseUrl ? "#fff" : "#fafafa", border: "1px solid #ede0f5",
         borderRadius: 16, cursor: t.baseUrl ? "pointer" : "default",
-        opacity: t.baseUrl ? 1 : 0.85,
+        opacity: t.baseUrl ? 1 : 0.6,
         boxShadow: "0 2px 10px rgba(90,27,94,0.07)",
         width: "100%", padding: 8,
         gap: 10, textAlign: "left",
         WebkitTapHighlightColor: "transparent",
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 6px 24px rgba(90,27,94,0.18)")}
-      onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 2px 12px rgba(90,27,94,0.08)")}
+      onMouseEnter={(e) => { if (t.baseUrl) e.currentTarget.style.boxShadow = "0 6px 24px rgba(90,27,94,0.18)"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 2px 12px rgba(90,27,94,0.08)"; }}
     >
       {/* Mini preview */}
       <div style={{
@@ -583,11 +595,12 @@ function MobileCard({
       </div>
 
       <div style={{
-        width: 26, height: 26, borderRadius: "50%", border: "1px solid #e6d7ef",
+        width: 26, height: 26, borderRadius: "50%", border: t.baseUrl ? "1px solid #e6d7ef" : "1px solid #d1d5db",
         display: "flex", alignItems: "center", justifyContent: "center",
-        color: "#5A1B5E", fontSize: 14, fontWeight: 900, flexShrink: 0,
+        color: t.baseUrl ? "#5A1B5E" : "#9ca3af", fontSize: t.baseUrl ? 14 : 11, fontWeight: 900, flexShrink: 0,
+        backgroundColor: t.baseUrl ? "transparent" : "#f3f4f6",
       }}>
-        ›
+        {t.baseUrl ? "›" : "🔒"}
       </div>
     </button>
   );

@@ -34,7 +34,7 @@ export default function FifaCard({ nombre, evento }: Props) {
       <audio ref={audioRef} src={AUDIO_ESTADIO} loop preload="auto" style={{ display:'none' }} />
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;500;600;700;800&display=swap');
 
         .fc-root {
           position: absolute; inset: 0; z-index: 25; overflow-y: auto;
@@ -86,12 +86,21 @@ export default function FifaCard({ nombre, evento }: Props) {
           50%      { transform: rotate(6deg); }
         }
 
-        /* ═══ GLOBO BALÓN MEJORADO ═══ */
+        /* ═══ GLOBO BALÓN ═══ */
         .fc-balloon {
-          position: absolute; right: 12px; top: 52px; z-index: 5;
-          display: flex; flex-direction: column; align-items: center;
-          animation: balloonFloat 4.5s ease-in-out infinite;
-          filter: drop-shadow(0 6px 16px rgba(0,0,0,0.5));
+          position: absolute;
+          right: -10px;
+          top: 40px;
+          z-index: 10;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          filter: drop-shadow(0 8px 20px rgba(0,0,0,0.55));
+        }
+        .fc-balloon-float {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
         .fc-balloon-ball {
           width: 54px; height: 54px;
@@ -115,57 +124,214 @@ export default function FifaCard({ nombre, evento }: Props) {
           background: linear-gradient(to bottom, rgba(255,255,255,0.55), transparent);
           margin-top: 3px; border-radius: 1px;
         }
+        @keyframes balloonRise {
+          from { transform: translateY(80vh) rotate(15deg); opacity: 0; }
+          to   { transform: translateY(0) rotate(0deg); opacity: 1; }
+        }
         @keyframes balloonFloat {
-          0%,100% { transform: translateY(0) rotate(4deg); }
-          50%      { transform: translateY(-18px) rotate(-4deg); }
+          0%   { transform: translateY(0) rotate(3deg); }
+          100% { transform: translateY(-16px) rotate(-3deg); }
         }
 
-        /* ═══ CARTA MUNDIAL — azul oscuro / plata ═══ */
+        /* ═══ CARTA PANINI ═══ */
         .fc-card {
           position: relative;
-          width: min(268px, 75vw);
-          aspect-ratio: 0.72; border-radius: 16px; overflow: hidden;
-          background: linear-gradient(155deg,
-            #0a1628 0%, #1a2e50 15%,
-            #0d1e40 32%, #1c3060 50%,
-            #0a1628 65%, #162848 82%, #0a1628 100%);
+          width: min(276px, 78vw);
+          aspect-ratio: 0.58; border-radius: 20px; overflow: hidden;
+          background: linear-gradient(135deg, #a5f3fc 0%, #0284c7 60%, #0369a1 100%);
+          border: 6px solid #d1d5db; /* Silver metallic border */
           box-shadow:
-            0 0 0 2px rgba(180,210,255,0.4),
-            0 0 0 4px rgba(80,140,220,0.2),
-            0 0 32px rgba(80,140,220,0.35),
-            0 0 80px rgba(80,140,220,0.1),
-            inset 0 0 40px rgba(0,0,0,0.3);
+            0 12px 36px rgba(0,0,0,0.5),
+            inset 0 0 16px rgba(255,255,255,0.3);
           flex-shrink: 0;
-          margin-bottom: 16px;
+          margin-bottom: 20px;
+          box-sizing: border-box;
         }
+        /* Rayas metálicas de fondo */
         .fc-card::before {
           content: ''; position: absolute; inset: 0; z-index: 0;
           background:
-            repeating-linear-gradient(-55deg, transparent, transparent 3px, rgba(255,255,255,0.03) 3px, rgba(255,255,255,0.03) 6px),
-            radial-gradient(ellipse at 50% 0%, rgba(100,160,255,0.12) 0%, transparent 70%);
+            repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(255,255,255,0.06) 5px, rgba(255,255,255,0.06) 10px),
+            radial-gradient(circle at 60% 30%, rgba(255,255,255,0.2) 0%, transparent 60%);
+          opacity: 0.85;
         }
-        .fc-card::after {
-          content: ''; position: absolute; top:0; left:0; right:0; height:40%;
-          background: linear-gradient(to bottom, rgba(150,200,255,0.12), transparent);
-          z-index: 0; border-radius: 16px 16px 0 0;
+
+        /* Barra izquierda con nombre de país */
+        .fc-left-bar {
+          position: absolute;
+          left: 0; top: 0; bottom: 0;
+          width: 44px;
+          background: linear-gradient(to bottom, #0c2340, #1d4ed8);
+          border-right: 1.5px solid rgba(255,255,255,0.25);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding-top: 10px;
+          z-index: 3;
+          box-shadow: 2px 0 8px rgba(0,0,0,0.3);
         }
-        .fc-inner { position:relative; z-index:1; height:100%; display:flex; flex-direction:column; }
+        .fc-vertical-text {
+          font-family: 'Anton', sans-serif;
+          font-size: 21px;
+          color: white;
+          text-transform: uppercase;
+          writing-mode: vertical-lr;
+          transform: rotate(180deg);
+          letter-spacing: 0.18em;
+          margin-top: 14px;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
 
-        .fc-top { padding:8px 10px 0; display:flex; justify-content:space-between; align-items:flex-start; }
-        .fc-rating { font-family:'Anton','Impact',sans-serif; font-size:clamp(30px,9vw,46px); color:#e8f0ff; line-height:1; text-shadow: 0 0 12px rgba(100,180,255,0.5); }
-        .fc-pos    { font-family:'Anton','Impact',sans-serif; font-size:clamp(11px,3.5vw,16px); color:rgba(180,210,255,0.85); }
-        .fc-flag-emoji { font-size:clamp(16px,4.5vw,22px); }
-        .fc-edition { font-size:8px; font-weight:800; letter-spacing:0.14em; color:rgba(150,200,255,0.55); text-transform:uppercase; }
+        /* Escudo de la bandera */
+        .fc-flag-shield {
+          position: absolute;
+          right: 12px;
+          top: 12px;
+          width: 38px;
+          height: 42px;
+          background: rgba(255,255,255,0.18);
+          border: 2px solid rgba(255,255,255,0.95);
+          border-radius: 4px 4px 18px 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 20px;
+          z-index: 3;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
 
-        .fc-photo-wrap { flex:1; display:flex; align-items:flex-end; justify-content:center; overflow:hidden; padding:0 6px; }
-        .fc-photo { width:100%; height:100%; object-fit:cover; object-position:center top; }
+        /* Número gigante en el fondo */
+        .fc-bg-number {
+          position: absolute;
+          right: -10px;
+          top: -24px;
+          font-family: 'Anton', sans-serif;
+          font-size: 160px;
+          line-height: 0.9;
+          font-weight: 900;
+          color: transparent;
+          -webkit-text-stroke: 2px rgba(255,255,255,0.28);
+          z-index: 1;
+          pointer-events: none;
+        }
 
-        .fc-name { font-family:'Anton','Impact',sans-serif; font-size:clamp(15px,5vw,22px); color:#e8f0ff; letter-spacing:0.06em; text-transform:uppercase; text-align:center; padding:3px 6px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 0 8px rgba(100,180,255,0.4); }
+        /* Foto del jugador */
+        .fc-player-photo-wrap {
+          position: absolute;
+          left: 44px; right: 0; top: 12px; bottom: 84px;
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
+          z-index: 2;
+          overflow: hidden;
+        }
+        .fc-player-photo {
+          height: 104%;
+          width: auto;
+          object-fit: contain;
+          object-position: bottom center;
+          filter: drop-shadow(0 6px 12px rgba(0,0,0,0.3));
+        }
 
-        .fc-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; padding:5px 8px 8px; background:linear-gradient(to bottom, rgba(0,10,30,0.4), rgba(0,10,30,0.6)); border-top:1px solid rgba(100,160,255,0.2); margin-top:3px; }
-        .fc-stat  { display:flex; flex-direction:column; align-items:center; gap:1px; }
-        .fc-stat-val { font-family:'Anton','Impact',sans-serif; font-size:clamp(13px,3.8vw,18px); color:#c8e0ff; line-height:1; }
-        .fc-stat-key { font-size:7px; font-weight:800; letter-spacing:0.1em; color:rgba(150,200,255,0.6); text-transform:uppercase; }
+        /* Panel inferior de información */
+        .fc-bottom-panel {
+          position: absolute;
+          left: 44px; right: 0; bottom: 0;
+          padding: 8px 10px 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          z-index: 3;
+          background: linear-gradient(to top, rgba(0,10,35,0.9) 0%, rgba(0,10,35,0.4) 80%, transparent 100%);
+        }
+        .fc-info-row {
+          display: flex;
+          gap: 6px;
+          align-items: stretch;
+        }
+        .fc-info-card {
+          flex: 1;
+          background: rgba(255, 255, 255, 0.95);
+          border: 1.5px solid #0b3c5d;
+          border-radius: 8px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+        }
+        .fc-info-header {
+          background: #0c2340;
+          color: #60a5fa;
+          font-size: 6px;
+          font-weight: 900;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          padding: 2px 6px;
+          font-family: sans-serif;
+        }
+        .fc-player-name {
+          font-family: 'Anton', sans-serif;
+          font-size: 17px;
+          color: #0c2340;
+          text-transform: uppercase;
+          padding: 2px 6px 0;
+          line-height: 1.15;
+          letter-spacing: 0.02em;
+        }
+        .fc-player-details {
+          border-top: 1.2px solid rgba(12, 35, 64, 0.15);
+          padding: 2px 6px 4px;
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 4px;
+        }
+        .fc-detail-item {
+          display: flex;
+          flex-direction: column;
+        }
+        .fc-detail-label {
+          font-size: 4.5px;
+          font-weight: 800;
+          color: #64748b;
+          text-transform: uppercase;
+          line-weight: 1;
+          font-family: sans-serif;
+        }
+        .fc-detail-val {
+          font-family: 'Anton', sans-serif;
+          font-size: 9px;
+          color: #0c2340;
+          line-height: 1.2;
+          margin-top: 1px;
+        }
+        .fc-number-badge {
+          width: 32px;
+          background: #0c2340;
+          border: 1.5px solid rgba(255,255,255,0.85);
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: 'Anton', sans-serif;
+          font-size: 19px;
+          color: white;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .fc-panini-logo {
+          background: #f59e0b; /* yellow */
+          border: 1.5px solid #dc2626; /* red */
+          color: #dc2626;
+          font-size: 6px;
+          font-weight: 900;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          text-align: center;
+          padding: 2.5px 10px;
+          border-radius: 3px;
+          width: max-content;
+          margin: 0 auto;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+          font-family: 'Anton', sans-serif;
+        }
 
         /* ═══ DATOS DEL EVENTO ═══ */
         .fc-event-card {
@@ -175,18 +341,21 @@ export default function FifaCard({ nombre, evento }: Props) {
           border-radius:18px; padding:16px 18px;
           display:flex; flex-direction:column; gap:12px;
           margin-bottom:16px;
+          font-family: 'Montserrat', sans-serif;
         }
         .fc-event-title {
-          font-family:'Anton','Impact',sans-serif;
-          font-size:clamp(11px,3vw,13px); letter-spacing:0.2em;
-          color:rgba(150,210,255,0.8); text-transform:uppercase;
-          text-align:center; margin-bottom:2px;
+          font-family: 'Montserrat', sans-serif;
+          font-weight: 800;
+          font-size: clamp(12px, 3.2vw, 14px); letter-spacing: 0.16em;
+          color: #f59e0b; text-transform: uppercase;
+          text-align: center; margin-bottom: 2px;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.4);
         }
-        .fc-event-row { display:flex; align-items:flex-start; gap:12px; }
+        .fc-event-row { display:flex; align-items:flex-start; gap:12px; font-family: 'Montserrat', sans-serif; }
         .fc-event-icon { font-size:18px; line-height:1; margin-top:2px; flex-shrink:0; }
-        .fc-event-label { font-size:9px; font-weight:800; letter-spacing:0.18em; color:rgba(150,210,255,0.65); text-transform:uppercase; margin:0 0 2px; font-family:sans-serif; }
-        .fc-event-val   { font-size:clamp(13px,3.5vw,15px); color:#fff; font-weight:600; margin:0; font-family:sans-serif; }
-        .fc-event-nota  { font-size:clamp(12px,3vw,13px); color:rgba(255,255,255,0.6); text-align:center; font-family:sans-serif; font-style:italic; }
+        .fc-event-label { font-size:9px; font-weight:800; letter-spacing:0.12em; color:rgba(150,210,255,0.65); text-transform:uppercase; margin:0 0 2px; font-family: 'Montserrat', sans-serif; }
+        .fc-event-val   { font-size:clamp(13px,3.5vw,15px); color:#fff; font-weight:600; margin:0; font-family: 'Montserrat', sans-serif; }
+        .fc-event-nota  { font-size:clamp(12px,3vw,13px); color:rgba(255,255,255,0.65); text-align:center; font-family: 'Montserrat', sans-serif; font-style:italic; }
 
         /* WhatsApp */
         .fc-wa {
@@ -217,50 +386,77 @@ export default function FifaCard({ nombre, evento }: Props) {
           </div>
         </div>
 
-        {/* ── Globo balón ── */}
-        <div style={{ position:'relative', width:'100%', maxWidth:320, height:0 }}>
-          <div className="fc-balloon">
-            <div className="fc-balloon-ball" />
-            <div className="fc-balloon-string" />
-          </div>
-        </div>
-
         {/* ── Label ── */}
         <p style={{
-          fontFamily:"'Anton','Impact',sans-serif", fontSize:'clamp(11px,3vw,13px)',
-          color:'rgba(150,210,255,0.8)', letterSpacing:'0.2em',
-          textTransform:'uppercase', marginBottom:10, textAlign:'center',
-        }}>⭐ Tu carta de jugador ⭐</p>
+          fontFamily: "'Montserrat', sans-serif", fontSize: 'clamp(11px,3vw,12px)',
+          fontWeight: 800, color: '#f59e0b', letterSpacing: '0.16em',
+          textTransform: 'uppercase', marginBottom: 12, textAlign: 'center',
+          textShadow: '0 1px 2px rgba(0,0,0,0.4)',
+        }}>⭐ Tu cromo de jugador ⭐</p>
 
-        {/* ── Carta Mundial ── */}
-        <div className="fc-card">
-          <div className="fc-inner">
-            <div className="fc-top">
-              <div>
-                <div className="fc-rating">7</div>
-                <div className="fc-pos">DEL</div>
-              </div>
-              <div style={{ textAlign:'right' }}>
-                <div className="fc-flag-emoji">🇨🇴</div>
-                <div className="fc-edition">World Cup Ed.</div>
-              </div>
+        {/* Contenedor relativo que agrupa la carta y el globo flotando encima */}
+        <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
+          {/* ── Carta Panini ── */}
+          <div className="fc-card">
+            {/* Fondo número gigante */}
+            <div className="fc-bg-number">7</div>
+
+            {/* Barra izquierda con nombre de país */}
+            <div className="fc-left-bar">
+              <span style={{ fontSize: 18, marginBottom: 2 }}>🏆</span>
+              <span style={{ fontSize: 6, fontWeight: 900, color: '#60a5fa', letterSpacing: '0.05em', textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.1, marginBottom: 6 }}>World<br/>Cup</span>
+              <span className="fc-vertical-text">COLOMBIA</span>
             </div>
 
-            <div className="fc-photo-wrap">
-              <img src={IMG_JUGADOR} alt="jugador" className="fc-photo" />
+            {/* Escudo de la bandera */}
+            <div className="fc-flag-shield">🇨🇴</div>
+
+            {/* Foto del jugador */}
+            <div className="fc-player-photo-wrap">
+              <img src={IMG_JUGADOR} alt="jugador" className="fc-player-photo" />
             </div>
 
-            <div className="fc-name">{nombre}</div>
-
-            <div className="fc-stats">
-              {STATS.map(s => (
-                <div key={s.key} className="fc-stat">
-                  <span className="fc-stat-val">{s.val}</span>
-                  <span className="fc-stat-key">{s.key}</span>
+            {/* Panel inferior de información */}
+            <div className="fc-bottom-panel">
+              <div className="fc-info-row">
+                {/* Tarjeta de info principal */}
+                <div className="fc-info-card">
+                  <div className="fc-info-header">DELANTERO / FORWARD</div>
+                  <div className="fc-player-name">{nombre}</div>
+                  <div className="fc-player-details">
+                    <div className="fc-detail-item">
+                      <span className="fc-detail-label">NACIMIENTO</span>
+                      <span className="fc-detail-val">2019</span>
+                    </div>
+                    <div className="fc-detail-item">
+                      <span className="fc-detail-label">ESTATURA</span>
+                      <span className="fc-detail-val">1.25 M</span>
+                    </div>
+                    <div className="fc-detail-item">
+                      <span className="fc-detail-label">CLUB</span>
+                      <span className="fc-detail-val">MATI FC</span>
+                    </div>
+                  </div>
                 </div>
-              ))}
+
+                {/* Número del jugador */}
+                <div className="fc-number-badge">7</div>
+              </div>
+
+              {/* Logo de Panini personalizado */}
+              <div className="fc-panini-logo">CELEBRARTE</div>
             </div>
           </div>
+
+          {/* ── Globo balón flotando encima con entrada desde abajo ── */}
+          <div className="fc-balloon" style={{ animation: 'balloonRise 2.2s cubic-bezier(0.19, 1, 0.22, 1) both' }}>
+            <div className="fc-balloon-float" style={{ animation: 'balloonFloat 4s ease-in-out infinite alternate' }}>
+              <div className="fc-balloon-ball" />
+              <div className="fc-balloon-string" />
+            </div>
+          </div>
+
         </div>
 
         {/* ── Datos del evento ── */}

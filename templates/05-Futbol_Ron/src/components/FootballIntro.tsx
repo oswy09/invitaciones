@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import FifaCard from './FifaCard';
 
 const VIDEO_BALL   = 'https://res.cloudinary.com/ddqbnr9vo/video/upload/v1785876951/Bal%C3%B3n_de_f%C3%BAtbo_stp8ed.mp4';
@@ -28,6 +28,86 @@ export default function FootballIntro() {
   const [phase, setPhase]       = useState<Phase>('splash');
   const [titleIn, setTitleIn]   = useState(false);
   const ballRef = useRef<HTMLVideoElement>(null);
+  const ytPlayerRef = useRef<any>(null);
+  const fallbackTimerRef = useRef<number | null>(null);
+
+  // Cargar la API del reproductor de iframe de YouTube
+  useEffect(() => {
+    if (!window.YT) {
+      const tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (phase === 'player') {
+      // Fallback timer: si en 10 segundos no ha empezado a reproducirse, avanza a card
+      fallbackTimerRef.current = window.setTimeout(() => {
+        setPhase('card');
+      }, 10000);
+
+      const createPlayer = () => {
+        try {
+          ytPlayerRef.current = new (window as any).YT.Player('yt-audio-player', {
+            height: '0',
+            width: '0',
+            videoId: 'YRoMao2MM2g',
+            playerVars: {
+              autoplay: 1,
+              controls: 0,
+              rel: 0,
+              showinfo: 0,
+              disablekb: 1,
+              fs: 0,
+              modestbranding: 1
+            },
+            events: {
+              onStateChange: (event: any) => {
+                if (event.data === 1) { // 1 = playing
+                  // Si empieza a reproducirse con éxito, cancelamos el fallback inicial
+                  if (fallbackTimerRef.current) {
+                    clearTimeout(fallbackTimerRef.current);
+                    fallbackTimerRef.current = null;
+                  }
+                } else if (event.data === 0) { // 0 = ended
+                  setPhase('card');
+                }
+              },
+              onError: () => {
+                setPhase('card');
+              }
+            }
+          });
+        } catch (e) {
+          setPhase('card');
+        }
+      };
+
+      if ((window as any).YT && (window as any).YT.Player) {
+        createPlayer();
+      } else {
+        const oldCallback = (window as any).onYouTubeIframeAPIReady;
+        (window as any).onYouTubeIframeAPIReady = () => {
+          if (oldCallback) oldCallback();
+          createPlayer();
+        };
+      }
+    }
+
+    return () => {
+      if (fallbackTimerRef.current) {
+        clearTimeout(fallbackTimerRef.current);
+      }
+      if (ytPlayerRef.current) {
+        try {
+          ytPlayerRef.current.destroy();
+        } catch (e) {}
+        ytPlayerRef.current = null;
+      }
+    };
+  }, [phase]);
 
   const handleStart = () => {
     setPhase('ball');
@@ -41,8 +121,6 @@ export default function FootballIntro() {
     if (phase !== 'ball') return;
     setPhase('player');
     setTimeout(() => setTitleIn(true), 600);
-    // imagen animada: avanza a card FIFA después de 5.5 s
-    setTimeout(() => setPhase('card'), 5500);
   };
 
   const handleBallTimeUpdate = () => {
@@ -116,6 +194,8 @@ export default function FootballIntro() {
 
       <div className="fb-root">
         <div className="fb-phone">
+          {/* Contenedor del reproductor de YouTube (siempre montado para evitar errores de desmonte en React) */}
+          <div id="yt-audio-player" style={{ display: 'none', width: 0, height: 0 }} />
 
           {/* ══ SPLASH ══ */}
           {phase === 'splash' && (
@@ -140,10 +220,11 @@ export default function FootballIntro() {
                 <span style={{
                   fontFamily: "'Anton', 'Impact', sans-serif",
                   fontSize: 'clamp(26px, 7.5vw, 40px)',
-                  fontWeight: 900, color: '#FFFF55',
+                  fontWeight: 900, color: '#FFFF22',
                   letterSpacing: '0.04em', textTransform: 'uppercase', lineHeight: 1.1,
                   animation: 'shimmer 2.4s ease-in-out infinite',
-                  textShadow: '0 3px 0 rgba(0,0,0,0.55)',
+                  textShadow: '2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 4px 8px rgba(0,0,0,0.6)',
+                  WebkitTextStroke: '1.2px #000',
                   textAlign: 'center', padding: '0 20px',
                 }}>¡Tienes una</span>
                 <span style={{
@@ -215,9 +296,10 @@ export default function FootballIntro() {
               <span style={{
                 fontFamily: "'Anton','Impact',sans-serif",
                 fontSize: 'clamp(28px,8vw,44px)',
-                color: '#FFFF55',
+                color: '#FFFF22',
                 textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1.05,
-                textShadow: '0 3px 0 rgba(0,0,0,0.7), 0 0 28px rgba(255,255,60,0.5)',
+                textShadow: '2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 4px 8px rgba(0,0,0,0.6)',
+                WebkitTextStroke: '1.2px #000',
                 textAlign: 'center', padding: '0 20px',
                 animation: 'shimmer 2.4s ease-in-out infinite',
               }}>¡Cumplo 7 años</span>
@@ -228,9 +310,10 @@ export default function FootballIntro() {
                 textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.1,
                 textShadow: '0 3px 0 rgba(0,0,0,0.8)',
                 textAlign: 'center', padding: '0 20px',
-              }}>y te quiero invitar!</span>
+              }}>y te quiero invitar...</span>
             </div>
           )}
+
 
           {/* ══ IMAGEN JUGADOR (webp animado) ══ */}
           {phase === 'player' && (
@@ -258,9 +341,10 @@ export default function FootballIntro() {
               <span style={{
                 fontFamily: "'Anton', 'Impact', sans-serif",
                 fontSize: 'clamp(26px, 7.5vw, 40px)',
-                fontWeight: 900, color: '#FFFF55',
+                fontWeight: 900, color: '#FFFF22',
                 textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.05,
-                textShadow: '0 3px 0 rgba(0,0,0,0.7), 0 0 30px rgba(255,255,60,0.5)',
+                textShadow: '2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 4px 8px rgba(0,0,0,0.6)',
+                WebkitTextStroke: '1.2px #000',
                 textAlign: 'center',
                 animation: 'shimmer 2.5s ease-in-out infinite',
               }}>¡A disfrutar de</span>
