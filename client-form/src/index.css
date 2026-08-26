@@ -24,3 +24,30 @@ body {
   90%  { transform: translate(32px,   8px); }
   100% { transform: translate(0px,   0px); }
 }
+
+@keyframes floatSoft {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSoft 4s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: floatSoft 4s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.social-icon-hover {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.social-icon-hover:hover {
+  transform: translateY(-6px) scale(1.2) rotate(8deg);
+}
+

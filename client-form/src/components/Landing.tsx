@@ -155,8 +155,31 @@ export default function Landing({ onVerPlantillas }: { onVerPlantillas: () => vo
       </main>
 
       {/* FOOTER */}
-      <footer className="px-6 py-8 border-t text-center text-xs" style={{ borderColor: "#E8B4BC", color: "#5A5A5A" }}>
-        © 2026 Celebrarte · Invitaciones digitales · Hecho con amor ✨
+      <footer className="px-6 py-8 border-t text-center text-xs flex flex-col items-center gap-4" style={{ borderColor: "#E8B4BC", color: "#5A5A5A" }}>
+        {/* Redes Sociales Animadas */}
+        <div className="flex justify-center items-center gap-6">
+          <a
+            href="https://www.instagram.com/celebrarte_invitacion?igsi=MWxzYXAyN2k0eHhlcA%3D%3D&utm_source=qr"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="social-icon-hover animate-float-slow text-[#5A5A5A] hover:text-[#E1306C]"
+            aria-label="Instagram"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+          </a>
+          <a
+            href="https://www.tiktok.com/@celebrarte_invitaciones?_r=1&_t=ZS-99CuAljACaC"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="social-icon-hover animate-float-delayed text-[#5A5A5A] hover:text-[#00f2fe]"
+            aria-label="TikTok"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+          </a>
+        </div>
+        <div>
+          © 2026 Celebrarte · Invitaciones digitales · Hecho con amor ✨
+        </div>
       </footer>
     </div>
   );
