@@ -112,6 +112,11 @@ export default function Dashboard() {
             style={{ color: C.brand, fontWeight: 600, textDecoration: 'none' }}>
             Celebrarte
           </a>
+          {' & '}
+          <a href="https://oswalstudio.com/" target="_blank" rel="noopener noreferrer"
+            style={{ color: C.brand, fontWeight: 600, textDecoration: 'none' }}>
+            Oswal Studio
+          </a>
         </p>
       </div>
     </div>
@@ -222,6 +227,11 @@ export default function Dashboard() {
           <a href="https://celebrarte.com.co/" target="_blank" rel="noopener noreferrer"
             style={{ color: C.brand, fontWeight: 600, textDecoration: 'none' }}>
             Celebrarte
+          </a>
+          {' & '}
+          <a href="https://oswalstudio.com/" target="_blank" rel="noopener noreferrer"
+            style={{ color: C.brand, fontWeight: 600, textDecoration: 'none' }}>
+            Oswal Studio
           </a>
         </p>
       </div>
