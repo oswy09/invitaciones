@@ -70,7 +70,6 @@ export default function Dashboard() {
           boxShadow: '0 4px 32px rgba(44,36,22,0.1)', width: '100%', maxWidth: 360,
           textAlign: 'center',
         }}>
-          <p style={{ fontSize: 28, marginBottom: 4 }}>🌿</p>
           <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, color: '#2C2416', marginBottom: 6 }}>
             Dashboard RSVP
           </h1>
@@ -183,7 +182,11 @@ export default function Dashboard() {
         </div>
 
         <p style={{ textAlign: 'center', fontSize: 11, color: '#C8BFA8', marginTop: 24, letterSpacing: '0.1em' }}>
-          Se actualiza en tiempo real · Celebrarte
+          Se actualiza en tiempo real ·{' '}
+          <a href="https://celebrarte.com" target="_blank" rel="noopener noreferrer"
+            style={{ color: '#A99261', textDecoration: 'none', fontWeight: 600 }}>
+            Celebrarte
+          </a>
         </p>
       </div>
     </div>
