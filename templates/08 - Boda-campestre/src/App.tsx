@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { saveRsvp } from './supabase';
 import gsap from 'gsap';
 import portadaImg      from '../images/img-portada-boda-golf.png';
 import hojaImg         from '../images/hoja-decoracion-boda.png';
@@ -702,8 +703,11 @@ function RsvpSection() {
   const WHATSAPP_NUMBER = '573158953019';
 
   const handleEnviar = () => {
+    const asisté = asiste === 'si';
+    saveRsvp(GUEST_NAME, asisté);
+
     let msg = '';
-    if (asiste === 'si') {
+    if (asisté) {
       msg = `Hola! Confirmo mi asistencia a la boda de María & Juanca 🌿\n\n✅ *Sí asistiré*\n👤 ${GUEST_NAME}`;
     } else {
       msg = `Hola! Gracias por la invitación a la boda de María & Juanca 🌿\n\n❌ Lamentablemente no podré asistir.\n\n— ${GUEST_NAME}`;
