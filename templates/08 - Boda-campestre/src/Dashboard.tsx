@@ -182,7 +182,7 @@ export default function Dashboard() {
         </div>
 
         <p style={{ textAlign: 'center', fontSize: 11, color: '#C8BFA8', marginTop: 24, letterSpacing: '0.1em' }}>
-          Se actualiza en tiempo real ·{' '}
+          Creado por:{' '}
           <a href="https://celebrarte.com" target="_blank" rel="noopener noreferrer"
             style={{ color: '#A99261', textDecoration: 'none', fontWeight: 600 }}>
             Celebrarte
