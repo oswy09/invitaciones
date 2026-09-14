@@ -7,13 +7,15 @@ import arbolImg        from '../images/Arbol-boda.jpeg';
 import campoImg        from '../images/campo-golf.jpeg';
 import dressImg        from '../images/dress-code-removebg-preview.png';
 import cierreImg       from '../images/recien-casados.jpeg';
+// @ts-ignore
 import sobreCerradoImg    from '../images/sobre_cerrado.png';
+// @ts-ignore
 import sobreAbiertoImg    from '../images/openn-removebg-preview.png';
 
 const params     = new URLSearchParams(window.location.search);
 const GUEST_NAME = params.get('guest') || 'Tía Gladys';
 
-// ── SOBRE ──────────────────────────────────────────────────────
+// ── SOBRE (fotos — versión cliente) ────────────────────────────
 function EnvelopeScene({ onOpen, onStartAudio }: { onOpen: () => void; onStartAudio?: () => void }) {
   const sceneRef = useRef<HTMLDivElement>(null);
   const [phase, setPhase] = useState<'idle' | 'shaking' | 'open'>('idle');
@@ -23,10 +25,8 @@ function EnvelopeScene({ onOpen, onStartAudio }: { onOpen: () => void; onStartAu
     if (clicked) return;
     setClicked(true);
     if (onStartAudio) onStartAudio();
-
     setPhase('shaking');
     setTimeout(() => setPhase('open'), 320);
-
     setTimeout(() => {
       if (sceneRef.current) {
         gsap.to(sceneRef.current, { opacity: 0, duration: 0.4, ease: 'power2.in', onComplete: onOpen });
@@ -35,74 +35,42 @@ function EnvelopeScene({ onOpen, onStartAudio }: { onOpen: () => void; onStartAu
   };
 
   return (
-    <div
-      ref={sceneRef}
-      onClick={handleOpen}
-      onTouchStart={handleOpen}
-      style={{
-        position: 'fixed', inset: 0,
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        gap: 28, zIndex: 200,
-        cursor: clicked ? 'default' : 'pointer',
-        WebkitTapHighlightColor: 'transparent',
-        touchAction: 'manipulation',
-      }}
-    >
-      {/* Imágenes del sobre apiladas */}
+    <div ref={sceneRef} onClick={handleOpen} onTouchStart={handleOpen} style={{
+      position: 'fixed', inset: 0,
+      display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      gap: 28, zIndex: 200,
+      cursor: clicked ? 'default' : 'pointer',
+      WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation',
+    }}>
       <div style={{
-        position: 'relative',
-        width: 'min(78vw, 300px)',
-        aspectRatio: '1 / 0.88',
+        position: 'relative', width: 'min(78vw, 300px)', aspectRatio: '1 / 0.88',
         animation: clicked ? 'none' : 'envelopeFloat 3.8s ease-in-out infinite',
         filter: 'drop-shadow(0 1.2rem 1.4rem rgba(131,119,90,0.26))',
       }}>
-        {/* Sobre cerrado */}
-        <img
-          src={sobreCerradoImg}
-          alt="Sobre cerrado"
-          style={{
-            position: 'absolute', inset: 0,
-            width: '100%', height: '100%',
-            objectFit: 'contain',
-            opacity: phase === 'open' ? 0 : 1,
-            transform: phase === 'open' ? 'scale(0.92)' : 'scale(1)',
-            filter: phase === 'open' ? 'blur(2px)' : 'blur(0px)',
-            transition: 'opacity 0.5s ease, transform 0.55s ease, filter 0.45s ease',
-            animation: phase === 'shaking' ? 'sealShake 0.32s ease-in-out' : 'none',
-          }}
-        />
-        {/* Sobre abierto */}
-        <img
-          src={sobreAbiertoImg}
-          alt="Sobre abierto"
-          style={{
-            position: 'absolute', inset: 0,
-            width: '100%', height: '100%',
-            objectFit: 'contain',
-            opacity: phase === 'open' ? 1 : 0,
-            transform: phase === 'open' ? 'scale(1) translateY(0)' : 'scale(0.92) translateY(20px)',
-            transition: phase === 'open'
-              ? 'opacity 0.55s cubic-bezier(0,0,0.2,1) 0.1s, transform 0.7s cubic-bezier(0.22,1,0.36,1) 0.08s'
-              : 'none',
-          }}
-        />
+        <img src={sobreCerradoImg} alt="Sobre cerrado" style={{
+          position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain',
+          opacity: phase === 'open' ? 0 : 1,
+          transform: phase === 'open' ? 'scale(0.92)' : 'scale(1)',
+          filter: phase === 'open' ? 'blur(2px)' : 'blur(0px)',
+          transition: 'opacity 0.5s ease, transform 0.55s ease, filter 0.45s ease',
+          animation: phase === 'shaking' ? 'sealShake 0.32s ease-in-out' : 'none',
+        }}/>
+        <img src={sobreAbiertoImg} alt="Sobre abierto" style={{
+          position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain',
+          opacity: phase === 'open' ? 1 : 0,
+          transform: phase === 'open' ? 'scale(1) translateY(0)' : 'scale(0.92) translateY(20px)',
+          transition: phase === 'open'
+            ? 'opacity 0.55s cubic-bezier(0,0,0.2,1) 0.1s, transform 0.7s cubic-bezier(0.22,1,0.36,1) 0.08s'
+            : 'none',
+        }}/>
       </div>
-
-      {/* Nombre + hint */}
       <div style={{
-        textAlign: 'center',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
-        opacity: clicked ? 0 : 1,
-        transition: clicked ? 'opacity 0.28s ease' : 'none',
-        pointerEvents: 'none',
+        textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
+        opacity: clicked ? 0 : 1, transition: clicked ? 'opacity 0.28s ease' : 'none', pointerEvents: 'none',
       }}>
-        <p style={{ fontFamily: 'var(--f-script)', fontSize: 'clamp(34px, 10vw, 46px)', color: 'var(--c-text)', lineHeight: 1.15 }}>{GUEST_NAME}</p>
-        <p style={{
-          fontFamily: 'var(--f-body)', fontSize: 12, letterSpacing: '0.22em',
-          textTransform: 'uppercase', color: 'var(--c-muted)',
-          animation: 'hintPulse 2.2s ease-in-out infinite',
-        }}>✉&nbsp;&nbsp;Toca para abrir</p>
+        <p style={{ fontFamily: 'var(--f-script)', fontSize: 'clamp(34px, 10vw, 46px)', color: '#8C6032', lineHeight: 1.15 }}>{GUEST_NAME}</p>
+        <p style={{ fontFamily: 'var(--f-body)', fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--c-muted)', animation: 'hintPulse 2.2s ease-in-out infinite' }}>Toca para abrir</p>
       </div>
     </div>
   );
@@ -142,19 +110,19 @@ function PortadaSection() {
         animation: 'fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.4s both',
       }}>
         <p style={{
-          fontFamily: 'var(--f-body)', fontSize: 11.5, fontWeight: 600,
+          fontFamily: 'var(--f-body)', fontSize: 11, fontWeight: 600,
           letterSpacing: '0.28em', textTransform: 'uppercase',
           color: 'var(--c-text)',
         }}>Matrimonio de</p>
         <p style={{
           fontFamily: 'var(--f-script)',
           fontSize: 'clamp(38px, 11vw, 52px)',
-          color: '#1a1410', lineHeight: 1.1, margin: '4px 0 2px',
+          color: '#A99261', lineHeight: 1.1, margin: '4px 0 2px',
         }}>María &amp; Juanca</p>
         <p style={{
           fontFamily: 'var(--f-body)', fontSize: 14, fontWeight: 500,
           letterSpacing: '0.18em', color: 'var(--c-text)', marginTop: 2,
-        }}>16 · 12 · 2026</p>
+        }}>19 · 12 · 2026</p>
         <p style={{
           fontFamily: 'var(--f-body)', fontSize: 12.5, fontWeight: 500,
           color: 'var(--c-text)',
@@ -273,7 +241,7 @@ function ParentsSection() {
       <h2 style={{
         fontFamily: 'var(--f-script)',
         fontSize: 'clamp(38px, 10vw, 50px)',
-        color: '#1a1410',
+        color: '#A99261',
         lineHeight: 1.25,
         margin: '0 0 32px',
         maxWidth: 320,
@@ -305,9 +273,10 @@ function ParentsSection() {
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
         animation: 'fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.25s both',
       }}>
-        {['Luis Carlos Varela V. · Q.E.P.D.', 'Myriam Bellini A.'].map((name, i) => (
-          <p key={i} style={{ fontFamily: 'var(--f-body)', fontSize: 15.5, color: 'var(--c-text)', lineHeight: 1.8, margin: 0 }}>{name}</p>
-        ))}
+        <p style={{ fontFamily: 'var(--f-body)', fontSize: 15.5, color: 'var(--c-text)', lineHeight: 1.8, margin: 0 }}>
+          Luis Carlos Varela V. · <span style={{ fontSize: 11, letterSpacing: '0.08em', color: 'var(--c-muted)' }}>Q.E.P.D</span>
+        </p>
+        <p style={{ fontFamily: 'var(--f-body)', fontSize: 15.5, color: 'var(--c-text)', lineHeight: 1.8, margin: 0 }}>Myriam Bellini A.</p>
       </div>
 
       {/* Invitación */}
@@ -481,7 +450,7 @@ function ItinerarioSection() {
       <h2 style={{
         fontFamily: 'var(--f-script)',
         fontSize: 'clamp(34px, 9vw, 44px)',
-        color: '#1a1410', lineHeight: 1.1,
+        color: '#A99261', lineHeight: 1.1,
         margin: '0 0 10px', fontWeight: 'normal',
       }}>Lugar</h2>
 
@@ -491,7 +460,7 @@ function ItinerarioSection() {
         marginBottom: 14,
         animation: 'fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.15s both',
       }}>
-        <p style={{ fontFamily: 'var(--f-body)', fontSize: 13, fontWeight: 600, letterSpacing: '0.06em', color: 'var(--c-text)', margin: 0, textAlign: 'center' }}>
+        <p style={{ fontFamily: 'var(--f-body)', fontSize: 14, fontWeight: 600, letterSpacing: '0.06em', color: 'var(--c-text)', margin: 0, textAlign: 'center' }}>
           Club Campestre de Cali, Cancha de Polo
         </p>
         <p style={{ fontFamily: 'var(--f-body)', fontSize: 12, color: 'var(--c-muted)', letterSpacing: '0.04em', margin: 0 }}>
@@ -519,7 +488,7 @@ function ItinerarioSection() {
       <h2 style={{
         fontFamily: 'var(--f-script)',
         fontSize: 'clamp(34px, 9vw, 44px)',
-        color: '#1a1410', lineHeight: 1.1,
+        color: '#A99261', lineHeight: 1.1,
         margin: '0 0 18px', fontWeight: 'normal',
         animation: 'fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.2s both',
       }}>Itinerario</h2>
@@ -534,7 +503,7 @@ function ItinerarioSection() {
                 {svgIcon(item.icon)}
               </div>
               <div style={{ paddingLeft: 14, textAlign: 'left', flex: 1 }}>
-                <p style={{ fontFamily: 'var(--f-body)', fontSize: 15.5, fontWeight: 600, color: 'var(--c-text)', margin: 0 }}>{item.label}</p>
+                <p style={{ fontFamily: 'var(--f-body)', fontSize: 14, fontWeight: 600, color: 'var(--c-text)', margin: 0 }}>{item.label}</p>
                 {item.sub && <p style={{ fontFamily: 'var(--f-body)', fontSize: 13, fontStyle: 'italic', color: 'var(--c-muted)', margin: '2px 0 0' }}>{item.sub}</p>}
               </div>
             </div>
@@ -567,7 +536,7 @@ function DressCodeSection() {
       <h2 style={{
         fontFamily: 'var(--f-script)',
         fontSize: 'clamp(38px, 10vw, 50px)',
-        color: '#1a1410', lineHeight: 1.1,
+        color: '#A99261', lineHeight: 1.1,
         margin: '0 0 8px', fontWeight: 'normal',
         animation: 'fadeUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.1s both',
       }}>Dress Code</h2>
@@ -591,8 +560,8 @@ function DressCodeSection() {
         animation: 'fadeUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.35s both',
       }}>
         <p style={{
-          fontFamily: 'var(--f-body)', fontSize: 12, fontWeight: 600,
-          letterSpacing: '0.26em', textTransform: 'uppercase',
+          fontFamily: 'var(--f-body)', fontSize: 11, fontWeight: 600,
+          letterSpacing: '0.28em', textTransform: 'uppercase',
           color: 'var(--c-text)',
         }}>Código de vestimenta</p>
         <p style={{
@@ -640,7 +609,7 @@ function RegalosSection() {
       <h2 style={{
         fontFamily: 'var(--f-script)',
         fontSize: 'clamp(38px, 10vw, 50px)',
-        color: '#1a1410', lineHeight: 1.1,
+        color: '#A99261', lineHeight: 1.1,
         margin: '0 0 8px', fontWeight: 'normal',
       }}>Nuestros regalos</h2>
 
@@ -649,21 +618,21 @@ function RegalosSection() {
       <p style={{
         fontFamily: 'var(--f-body)', fontSize: 16.5, fontStyle: 'italic',
         color: 'var(--c-text)', lineHeight: 1.8,
-        maxWidth: 290, marginBottom: 12,
+        maxWidth: 290, marginBottom: 20,
       }}>
-        Tu presencia es el mejor regalo.
+        Tu compañía es el mejor regalo.
       </p>
       <p style={{
         fontFamily: 'var(--f-body)', fontSize: 15,
         color: 'var(--c-muted)', lineHeight: 1.8,
-        maxWidth: 290,
+        maxWidth: 290, textAlign: 'center',
       }}>
-        Pero si deseas hacernos un detalle, hemos elegido una
+        Para quienes deseen tener un detalle con nosotros, hemos dispuesto una
       </p>
       <p style={{
-        fontFamily: 'var(--f-body)', fontSize: 13.5, fontWeight: 600,
-        letterSpacing: '0.24em', textTransform: 'uppercase',
-        color: 'var(--c-gold)', marginTop: 8, marginBottom: 28,
+        fontFamily: 'var(--f-body)', fontSize: 11, fontWeight: 600,
+        letterSpacing: '0.28em', textTransform: 'uppercase',
+        color: 'var(--c-gold)', marginTop: 8, marginBottom: 24,
       }}>
         lluvia de sobres
       </p>
@@ -705,71 +674,256 @@ function RegalosSection() {
           }}/>
         ))}
       </div>
+
+      {/* Datos bancarios */}
+      <div style={{
+        marginTop: 24, padding: '16px 24px',
+        background: 'var(--c-surface)', borderRadius: 10,
+        border: '1px solid var(--c-border)',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+        maxWidth: 270,
+      }}>
+        <p style={{ fontFamily: 'var(--f-body)', fontSize: 11, fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--c-muted)', margin: 0 }}>Ahorros NU</p>
+        <p style={{ fontFamily: 'var(--f-body)', fontSize: 18, fontWeight: 700, color: 'var(--c-gold)', letterSpacing: '0.06em', margin: '2px 0' }}># 92855767</p>
+        <div style={{ width: 30, height: 1, background: 'var(--c-border)', margin: '4px 0' }} />
+        <p style={{ fontFamily: 'var(--f-body)', fontSize: 13, fontWeight: 600, color: 'var(--c-text)', margin: 0 }}>Juan Carlos Varela</p>
+        <p style={{ fontFamily: 'var(--f-body)', fontSize: 12, color: 'var(--c-muted)', margin: 0 }}>CC: 1127228005</p>
+      </div>
     </section>
   );
 }
 
 // ── RSVP ───────────────────────────────────────────────────────
 function RsvpSection() {
+  const [open, setOpen] = useState(false);
+  const [asiste, setAsiste] = useState<'si' | 'no' | null>(null);
+  const [acompanantes, setAcompanantes] = useState(0);
+  const [sent, setSent] = useState(false);
+
+  const WHATSAPP_NUMBER = '573158953019';
+
+  const handleEnviar = () => {
+    let msg = '';
+    if (asiste === 'si') {
+      const total = 1 + acompanantes;
+      const quien = acompanantes === 0
+        ? `solo yo (${GUEST_NAME})`
+        : acompanantes === 1
+          ? `${GUEST_NAME} + 1 acompañante`
+          : `${GUEST_NAME} + 2 acompañantes`;
+      msg = `Hola! Confirmo mi asistencia a la boda de María & Juanca 🌿\n\n✅ *Sí asistiré*\n👤 ${quien}\n🧑‍🤝‍🧑 Total: ${total} persona${total > 1 ? 's' : ''}`;
+    } else {
+      msg = `Hola! Gracias por la invitación a la boda de María & Juanca 🌿\n\n❌ Lamentablemente no podré asistir.\n\n— ${GUEST_NAME}`;
+    }
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+    setSent(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setTimeout(() => { setAsiste(null); setAcompanantes(0); setSent(false); }, 300);
+  };
+
+  const btnBase: React.CSSProperties = {
+    fontFamily: 'var(--f-body)', fontSize: 13, fontWeight: 600,
+    letterSpacing: '0.1em', textTransform: 'uppercase',
+    padding: '12px 20px', borderRadius: 30, cursor: 'pointer',
+    transition: 'all 0.18s ease', border: '1.5px solid transparent',
+  };
+
   return (
-    <section style={{
-      textAlign: 'center', background: 'var(--c-bg)',
-      padding: '20px 32px 32px',
-      display: 'flex', flexDirection: 'column', alignItems: 'center',
-      animation: 'fadeUp 0.8s cubic-bezier(0.22,1,0.36,1) both',
-    }}>
-      <h2 style={{
-        fontFamily: 'var(--f-script)',
-        fontSize: 'clamp(38px, 10vw, 50px)',
-        color: '#1a1410', lineHeight: 1.1,
-        margin: '0 0 8px', fontWeight: 'normal',
-      }}>Confirmar asistencia</h2>
-
-      <div style={{ width: 40, height: 1, background: 'var(--c-border)', margin: '0 auto 32px' }} />
-
-      <p style={{
-        fontFamily: 'var(--f-body)', fontSize: 15,
-        color: 'var(--c-muted)', lineHeight: 1.8,
-        maxWidth: 280, marginBottom: 28,
+    <>
+      <section style={{
+        textAlign: 'center', background: 'var(--c-bg)',
+        padding: '20px 32px 32px',
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        animation: 'fadeUp 0.8s cubic-bezier(0.22,1,0.36,1) both',
       }}>
-        Por favor, confirma tu asistencia antes del <strong style={{ color: 'var(--c-text)', fontWeight: 600 }}>2 de Octubre de 2026</strong>.
-      </p>
+        <h2 style={{
+          fontFamily: 'var(--f-script)',
+          fontSize: 'clamp(38px, 10vw, 50px)',
+          color: '#A99261', lineHeight: 1.1,
+          margin: '0 0 8px', fontWeight: 'normal',
+        }}>RSVP</h2>
 
-      {/* Botón de confirmación — siempre en una sola línea en mobile */}
-      <a
-        href="https://wa.me/573158953019"
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{
-          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-          padding: '14px clamp(16px, 5vw, 30px)',
-          background: 'var(--c-surface)',
-          border: '1px solid var(--c-border)',
-          borderRadius: 40,
-          fontFamily: 'var(--f-body)',
-          color: 'var(--c-text)', textDecoration: 'none',
-          whiteSpace: 'nowrap',
-          maxWidth: '100%',
-          boxSizing: 'border-box',
-          boxShadow: '0 2px 10px rgba(100,75,30,0.08)',
-        }}
-      >
-        <span style={{
-          display: 'flex', alignItems: 'center', gap: 8,
-          fontSize: 'clamp(11px, 3.3vw, 13px)',
-          fontWeight: 600,
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          whiteSpace: 'nowrap',
+        <div style={{ width: 40, height: 1, background: 'var(--c-border)', margin: '0 auto 24px' }} />
+
+        <p style={{
+          fontFamily: 'var(--f-body)', fontSize: 13, fontWeight: 600,
+          letterSpacing: '0.16em', color: 'var(--c-muted)',
+          marginBottom: 28, textTransform: 'uppercase',
         }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-            <path d="M20.52 3.48A11.93 11.93 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.97L0 24l6.23-1.63A11.94 11.94 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.21-3.48-8.52z" fill="#8FA882" opacity="0.8"/>
-            <path d="M17.47 14.83c-.25-.13-1.47-.73-1.7-.81-.23-.08-.4-.13-.56.13-.17.25-.64.81-.79.98-.14.17-.29.19-.54.06-.25-.13-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.07s.89 2.4 1.02 2.57c.13.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.55.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.1-.23-.16-.48-.29z" fill="var(--c-bg)"/>
-          </svg>
-          Confirmar asistencia
-        </span>
-      </a>
-    </section>
+          Fecha límite: <span style={{ color: 'var(--c-gold)' }}>02.10.26</span>
+        </p>
+
+        <button
+          onClick={() => setOpen(true)}
+          style={{
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            padding: '14px clamp(16px, 5vw, 30px)',
+            background: 'var(--c-surface)',
+            border: '1px solid var(--c-border)',
+            borderRadius: 40,
+            fontFamily: 'var(--f-body)',
+            color: 'var(--c-text)',
+            whiteSpace: 'nowrap',
+            maxWidth: '100%',
+            boxSizing: 'border-box',
+            boxShadow: '0 2px 10px rgba(100,75,30,0.08)',
+            cursor: 'pointer',
+          }}
+        >
+          <span style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            fontSize: 'clamp(11px, 3.3vw, 13px)',
+            fontWeight: 600,
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            whiteSpace: 'nowrap',
+          }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+              <path d="M20.52 3.48A11.93 11.93 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.97L0 24l6.23-1.63A11.94 11.94 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.21-3.48-8.52z" fill="#8FA882" opacity="0.8"/>
+              <path d="M17.47 14.83c-.25-.13-1.47-.73-1.7-.81-.23-.08-.4-.13-.56.13-.17.25-.64.81-.79.98-.14.17-.29.19-.54.06-.25-.13-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.07s.89 2.4 1.02 2.57c.13.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.55.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.1-.23-.16-.48-.29z" fill="var(--c-bg)"/>
+            </svg>
+            Confirmar asistencia
+          </span>
+        </button>
+      </section>
+
+      {/* ── Modal RSVP ── */}
+      {open && (
+        <div
+          onClick={handleClose}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9000,
+            background: 'rgba(44,36,22,0.55)',
+            display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+            animation: 'fadeUp 0.22s ease both',
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              width: '100%', maxWidth: 460,
+              background: 'var(--c-bg)',
+              borderRadius: '24px 24px 0 0',
+              padding: '32px 28px 40px',
+              boxShadow: '0 -8px 40px rgba(44,36,22,0.18)',
+            }}
+          >
+            {/* Handle */}
+            <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--c-border)', margin: '0 auto 24px' }} />
+
+            {!sent ? (
+              <>
+                <p style={{
+                  fontFamily: 'var(--f-body)', fontSize: 11, fontWeight: 600,
+                  letterSpacing: '0.24em', textTransform: 'uppercase',
+                  color: 'var(--c-muted)', textAlign: 'center', marginBottom: 28,
+                }}>¿Confirmas tu asistencia?</p>
+
+                {/* Sí / No */}
+                <div style={{ display: 'flex', gap: 10, marginBottom: 24 }}>
+                  {(['si', 'no'] as const).map(op => (
+                    <button
+                      key={op}
+                      onClick={() => { setAsiste(op); if (op === 'no') setAcompanantes(0); }}
+                      style={{
+                        ...btnBase,
+                        flex: 1,
+                        background: asiste === op ? (op === 'si' ? '#A99261' : '#8C6032') : 'var(--c-surface)',
+                        color: asiste === op ? '#FAF7F0' : 'var(--c-muted)',
+                        borderColor: asiste === op ? 'transparent' : 'var(--c-border)',
+                      }}
+                    >
+                      {op === 'si' ? '✓ Sí asistiré' : '✗ No podré ir'}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Acompañantes — solo si dice Sí */}
+                {asiste === 'si' && (
+                  <div style={{ marginBottom: 28 }}>
+                    <p style={{
+                      fontFamily: 'var(--f-body)', fontSize: 11, fontWeight: 600,
+                      letterSpacing: '0.22em', textTransform: 'uppercase',
+                      color: 'var(--c-muted)', textAlign: 'center', marginBottom: 14,
+                    }}>¿Llevas acompañante?</p>
+                    <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                      {[0, 1, 2].map(n => (
+                        <button
+                          key={n}
+                          onClick={() => setAcompanantes(n)}
+                          style={{
+                            ...btnBase,
+                            width: 64, padding: '10px 0',
+                            background: acompanantes === n ? '#A99261' : 'var(--c-surface)',
+                            color: acompanantes === n ? '#FAF7F0' : 'var(--c-muted)',
+                            borderColor: acompanantes === n ? 'transparent' : 'var(--c-border)',
+                            fontSize: 12,
+                          }}
+                        >
+                          {n === 0 ? 'Solo yo' : n === 1 ? '+1' : '+2'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Enviar */}
+                {asiste !== null && (
+                  <button
+                    onClick={handleEnviar}
+                    style={{
+                      width: '100%', padding: '15px',
+                      background: '#4A6644', color: '#FAF7F0',
+                      borderRadius: 40, border: 'none', cursor: 'pointer',
+                      fontFamily: 'var(--f-body)', fontSize: 13, fontWeight: 600,
+                      letterSpacing: '0.14em', textTransform: 'uppercase',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M20.52 3.48A11.93 11.93 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.97L0 24l6.23-1.63A11.94 11.94 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.21-3.48-8.52z" fill="#FAF7F0" opacity="0.9"/>
+                      <path d="M17.47 14.83c-.25-.13-1.47-.73-1.7-.81-.23-.08-.4-.13-.56.13-.17.25-.64.81-.79.98-.14.17-.29.19-.54.06-.25-.13-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.07s.89 2.4 1.02 2.57c.13.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.55.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.1-.23-.16-.48-.29z" fill="#4A6644"/>
+                    </svg>
+                    Enviar por WhatsApp
+                  </button>
+                )}
+              </>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '12px 0' }}>
+                <p style={{
+                  fontFamily: 'var(--f-script)', fontSize: 'clamp(28px, 8vw, 38px)',
+                  color: '#A99261', marginBottom: 12, lineHeight: 1.1,
+                }}>¡Gracias!</p>
+                <p style={{
+                  fontFamily: 'var(--f-body)', fontSize: 13, color: 'var(--c-muted)',
+                  letterSpacing: '0.06em', marginBottom: 28, lineHeight: 1.6,
+                }}>
+                  {asiste === 'si'
+                    ? 'Tu confirmación fue enviada. ¡Los esperamos con mucho amor!'
+                    : 'Recibimos tu mensaje. ¡Te queremos igual!'}
+                </p>
+                <button
+                  onClick={handleClose}
+                  style={{
+                    ...btnBase,
+                    background: 'var(--c-surface)',
+                    color: 'var(--c-muted)',
+                    borderColor: 'var(--c-border)',
+                    padding: '12px 32px',
+                  }}
+                >
+                  Cerrar
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -778,7 +932,7 @@ function CierreSection() {
   return (
     <section style={{
       textAlign: 'center', background: 'var(--c-bg)',
-      padding: '60px 32px 100px',
+      padding: '12px 32px 20px',
       display: 'flex', flexDirection: 'column', alignItems: 'center',
       animation: 'fadeUp 0.8s cubic-bezier(0.22,1,0.36,1) both',
     }}>
@@ -787,7 +941,7 @@ function CierreSection() {
         src={cierreImg}
         alt="María y Juanca"
         style={{
-          width: '88%', maxWidth: 300,
+          width: '72%', maxWidth: 240,
           borderRadius: 4,
           objectFit: 'cover',
           marginBottom: 24,
@@ -799,7 +953,7 @@ function CierreSection() {
       <p style={{
         fontFamily: 'var(--f-script)',
         fontSize: 'clamp(44px, 12vw, 60px)',
-        color: '#1a1410', lineHeight: 1.05,
+        color: '#A99261', lineHeight: 1.05,
         margin: '0 0 14px', fontWeight: 'normal',
       }}>María &amp; Juanca</p>
 
@@ -817,25 +971,24 @@ function CierreSection() {
         fontFamily: 'var(--f-body)', fontSize: 16, fontWeight: 500,
         letterSpacing: '0.2em', color: 'var(--c-text)',
         marginBottom: 4,
-      }}>16 · 12 · 2026</p>
+      }}>19 · 12 · 2026</p>
       <p style={{
-        fontFamily: 'var(--f-body)', fontSize: 12.5, fontWeight: 600,
+        fontFamily: 'var(--f-body)', fontSize: 11, fontWeight: 600,
         letterSpacing: '0.28em', textTransform: 'uppercase',
         color: 'var(--c-muted)',
       }}>Cali, Colombia</p>
 
       {/* Hoja decorativa */}
       <img src={hojaImg} alt="" aria-hidden="true" style={{
-        width: 90, opacity: 0.6, marginTop: 32,
+        width: 70, opacity: 0.5, marginTop: 16,
         animation: 'leafFloat 4s ease-in-out infinite',
       }} />
     </section>
   );
 }
 
-// ── REPRODUCTOR FIJO (Ed Sheeran - Perfect local) ────────────────
-const MUSIC_SRC = '/perfect.mp3';
-const MUSIC_START_SECOND = 14;
+const MUSIC_SRC = '/wedding-song.mp3';
+const MUSIC_START_SECOND = 0;
 
 let globalAudio: HTMLAudioElement | null = null;
 let setGlobalPlaying: ((p: boolean) => void) | null = null;
@@ -929,6 +1082,7 @@ function startAudioPlayback() {
   }
 }
 
+// @ts-ignore
 function toggleAudioPlayback(currentlyPlaying: boolean) {
   const audio = getAudio();
   if (currentlyPlaying) {
@@ -1276,6 +1430,61 @@ function GolfProgressBar({ pct }: { pct: number }) {
   );
 }
 
+// ── FLECHA SCROLL ──────────────────────────────────────────────
+function ScrollArrow({ mainRef, totalPages }: { mainRef: React.RefObject<HTMLElement | null>; totalPages: number }) {
+  const [currentPage, setCurrentPage] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const el = mainRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const pageH = el.clientHeight;
+      const page = Math.round(el.scrollTop / pageH);
+      setCurrentPage(page);
+      setVisible(page < totalPages - 1);
+    };
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, [mainRef, totalPages]);
+
+  // @ts-ignore
+  void currentPage;
+
+  if (!visible) return null;
+
+  return (
+    <div
+      onClick={() => {
+        const el = mainRef.current;
+        if (!el) return;
+        el.scrollBy({ top: el.clientHeight, behavior: 'smooth' });
+      }}
+      style={{
+        position: 'fixed', bottom: 22, left: '50%', transform: 'translateX(-50%)',
+        zIndex: 100, pointerEvents: 'auto', cursor: 'pointer',
+        opacity: visible ? 1 : 0,
+        transition: 'opacity 0.4s ease',
+        padding: '8px 16px',
+      }}
+    >
+      <style>{`
+        @keyframes arrowBounce {
+          0%, 100% { transform: translateY(0px); opacity: 0.5; }
+          50%       { transform: translateY(6px); opacity: 1; }
+        }
+      `}</style>
+      <svg
+        width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke="#9f844d" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+        style={{ animation: 'arrowBounce 1.8s ease-in-out infinite' }}
+      >
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </div>
+  );
+}
+
 // ── APP ────────────────────────────────────────────────────────
 export default function App() {
   const initS = params.get('s');
@@ -1285,37 +1494,29 @@ export default function App() {
   );
   // @ts-ignore
   const [scrollPct, setScrollPct] = useState(0);
+  const mainRef = useRef<HTMLElement>(null);
+  // @ts-ignore
   const [musicPlaying, setMusicPlaying] = useState(false);
 
   useEffect(() => {
     setGlobalPlaying = (p: boolean) => setMusicPlaying(p);
-    // Audio desactivado — descomentar startAudioPlayback() para activar música
-    return () => { setGlobalPlaying = null; };
-  }, []);
-
-  useEffect(() => {
-    if (overlay !== null) return;
-    const onScroll = () => {
-      const el = document.documentElement;
-      const total = el.scrollHeight - el.clientHeight;
-      setScrollPct(total > 0 ? Math.min(100, (window.scrollY / total) * 100) : 0);
+    const removeTouchListeners = () => {
+      window.removeEventListener('touchstart', onFirstTouch);
+      window.removeEventListener('pointerdown', onFirstTouch);
+      window.removeEventListener('click', onFirstTouch);
     };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [overlay]);
+    const onFirstTouch = () => { removeTouchListeners(); if (!userManuallyPaused) startAudioPlayback(); };
+    window.addEventListener('touchstart', onFirstTouch, { passive: true });
+    window.addEventListener('pointerdown', onFirstTouch, { passive: true });
+    window.addEventListener('click', onFirstTouch);
+    return () => { setGlobalPlaying = null; removeTouchListeners(); };
+  }, []);
 
   const handleEnvelopeOpen = () => {
     setOverlay('loading');
   };
 
-  const handleStartAudio = () => {
-    // Audio desactivado
-  };
-
-  // @ts-ignore
-  const toggleMusic = () => {
-    toggleAudioPlayback(musicPlaying);
-  };
+  const handleStartAudio = () => { startAudioPlayback(); };
 
   return (
     <>
@@ -1326,7 +1527,7 @@ export default function App() {
       )}
       {overlay === 'loading' && <RamaPreloader onDone={() => setOverlay(null)} />}
       {overlay === null && (
-        <main style={{
+        <main ref={mainRef} style={{
           maxWidth: 480, margin: '0 auto', background: 'var(--c-bg)',
           height: '100dvh', overflowY: 'scroll',
           scrollSnapType: 'y mandatory',
@@ -1348,21 +1549,22 @@ export default function App() {
           <div style={{ minHeight: '100dvh', scrollSnapAlign: 'start' }}>
             <DressCodeSection />
           </div>
-          {/* Página 5 — Regalos + RSVP */}
+          {/* Página 5 — Regalos */}
           <div style={{ minHeight: '100dvh', scrollSnapAlign: 'start', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <RegalosSection />
-            <RsvpSection />
           </div>
-          {/* Página 6 — Cierre */}
-          <div style={{ minHeight: '100dvh', scrollSnapAlign: 'start' }}>
+          {/* Página 6 — RSVP + Cierre */}
+          <div style={{ minHeight: '100dvh', scrollSnapAlign: 'start', display: 'flex', flexDirection: 'column' }}>
+            <RsvpSection />
             <CierreSection />
           </div>
         </main>
       )}
-      {/* MÚSICA desactivada — descomentar para activar: */}
+      {/* Música desactivada */}
       {/* {overlay === null && <FixedMusicPlayer playing={musicPlaying} onToggle={toggleMusic} />} */}
-      {/* BARRA GOLF desactivada — descomentar para activar: */}
+      {/* Barra golf desactivada */}
       {/* {overlay === null && <GolfProgressBar pct={scrollPct} />} */}
+      {overlay === null && <ScrollArrow mainRef={mainRef} totalPages={6} />}
     </>
   );
 }
