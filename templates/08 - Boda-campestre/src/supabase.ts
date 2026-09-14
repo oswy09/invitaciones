@@ -10,6 +10,9 @@ export const EVENTO_ID = 'maria-juanca-2026';
 export async function saveRsvp(nombre: string, asiste: boolean) {
   const { error } = await supabase
     .from('rsvp_responses')
-    .insert({ nombre, asiste, evento_id: EVENTO_ID });
+    .upsert(
+      { nombre, asiste, evento_id: EVENTO_ID },
+      { onConflict: 'nombre,evento_id' }
+    );
   if (error) throw new Error(error.message);
 }

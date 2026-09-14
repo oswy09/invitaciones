@@ -12,11 +12,11 @@ type RsvpRow = {
 };
 
 const C = {
-  bg: '#F7F8FA', surface: '#FFFFFF', border: '#E4E7EC',
-  text: '#101828', muted: '#667085', subtle: '#98A2B3',
-  brand: '#2D6A4F', brandBg: '#EAF4EF',
+  bg: '#FAF5FB', surface: '#FFFFFF', border: '#EAD9ED',
+  text: '#1A0A1C', muted: '#7A5880', subtle: '#B09AB5',
+  brand: '#5A1B5E', brandBg: '#F3E8F5',
   warn: '#B54708', warnBg: '#FEF6EE',
-  accent: '#C9A84C', accentBg: '#FDF8EC',
+  accent: '#8B3D90', accentBg: '#EDD9EE',
 };
 const font = "'Inter','Montserrat',system-ui,sans-serif";
 
@@ -107,7 +107,7 @@ export default function Dashboard() {
 
         <p style={{ textAlign: 'center', marginTop: 20, fontSize: 12, color: C.subtle }}>
           Creado por:{' '}
-          <a href="https://celebrarte.com" target="_blank" rel="noopener noreferrer"
+          <a href="https://celebrarte.com.co/" target="_blank" rel="noopener noreferrer"
             style={{ color: C.brand, fontWeight: 600, textDecoration: 'none' }}>
             Celebrarte
           </a>
@@ -218,7 +218,7 @@ export default function Dashboard() {
 
         <p style={{ textAlign: 'center', fontSize: 11, color: C.subtle, marginTop: 20 }}>
           Creado por:{' '}
-          <a href="https://celebrarte.com" target="_blank" rel="noopener noreferrer"
+          <a href="https://celebrarte.com.co/" target="_blank" rel="noopener noreferrer"
             style={{ color: C.brand, fontWeight: 600, textDecoration: 'none' }}>
             Celebrarte
           </a>
