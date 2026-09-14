@@ -697,7 +697,6 @@ function RegalosSection() {
 function RsvpSection() {
   const [open, setOpen] = useState(false);
   const [asiste, setAsiste] = useState<'si' | 'no' | null>(null);
-  const [acompanantes, setAcompanantes] = useState(0);
   const [sent, setSent] = useState(false);
 
   const WHATSAPP_NUMBER = '573158953019';
@@ -705,13 +704,7 @@ function RsvpSection() {
   const handleEnviar = () => {
     let msg = '';
     if (asiste === 'si') {
-      const total = 1 + acompanantes;
-      const quien = acompanantes === 0
-        ? `solo yo (${GUEST_NAME})`
-        : acompanantes === 1
-          ? `${GUEST_NAME} + 1 acompañante`
-          : `${GUEST_NAME} + 2 acompañantes`;
-      msg = `Hola! Confirmo mi asistencia a la boda de María & Juanca 🌿\n\n✅ *Sí asistiré*\n👤 ${quien}\n🧑‍🤝‍🧑 Total: ${total} persona${total > 1 ? 's' : ''}`;
+      msg = `Hola! Confirmo mi asistencia a la boda de María & Juanca 🌿\n\n✅ *Sí asistiré*\n👤 ${GUEST_NAME}`;
     } else {
       msg = `Hola! Gracias por la invitación a la boda de María & Juanca 🌿\n\n❌ Lamentablemente no podré asistir.\n\n— ${GUEST_NAME}`;
     }
@@ -722,7 +715,7 @@ function RsvpSection() {
 
   const handleClose = () => {
     setOpen(false);
-    setTimeout(() => { setAsiste(null); setAcompanantes(0); setSent(false); }, 300);
+    setTimeout(() => { setAsiste(null); setSent(false); }, 300);
   };
 
   const btnBase: React.CSSProperties = {
@@ -828,7 +821,7 @@ function RsvpSection() {
                   {(['si', 'no'] as const).map(op => (
                     <button
                       key={op}
-                      onClick={() => { setAsiste(op); if (op === 'no') setAcompanantes(0); }}
+                      onClick={() => setAsiste(op)}
                       style={{
                         ...btnBase,
                         flex: 1,
@@ -841,35 +834,6 @@ function RsvpSection() {
                     </button>
                   ))}
                 </div>
-
-                {/* Acompañantes — solo si dice Sí */}
-                {asiste === 'si' && (
-                  <div style={{ marginBottom: 28 }}>
-                    <p style={{
-                      fontFamily: 'var(--f-body)', fontSize: 11, fontWeight: 600,
-                      letterSpacing: '0.22em', textTransform: 'uppercase',
-                      color: 'var(--c-muted)', textAlign: 'center', marginBottom: 14,
-                    }}>¿Llevas acompañante?</p>
-                    <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-                      {[0, 1, 2].map(n => (
-                        <button
-                          key={n}
-                          onClick={() => setAcompanantes(n)}
-                          style={{
-                            ...btnBase,
-                            width: 64, padding: '10px 0',
-                            background: acompanantes === n ? '#A99261' : 'var(--c-surface)',
-                            color: acompanantes === n ? '#FAF7F0' : 'var(--c-muted)',
-                            borderColor: acompanantes === n ? 'transparent' : 'var(--c-border)',
-                            fontSize: 12,
-                          }}
-                        >
-                          {n === 0 ? 'Solo yo' : n === 1 ? '+1' : '+2'}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 {/* Enviar */}
                 {asiste !== null && (
