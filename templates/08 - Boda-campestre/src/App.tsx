@@ -703,11 +703,15 @@ function RsvpSection() {
   const WHATSAPP_NUMBER = '573158953019';
 
   const handleEnviar = () => {
-    const asisté = asiste === 'si';
-    saveRsvp(GUEST_NAME, asisté);
+    const asistira = asiste === 'si';
+    saveRsvp(GUEST_NAME, asistira).then(() => {
+      console.log('[RSVP] guardado ok:', GUEST_NAME, asistira);
+    }).catch((e: unknown) => {
+      console.error('[RSVP] error al guardar:', e);
+    });
 
     let msg = '';
-    if (asisté) {
+    if (asistira) {
       msg = `Hola! Confirmo mi asistencia a la boda de María & Juanca 🌿\n\n✅ *Sí asistiré*\n👤 ${GUEST_NAME}`;
     } else {
       msg = `Hola! Gracias por la invitación a la boda de María & Juanca 🌿\n\n❌ Lamentablemente no podré asistir.\n\n— ${GUEST_NAME}`;

@@ -7,5 +7,5 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export async function saveRsvp(nombre: string, asiste: boolean) {
   const { error } = await supabase.from('rsvp_responses').insert({ nombre, asiste });
-  if (error) console.error('RSVP save error:', error.message);
+  if (error) throw new Error(error.message);
 }
