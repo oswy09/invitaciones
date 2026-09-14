@@ -15,7 +15,8 @@ const C = {
   bg: '#FAF5FB', surface: '#FFFFFF', border: '#EAD9ED',
   text: '#1A0A1C', muted: '#7A5880', subtle: '#B09AB5',
   brand: '#5A1B5E', brandBg: '#F3E8F5',
-  warn: '#B54708', warnBg: '#FEF6EE',
+  green: '#1A7A3C', greenBg: '#E6F4EC',
+  warn: '#C0392B', warnBg: '#FDECEA',
   accent: '#8B3D90', accentBg: '#EDD9EE',
 };
 const font = "'Inter','Montserrat',system-ui,sans-serif";
@@ -146,9 +147,9 @@ export default function Dashboard() {
         {/* Contadores */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 20 }}>
           {[
-            { label: 'Confirman', value: si, color: C.brand, bg: C.brandBg },
+            { label: 'Confirman', value: si, color: C.green, bg: C.greenBg },
             { label: 'No asisten', value: no, color: C.warn, bg: C.warnBg },
-            { label: 'Total', value: rows.length, color: C.accent, bg: C.accentBg },
+            { label: 'Total', value: rows.length, color: C.brand, bg: C.brandBg },
           ].map(({ label, value, color }) => (
             <div key={label} style={{
               background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12,
@@ -192,10 +193,10 @@ export default function Dashboard() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{
                   width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-                  background: r.asiste ? C.brandBg : C.warnBg,
+                  background: r.asiste ? C.greenBg : C.warnBg,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 14, fontWeight: 700,
-                  color: r.asiste ? C.brand : C.warn,
+                  color: r.asiste ? C.green : C.warn,
                 }}>
                   {r.nombre.charAt(0).toUpperCase()}
                 </div>
@@ -206,8 +207,8 @@ export default function Dashboard() {
               </div>
               <span style={{
                 fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
-                color: r.asiste ? C.brand : C.warn,
-                background: r.asiste ? C.brandBg : C.warnBg,
+                color: r.asiste ? C.green : C.warn,
+                background: r.asiste ? C.greenBg : C.warnBg,
                 padding: '4px 10px', borderRadius: 20,
               }}>
                 {r.asiste ? 'Sí' : 'No'}
