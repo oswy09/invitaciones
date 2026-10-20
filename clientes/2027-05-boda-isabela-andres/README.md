@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| **Dominio** | (pendiente configurar) |
+| **Dominio** | https://boda-isabela-andres.pages.dev (producción pendiente subdominio) |
 | **Proyecto Cloudflare Pages** | `boda-isabela-andres` |
 | **Plantilla base** | `templates/09-boda-playa` |
 | **EVENTO_ID Supabase** | (pendiente definir) |
