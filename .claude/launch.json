@@ -42,6 +42,30 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "templates/05-Futbol_Ron"],
       "port": 3106
+    },
+    {
+      "name": "boda-loving",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "templates/06-Boda-loving"],
+      "port": 3107
+    },
+    {
+      "name": "boda-cine",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "templates/07 - boda-cine", "--", "--port", "3108"],
+      "port": 3108
+    },
+    {
+      "name": "boda-campestre",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "templates/08 - Boda-campestre", "--", "--port", "3109"],
+      "port": 3109
+    },
+    {
+      "name": "boda-playa",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "templates/09 - Boda - Playa", "--", "--port", "3110"],
+      "port": 3110
     }
   ]
 }

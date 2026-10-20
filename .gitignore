@@ -7,3 +7,21 @@ coverage/
 .env
 .env.local
 !.env.example
+
+# Local Netlify folder
+.netlify
+
+# Build archives
+*.zip
+*.ttf.bak
+
+# Duplicate/scratch audio at template root (real copy lives in public/)
+templates/08\ -\ Boda-campestre/perfect.mp3
+
+# Compiled plantilla bundles (built assets with embedded keys)
+client-form/public/plantillas/
+
+# Scratch / reference folders
+templates/08\ -\ Boda-campestre/Ref/
+templates/08\ -\ Boda-campestre/.claude/
+wedding-invitation/

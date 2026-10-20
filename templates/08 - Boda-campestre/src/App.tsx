@@ -13,8 +13,120 @@ import sobreCerradoImg    from '../images/sobre_cerrado.png';
 // @ts-ignore
 import sobreAbiertoImg    from '../images/openn-removebg-preview.png';
 
+const IS_TEMPLATE = window.location.hostname.includes('plantilla-08-boda-campestre');
+const COUPLE_NAME = IS_TEMPLATE ? 'Cata & Cami' : 'María & Juanca';
+
 const params     = new URLSearchParams(window.location.search);
-const GUEST_NAME = params.get('guest') || 'Tía Gladys';
+const GUEST_MAP: Record<string, string> = {
+  'demo': '',
+  'juan-camilo-y-laura': 'Juan Camilo & Laura',
+  'alejandro-y-astrid': 'Alejandro & Astrid',
+  'alejandro-y-claudia': 'Alejandro & Claudia',
+  'alejo-y-natasha': 'Alejo & Natasha',
+  'ana-y-diego': 'Ana & Diego',
+  'andres-y-anny': 'Andrés & Anny',
+  'andres-y-stephy': 'Andres & Stephy',
+  'anita-y-elber': 'Anita & Elber',
+  'anto-y-elizaveta': 'Anto & Elizaveta',
+  'arango-y-daniella': 'Arango & Daniella',
+  'bello-y-pao': 'Bello & Pao',
+  'camilo-e-isa': 'Camilo e Isa',
+  'camilo-y-laura': 'Camilo & Laura',
+  'campu-y-tati': 'Campu & Tati',
+  'chiaris': 'Chiaris',
+  'cristi-y-santi': 'Cristi & Santi',
+  'dani': 'Dani',
+  'daniel-y-carolina': 'Daniel & Carolina',
+  'eddy-y-lala': 'Eddy & Lala',
+  'eduardito': 'Eduardito',
+  'eli-y-jorge': 'Eli & Jorge',
+  'esteban-y-laura': 'Esteban & Laura',
+  'fabio-e-irene': 'Fabio e Irene',
+  'familia-perez-gonzales': 'Familia Pérez Gonzáles',
+  'gomez-e-irene': 'Gómez e Irene',
+  'gregs-y-caro': 'Gregs & Caro',
+  'gus-y-male': 'Gus & Male',
+  'jaime-y-anita': 'Jaime & Anita',
+  'jara-y-angelita': 'Jara & Angelita',
+  'jorge-y-maria-del-rosario': 'Jorge & María del Rosario',
+  'jose-y-maria': 'Jose & Maria',
+  'juancho-y-clara': 'Juancho & Clara',
+  'juan-jaramillo': 'Juan Jaramillo',
+  'juan-jo': 'Juan Jo',
+  'juanma-y-ana': 'JuanMa & Ana',
+  'july-y-tony': 'July & Tony',
+  'kikito-y-tutua': 'Kikito & Tutua',
+  'lolo': 'Lolo',
+  'luis-y-marce': 'Luis & Marce',
+  'lui-y-atiz': 'Lui & Atiz',
+  'malia-y-rod': 'Malía & Rod',
+  'mami': 'Mami',
+  'marce': 'Marce',
+  'margarita': 'Margarita',
+  'margarita-y-eduardo': 'Margarita & Eduardo',
+  'maria-paulina-escobar': 'María Paulina Escobar',
+  'mari-y-wara': 'Mari & Wara',
+  'martica': 'Martica',
+  'mauricio-y-juliana': 'Mauricio & Juliana',
+  'mauricio-y-marisa': 'Mauricio & Marisa',
+  'may-y-beto': 'May & Beto',
+  'moma': 'Moma',
+  'moni-y-luis-fer': 'Moni & Luis Fer.',
+  'nate-y-camille': 'Nate & Camille',
+  'nati-y-cami': 'Nati & Cami',
+  'olguister': 'Olguister',
+  'pablito-y-dani': 'Pablito & Dani',
+  'pablo-vernaza': 'Pablo Vernaza',
+  'pao-y-feli': 'Pao & Feli',
+  'papi-e-isa': 'Papi e Isa',
+  'pipe-y-gabriela': 'Pipe & Gabriela',
+  'primo-anibal-y-maria': 'Primo Anibal y Maria',
+  'primo-esteban': 'Primo Esteban',
+  'rafa-y-olga': 'Rafa & Olga',
+  'richi': 'Richi',
+  'rick': 'Rick',
+  'ruben-y-betty': 'Ruben & Betty',
+  'santi-y-mara': 'Santi & Mara',
+  'santi-y-megan': 'Santi & Megan',
+  'santi-y-sami': 'Santi & Sami',
+  'santi-y-vane': 'Santi & Vane',
+  'sarita-y-nano': 'Sarita & Nano',
+  'sebas': 'Sebas',
+  'sebas-y-mari': 'Sebas & Mari',
+  'sofi-y-mauro': 'Sofi & Mauro',
+  'soichi-y-sarah': 'Soichi & Sarah',
+  'steve-y-chola': 'Steve & Chola',
+  'tata-bedoya': 'Tata Bedoya',
+  'tato-y-marthica': 'Tato & Marthica',
+  'tia-cynthia': 'Tía Cynthia',
+  'tia-elvira': 'Tía Elvira',
+  'tia-giova-y-tio-jimmy': 'Tía Giova & Tío Jimmy',
+  'tia-lucia': 'Tía Lucia',
+  'tia-maria-claudia': 'Tía Maria Claudia',
+  'tia-maria-cristina-y-tio-anibal': 'Tía Maria Cristina & Tío Anibal',
+  'tia-martha': 'Tía Martha',
+  'tia-monja': 'Tía Monja',
+  'tia-paty-y-tio-pipo': 'Tía Paty & Tío Pipo',
+  'tia-virginia': 'Tía Virginia',
+  'tio-oscar-y-tia-vane': 'Tío Oscar y Tía Vane',
+  'tio-tono-y-moira': 'Tío Toño & Moira',
+  'titi-y-juan-ca': 'Titi & Juan Ca.',
+  'tutua-y-kikito': 'Tutua & Kikito',
+  'vale': 'Vale',
+  'vane-y-pipe': 'Vane & Pipe',
+  'vilma-y-luis': 'Vilma & Luis',
+  'vivi-y-juan-fer': 'Vivi & Juan Fer',
+  'yamile-abrahim': 'Yamile Abrahim',
+  'yolanda-suarez': 'Yolanda Suárez',
+  'zazu-y-matt': 'Zazu & Matt',
+  'prado-y-lini': 'Prado & Lini',
+  'cesar-y-adriana': 'Cesar & Adriana',
+  'mario-escobar-y-martha-varela': 'Mario Escobar & Martha Varela',
+  'arturo-y-cecilia': 'Arturo & Cecilia',
+};
+const pathSlug   = decodeURIComponent(window.location.pathname.replace(/^\//, '').trim());
+const rawGuest   = (pathSlug && pathSlug !== 'dashboard') ? pathSlug : (params.get('guest') || 'Tía Gladys');
+const GUEST_NAME = GUEST_MAP[rawGuest] ?? rawGuest.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
 // ── SOBRE (fotos — versión cliente) ────────────────────────────
 function EnvelopeScene({ onOpen, onStartAudio }: { onOpen: () => void; onStartAudio?: () => void }) {
@@ -70,7 +182,7 @@ function EnvelopeScene({ onOpen, onStartAudio }: { onOpen: () => void; onStartAu
         textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
         opacity: clicked ? 0 : 1, transition: clicked ? 'opacity 0.28s ease' : 'none', pointerEvents: 'none',
       }}>
-        <p style={{ fontFamily: 'var(--f-script)', fontSize: 'clamp(34px, 10vw, 46px)', color: '#8C6032', lineHeight: 1.15 }}>{GUEST_NAME}</p>
+        {GUEST_NAME && <p style={{ fontFamily: 'var(--f-script)', fontSize: 'clamp(34px, 10vw, 46px)', color: '#8C6032', lineHeight: 1.15 }}>{GUEST_NAME}</p>}
         <p style={{ fontFamily: 'var(--f-body)', fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--c-muted)', animation: 'hintPulse 2.2s ease-in-out infinite' }}>Toca para abrir</p>
       </div>
     </div>
@@ -119,15 +231,15 @@ function PortadaSection() {
           fontFamily: 'var(--f-script)',
           fontSize: 'clamp(38px, 11vw, 52px)',
           color: '#A99261', lineHeight: 1.1, margin: '4px 0 2px',
-        }}>María &amp; Juanca</p>
+        }}>{COUPLE_NAME}</p>
         <p style={{
           fontFamily: 'var(--f-body)', fontSize: 14, fontWeight: 500,
           letterSpacing: '0.18em', color: 'var(--c-text)', marginTop: 2,
-        }}>19 · 12 · 2026</p>
+        }}>{IS_TEMPLATE ? '24 · 10 · 2026' : '19 · 12 · 2026'}</p>
         <p style={{
           fontFamily: 'var(--f-body)', fontSize: 12.5, fontWeight: 500,
           color: 'var(--c-text)',
-        }}>Cali, Colombia</p>
+        }}>{IS_TEMPLATE ? 'Montería, Colombia' : 'Cali, Colombia'}</p>
       </div>
 
     </section>
@@ -261,7 +373,10 @@ function ParentsSection() {
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
         animation: 'fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.2s both',
       }}>
-        {['Jorge Diego Jaramillo B.', 'Olga Elena Pérez A.'].map((name, i) => (
+        {(IS_TEMPLATE
+          ? ['Roberto Gómez M.', 'Patricia Ruiz de Gómez']
+          : ['Jorge Diego Jaramillo B.', 'Olga Elena Pérez A.']
+        ).map((name, i) => (
           <p key={i} style={{ fontFamily: 'var(--f-body)', fontSize: 15.5, color: 'var(--c-text)', lineHeight: 1.8, margin: 0 }}>{name}</p>
         ))}
       </div>
@@ -274,10 +389,19 @@ function ParentsSection() {
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
         animation: 'fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.25s both',
       }}>
-        <p style={{ fontFamily: 'var(--f-body)', fontSize: 15.5, color: 'var(--c-text)', lineHeight: 1.8, margin: 0 }}>
-          Luis Carlos Varela V. · <span style={{ fontSize: 11, letterSpacing: '0.08em', color: 'var(--c-muted)' }}>Q.E.P.D</span>
-        </p>
-        <p style={{ fontFamily: 'var(--f-body)', fontSize: 15.5, color: 'var(--c-text)', lineHeight: 1.8, margin: 0 }}>Myriam Bellini A.</p>
+        {IS_TEMPLATE ? (
+          <>
+            <p style={{ fontFamily: 'var(--f-body)', fontSize: 15.5, color: 'var(--c-text)', lineHeight: 1.8, margin: 0 }}>Andrés Felipe Torres S.</p>
+            <p style={{ fontFamily: 'var(--f-body)', fontSize: 15.5, color: 'var(--c-text)', lineHeight: 1.8, margin: 0 }}>Carmen Lucía Salazar V.</p>
+          </>
+        ) : (
+          <>
+            <p style={{ fontFamily: 'var(--f-body)', fontSize: 15.5, color: 'var(--c-text)', lineHeight: 1.8, margin: 0 }}>
+              Luis Carlos Varela V. · <span style={{ fontSize: 11, letterSpacing: '0.08em', color: 'var(--c-muted)' }}>Q.E.P.D</span>
+            </p>
+            <p style={{ fontFamily: 'var(--f-body)', fontSize: 15.5, color: 'var(--c-text)', lineHeight: 1.8, margin: 0 }}>Myriam Bellini A.</p>
+          </>
+        )}
       </div>
 
       {/* Invitación */}
@@ -462,10 +586,10 @@ function ItinerarioSection() {
         animation: 'fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.15s both',
       }}>
         <p style={{ fontFamily: 'var(--f-body)', fontSize: 14, fontWeight: 600, letterSpacing: '0.06em', color: 'var(--c-text)', margin: 0, textAlign: 'center' }}>
-          Club Campestre de Cali, Cancha de Polo
+          {IS_TEMPLATE ? 'Hacienda Villa del Río · Montería' : 'Club Campestre de Cali, Cancha de Polo'}
         </p>
         <p style={{ fontFamily: 'var(--f-body)', fontSize: 12, color: 'var(--c-muted)', letterSpacing: '0.04em', margin: 0 }}>
-          Calle 5 con Carrera 100
+          {IS_TEMPLATE ? 'Km 5 vía Montería - Cereté' : 'Calle 5 con Carrera 100'}
         </p>
       </div>
 
@@ -571,7 +695,7 @@ function DressCodeSection() {
         }}>
           Mujeres: Vestido largo<br/>
           <span style={{ fontSize: 13.5 }}>(zapatos cómodos para caminar sobre el pasto)</span><br/>
-          Hombres: guayabera y pantalón beige
+          Hombres: Guayabera blanca, manga larga,<br/>pantalón beige
         </p>
       </div>
 
@@ -684,11 +808,11 @@ function RegalosSection() {
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
         maxWidth: 270,
       }}>
-        <p style={{ fontFamily: 'var(--f-body)', fontSize: 11, fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--c-muted)', margin: 0 }}>Ahorros NU</p>
-        <p style={{ fontFamily: 'var(--f-body)', fontSize: 18, fontWeight: 700, color: 'var(--c-gold)', letterSpacing: '0.06em', margin: '2px 0' }}># 92855767</p>
+        <p style={{ fontFamily: 'var(--f-body)', fontSize: 11, fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--c-muted)', margin: 0 }}>{IS_TEMPLATE ? 'Ahorros Bancolombia' : 'Ahorros NU'}</p>
+        <p style={{ fontFamily: 'var(--f-body)', fontSize: 18, fontWeight: 700, color: 'var(--c-gold)', letterSpacing: '0.06em', margin: '2px 0' }}>{IS_TEMPLATE ? '# *** **** ****' : '# 92855767'}</p>
         <div style={{ width: 30, height: 1, background: 'var(--c-border)', margin: '4px 0' }} />
-        <p style={{ fontFamily: 'var(--f-body)', fontSize: 13, fontWeight: 600, color: 'var(--c-text)', margin: 0 }}>Juan Carlos Varela</p>
-        <p style={{ fontFamily: 'var(--f-body)', fontSize: 12, color: 'var(--c-muted)', margin: 0 }}>CC: 1127228005</p>
+        <p style={{ fontFamily: 'var(--f-body)', fontSize: 13, fontWeight: 600, color: 'var(--c-text)', margin: 0 }}>{IS_TEMPLATE ? 'Catalina Gómez R.' : 'Juan Carlos Varela'}</p>
+        <p style={{ fontFamily: 'var(--f-body)', fontSize: 12, color: 'var(--c-muted)', margin: 0 }}>{IS_TEMPLATE ? 'CC: 10*** ***45' : 'CC: 1127228005'}</p>
       </div>
     </section>
   );
@@ -700,7 +824,16 @@ function RsvpSection() {
   const [asiste, setAsiste] = useState<'si' | 'no' | null>(null);
   const [sent, setSent] = useState(false);
 
-  const WHATSAPP_NUMBER = '573158953019';
+  const telParam = params.get('tel')?.replace(/\D/g, '') ?? '';
+  const WHATSAPP_NUMBER = IS_TEMPLATE ? '573057502790' : (telParam || '573236120454');
+  if (telParam) { const u = new URL(window.location.href); u.searchParams.delete('tel'); history.replaceState(null, '', u.pathname); }
+
+  const getWaUrl = (op: 'si' | 'no') => {
+    const msg = op === 'si'
+      ? `Hola! Confirmo mi asistencia a la boda de María & Juanca 🌿\n\n✅ *Sí asistiré*\n👤 ${GUEST_NAME}`
+      : `Hola! Gracias por la invitación a la boda de María & Juanca 🌿\n\n❌ Lamentablemente no podré asistir.\n\n— ${GUEST_NAME}`;
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+  };
 
   const handleEnviar = () => {
     const asistira = asiste === 'si';
@@ -709,15 +842,6 @@ function RsvpSection() {
     }).catch((e: unknown) => {
       console.error('[RSVP] error al guardar:', e);
     });
-
-    let msg = '';
-    if (asistira) {
-      msg = `Hola! Confirmo mi asistencia a la boda de María & Juanca 🌿\n\n✅ *Sí asistiré*\n👤 ${GUEST_NAME}`;
-    } else {
-      msg = `Hola! Gracias por la invitación a la boda de María & Juanca 🌿\n\n❌ Lamentablemente no podré asistir.\n\n— ${GUEST_NAME}`;
-    }
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
     setSent(true);
   };
 
@@ -755,7 +879,7 @@ function RsvpSection() {
           letterSpacing: '0.16em', color: 'var(--c-muted)',
           marginBottom: 28, textTransform: 'uppercase',
         }}>
-          Fecha límite: <span style={{ color: 'var(--c-gold)' }}>02.10.26</span>
+          Fecha límite: <span style={{ color: 'var(--c-gold)' }}>15.10.26</span>
         </p>
 
         <button
@@ -845,7 +969,10 @@ function RsvpSection() {
 
                 {/* Enviar */}
                 {asiste !== null && (
-                  <button
+                  <a
+                    href={getWaUrl(asiste)}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     onClick={handleEnviar}
                     style={{
                       width: '100%', padding: '15px',
@@ -854,6 +981,7 @@ function RsvpSection() {
                       fontFamily: 'var(--f-body)', fontSize: 13, fontWeight: 600,
                       letterSpacing: '0.14em', textTransform: 'uppercase',
                       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                      textDecoration: 'none', boxSizing: 'border-box',
                     }}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -861,7 +989,7 @@ function RsvpSection() {
                       <path d="M17.47 14.83c-.25-.13-1.47-.73-1.7-.81-.23-.08-.4-.13-.56.13-.17.25-.64.81-.79.98-.14.17-.29.19-.54.06-.25-.13-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.07s.89 2.4 1.02 2.57c.13.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.55.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.1-.23-.16-.48-.29z" fill="#4A6644"/>
                     </svg>
                     Enviar por WhatsApp
-                  </button>
+                  </a>
                 )}
               </>
             ) : (
@@ -927,7 +1055,7 @@ function CierreSection() {
         fontSize: 'clamp(44px, 12vw, 60px)',
         color: '#A99261', lineHeight: 1.05,
         margin: '0 0 14px', fontWeight: 'normal',
-      }}>María &amp; Juanca</p>
+      }}>{COUPLE_NAME}</p>
 
       {/* Corazón */}
       <svg width="22" height="20" viewBox="0 0 24 22" fill="none" style={{ marginBottom: 16 }}>
@@ -943,12 +1071,12 @@ function CierreSection() {
         fontFamily: 'var(--f-body)', fontSize: 16, fontWeight: 500,
         letterSpacing: '0.2em', color: 'var(--c-text)',
         marginBottom: 4,
-      }}>19 · 12 · 2026</p>
+      }}>{IS_TEMPLATE ? '24 · 10 · 2026' : '19 · 12 · 2026'}</p>
       <p style={{
         fontFamily: 'var(--f-body)', fontSize: 11, fontWeight: 600,
         letterSpacing: '0.28em', textTransform: 'uppercase',
         color: 'var(--c-muted)',
-      }}>Cali, Colombia</p>
+      }}>{IS_TEMPLATE ? 'Montería, Colombia' : 'Cali, Colombia'}</p>
 
       {/* Hoja decorativa */}
       <img src={hojaImg} alt="" aria-hidden="true" style={{
@@ -959,10 +1087,20 @@ function CierreSection() {
   );
 }
 
-const MUSIC_SRC = '/wedding-song.mp3';
+const MUSIC_SRC = 'https://res.cloudinary.com/ddqbnr9vo/video/upload/v1790211341/wedding-song_feygag.mp3';
 const MUSIC_START_SECOND = 0;
 
 let globalAudio: HTMLAudioElement | null = null;
+
+// Preload audio as soon as the module loads so it's ready when user taps
+if (typeof window !== 'undefined') {
+  const preloadAudio = new Audio(MUSIC_SRC);
+  preloadAudio.preload = 'auto';
+  preloadAudio.load();
+  globalAudio = preloadAudio;
+  globalAudio.loop = true;
+  globalAudio.volume = 0.7;
+}
 let setGlobalPlaying: ((p: boolean) => void) | null = null;
 let audioStartInitialized = false;
 

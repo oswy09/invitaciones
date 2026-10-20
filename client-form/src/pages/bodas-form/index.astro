@@ -1,0 +1,535 @@
+---
+// Página standalone — no usa el layout Base
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invitación de boda personalizada | Celebrarte</title>
+  <meta name="description" content="Solicita tu invitación de boda digital personalizada con Celebrarte. Cuéntanos sobre tu gran día y te creamos algo único.">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&family=Quicksand:wght@400;500;600;700&display=swap">
+  <style>
+    :root {
+      --bg:       #F8F7F4;
+      --bg2:      #F9F0FB;
+      --surface:  #FFFFFF;
+      --text:     #3A1140;
+      --text2:    #7B4A82;
+      --text3:    #C4A0CC;
+      --accent:   #5A1B5E;
+      --accent-h: #7B3080;
+      --border:   #F0E0F5;
+      --border2:  #E6D0F0;
+      --ring:     rgba(90,27,94,0.14);
+      --err:      #B84040;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:       #160D18; --bg2: #1F1022; --surface: #221225;
+        --text:     #F2E4F8; --text2: #C4A0CC; --text3: #7A5882;
+        --accent:   #C070D8; --accent-h: #D090E8;
+        --border:   #3A1F40; --border2: #4A2858;
+        --ring:     rgba(192,112,216,0.18); --err: #D06060;
+      }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Quicksand', system-ui, sans-serif; font-size: 15px; line-height: 1.6; min-height: 100vh; }
+
+    /* Header */
+    .site-header {
+      width: 100%; background: #fff;
+      border-bottom: 1px solid #F0E0E8;
+      box-shadow: 0 1px 4px rgba(90,27,94,0.07);
+      padding: 14px 32px;
+    }
+    .site-header a { display: inline-block; }
+    .site-header img { height: 44px; width: auto; display: block; }
+
+    /* Layout */
+    .wrap { max-width: 640px; margin: 0 auto; padding: 0 24px 100px; }
+
+    /* Hero */
+    .hero { padding: 52px 0 44px; text-align: center; }
+    .hero-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 22px; }
+    .hero-headline { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(32px, 7vw, 50px); font-weight: 400; line-height: 1.18; color: var(--text); text-wrap: balance; margin-bottom: 26px; }
+    .hero-sub { font-size: 15px; color: var(--text2); max-width: 440px; margin: 0 auto; line-height: 1.75; font-weight: 500; }
+
+    .hr { height: 1px; background: var(--border); margin: 36px 0; }
+
+    /* Form sections */
+    .fsec { margin-bottom: 36px; }
+    .fsec-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .fsec-desc  { font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 20px; line-height: 1.6; }
+
+    /* Fields */
+    .field-stack { display: flex; flex-direction: column; gap: 14px; }
+    .field-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 480px) { .field-row { grid-template-columns: 1fr; } }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text2); }
+    .field input, .field textarea, .field select {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      padding: 9px 12px; font-family: 'Quicksand', sans-serif; font-size: 15px;
+      font-weight: 500; color: var(--text); width: 100%; outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .field input::placeholder, .field textarea::placeholder { color: var(--text3); }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--ring); }
+    .field textarea { resize: vertical; min-height: 76px; line-height: 1.6; }
+    .field select {
+      cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' fill='none'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23C4A0CC' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
+    }
+
+    /* Section toggles */
+    .sec-grid { display: flex; flex-direction: column; gap: 8px; }
+    .sec-toggle { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); transition: border-color 0.2s; overflow: hidden; }
+    .sec-toggle.on { border-color: var(--accent); }
+    .sec-head { display: flex; align-items: center; gap: 13px; padding: 13px 15px; cursor: pointer; user-select: none; transition: background 0.15s; }
+    .sec-head:hover { background: var(--bg2); }
+    .sec-cb { width: 20px; height: 20px; border: 1.5px solid var(--border2); border-radius: 5px; background: var(--bg); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; }
+    .sec-toggle.on .sec-cb { background: var(--accent); border-color: var(--accent); }
+    .sec-cb svg { opacity: 0; transition: opacity 0.1s; }
+    .sec-toggle.on .sec-cb svg { opacity: 1; }
+    .sec-label { flex: 1; }
+    .sec-name { font-size: 14px; font-weight: 600; color: var(--text); }
+    .sec-hint  { font-size: 12px; font-weight: 500; color: var(--text3); margin-top: 1px; }
+    .sec-body  { display: none; padding: 0 15px 16px; border-top: 1px solid var(--border); }
+    .sec-toggle.on .sec-body { display: block; padding-top: 16px; }
+
+    /* Submit */
+    .submit-wrap { margin-top: 44px; text-align: center; }
+    .submit-btn {
+      background: var(--accent); color: #fff; border: none; border-radius: 99px;
+      padding: 15px 44px; font-family: 'Quicksand', sans-serif; font-size: 16px;
+      font-weight: 700; cursor: pointer; transition: background 0.15s, transform 0.1s; letter-spacing: 0.02em;
+    }
+    .submit-btn:hover  { background: var(--accent-h); }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .submit-note { font-size: 12px; color: var(--text3); margin-top: 14px; font-weight: 500; }
+
+    /* Success */
+    .success-state { display: none; text-align: center; padding: 80px 0; }
+    .success-state.show { display: block; }
+    .success-icon  { font-size: 48px; margin-bottom: 20px; display: block; }
+    .success-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-style: italic; color: var(--text); margin-bottom: 12px; }
+    .success-body  { font-size: 15px; color: var(--text2); font-weight: 500; max-width: 360px; margin: 0 auto; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--accent); color: #fff; padding: 12px 22px; border-radius: 99px;
+      font-size: 14px; font-weight: 600; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s, transform 0.3s; z-index: 9999; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="https://celebrarte.com.co">
+      <img src="https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png" alt="Celebrarte">
+    </a>
+  </header>
+
+  <div class="wrap">
+    <section class="hero">
+      <p class="hero-eyebrow">Invitaciones de boda personalizadas</p>
+      <h1 class="hero-headline">Cuéntanos sobre tu gran día</h1>
+      <p class="hero-sub">Selecciona las secciones que quieres incluir y completa los detalles. Te escribimos para crear algo único.</p>
+    </section>
+
+    <form id="form" name="bodas-form" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+      <input type="hidden" name="form-name" value="bodas-form">
+      <p class="hidden"><input name="bot-field"></p>
+
+      <!-- Datos generales -->
+      <div class="fsec">
+        <h2 class="fsec-title">Datos generales</h2>
+        <p class="fsec-desc">Info básica de los novios y la fecha.</p>
+        <div class="field-stack">
+          <div class="field-row">
+            <div class="field">
+              <label for="f-n1">Nombre — novia/novio 1</label>
+              <input type="text" id="f-n1" name="nombre1" placeholder="Nombre completo" required>
+            </div>
+            <div class="field">
+              <label for="f-n2">Nombre — novia/novio 2</label>
+              <input type="text" id="f-n2" name="nombre2" placeholder="Nombre completo" required>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="f-fecha">Fecha de la boda</label>
+              <input type="date" id="f-fecha" name="fecha" required>
+            </div>
+            <div class="field">
+              <label for="f-hora">Hora</label>
+              <input type="time" id="f-hora" name="hora">
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-lugar">Ciudad / lugar</label>
+            <input type="text" id="f-lugar" name="lugar" placeholder="Ej: Medellín, Colombia">
+          </div>
+          <div class="field">
+            <label for="f-tel">Tu WhatsApp</label>
+            <input type="tel" id="f-tel" name="telefono" placeholder="+57 300 000 0000" required>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <!-- Secciones -->
+      <div class="fsec">
+        <h2 class="fsec-title">Elige las secciones</h2>
+        <p class="fsec-desc">Activa cada sección que quieres incluir y completa los detalles.</p>
+        <div class="sec-grid">
+
+          <!-- Portada + frase inicial -->
+          <div class="sec-toggle" id="sec-portada">
+            <div class="sec-head" onclick="toggle('portada')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggle('portada')">
+              <div class="sec-cb"><svg width="11" height="8" fill="none"><path d="M1 4l3 3 6-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="sec-label">
+                <div class="sec-name">Portada inicial</div>
+                <div class="sec-hint">Nombres, fecha, foto principal y frase de bienvenida</div>
+              </div>
+            </div>
+            <div class="sec-body">
+              <div class="field-stack">
+                <div class="field">
+                  <label for="p-foto">Foto de portada (link de Drive, WeTransfer, etc.)</label>
+                  <input type="text" id="p-foto" name="portada_foto" placeholder="https://drive.google.com/...">
+                </div>
+                <div class="field">
+                  <label for="p-estilo">Estilo visual</label>
+                  <select id="p-estilo" name="portada_estilo">
+                    <option value="">Sin preferencia</option>
+                    <option>Elegante minimalista</option>
+                    <option>Romántico floral</option>
+                    <option>Moderno oscuro</option>
+                    <option>Vintage</option>
+                    <option>Otro (detallar en notas)</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="p-frase">Frase o versículo de bienvenida (opcional)</label>
+                  <textarea id="p-frase" name="frase_inicial" rows="3" placeholder="Escribe la frase que quieres al inicio de la invitación..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Imágenes -->
+          <div class="sec-toggle" id="sec-imagenes">
+            <div class="sec-head" onclick="toggle('imagenes')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggle('imagenes')">
+              <div class="sec-cb"><svg width="11" height="8" fill="none"><path d="M1 4l3 3 6-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="sec-label">
+                <div class="sec-name">Galería de imágenes</div>
+                <div class="sec-hint">Fotos de la pareja o del evento</div>
+              </div>
+            </div>
+            <div class="sec-body">
+              <div class="field-stack">
+                <div class="field">
+                  <label for="img-link">Carpeta con fotos</label>
+                  <input type="text" id="img-link" name="imagenes_link" placeholder="https://drive.google.com/...">
+                </div>
+                <div class="field">
+                  <label for="img-qty">Cantidad aproximada de fotos</label>
+                  <select id="img-qty" name="imagenes_cantidad">
+                    <option value="">No sé aún</option>
+                    <option>1 - 3 fotos</option>
+                    <option>4 - 8 fotos</option>
+                    <option>9 o más</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video -->
+          <div class="sec-toggle" id="sec-video">
+            <div class="sec-head" onclick="toggle('video')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggle('video')">
+              <div class="sec-cb"><svg width="11" height="8" fill="none"><path d="M1 4l3 3 6-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="sec-label">
+                <div class="sec-name">Video</div>
+                <div class="sec-hint">Video de presentación o save the date</div>
+              </div>
+            </div>
+            <div class="sec-body">
+              <div class="field">
+                <label for="vid-url">Link del video (YouTube, Vimeo, Drive…)</label>
+                <input type="url" id="vid-url" name="video_url" placeholder="https://youtube.com/...">
+              </div>
+            </div>
+          </div>
+
+          <!-- Música -->
+          <div class="sec-toggle" id="sec-musica">
+            <div class="sec-head" onclick="toggle('musica')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggle('musica')">
+              <div class="sec-cb"><svg width="11" height="8" fill="none"><path d="M1 4l3 3 6-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="sec-label">
+                <div class="sec-name">Reproductor de música</div>
+                <div class="sec-hint">Canción de fondo en la invitación</div>
+              </div>
+            </div>
+            <div class="sec-body">
+              <div class="field-stack">
+                <div class="field">
+                  <label for="mus-titulo">Nombre de la canción</label>
+                  <input type="text" id="mus-titulo" name="musica_titulo" placeholder="Ej: Perfect — Ed Sheeran">
+                </div>
+                <div class="field">
+                  <label for="mus-link">Link de YouTube o Spotify</label>
+                  <input type="url" id="mus-link" name="musica_link" placeholder="https://...">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Itinerario -->
+          <div class="sec-toggle" id="sec-itinerario">
+            <div class="sec-head" onclick="toggle('itinerario')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggle('itinerario')">
+              <div class="sec-cb"><svg width="11" height="8" fill="none"><path d="M1 4l3 3 6-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="sec-label">
+                <div class="sec-name">Itinerario</div>
+                <div class="sec-hint">Ceremonia, cóctel, cena, fiesta…</div>
+              </div>
+            </div>
+            <div class="sec-body">
+              <div class="field">
+                <label for="it-texto">Describe los momentos del día</label>
+                <textarea id="it-texto" name="itinerario" rows="5" placeholder="Ej:&#10;4:00 pm — Ceremonia religiosa&#10;6:00 pm — Cóctel&#10;8:00 pm — Cena y fiesta"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vestimenta -->
+          <div class="sec-toggle" id="sec-vestimenta">
+            <div class="sec-head" onclick="toggle('vestimenta')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggle('vestimenta')">
+              <div class="sec-cb"><svg width="11" height="8" fill="none"><path d="M1 4l3 3 6-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="sec-label">
+                <div class="sec-name">Código de vestimenta</div>
+                <div class="sec-hint">Etiqueta formal, cocktail, casual…</div>
+              </div>
+            </div>
+            <div class="sec-body">
+              <div class="field-stack">
+                <div class="field">
+                  <label for="vest-tipo">Tipo de vestimenta</label>
+                  <select id="vest-tipo" name="vestimenta_tipo">
+                    <option value="">Selecciona…</option>
+                    <option>Etiqueta rigurosa (black tie)</option>
+                    <option>Etiqueta formal</option>
+                    <option>Cocktail</option>
+                    <option>Smart casual</option>
+                    <option>Casual</option>
+                    <option>Otro</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="vest-nota">Nota adicional (opcional)</label>
+                  <input type="text" id="vest-nota" name="vestimenta_nota" placeholder="Ej: preferiblemente tonos tierra">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RSVP -->
+          <div class="sec-toggle" id="sec-rsvp">
+            <div class="sec-head" onclick="toggle('rsvp')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggle('rsvp')">
+              <div class="sec-cb"><svg width="11" height="8" fill="none"><path d="M1 4l3 3 6-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="sec-label">
+                <div class="sec-name">Botón de confirmación (RSVP)</div>
+                <div class="sec-hint">Formulario para que los invitados confirmen</div>
+              </div>
+            </div>
+            <div class="sec-body">
+              <div class="field-stack">
+                <div class="field">
+                  <label for="rsvp-fecha">Fecha límite para confirmar</label>
+                  <input type="date" id="rsvp-fecha" name="rsvp_limite">
+                </div>
+                <div class="field">
+                  <label for="rsvp-nota">Instrucciones para los invitados (opcional)</label>
+                  <textarea id="rsvp-nota" name="rsvp_nota" rows="2" placeholder="Ej: Confirmar antes del 10 de mayo con número de acompañantes"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Muro de mensajes -->
+          <div class="sec-toggle" id="sec-muro">
+            <div class="sec-head" onclick="toggle('muro')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggle('muro')">
+              <div class="sec-cb"><svg width="11" height="8" fill="none"><path d="M1 4l3 3 6-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="sec-label">
+                <div class="sec-name">Muro de mensajes</div>
+                <div class="sec-hint">Los invitados dejan mensajes y buenos deseos</div>
+              </div>
+            </div>
+            <div class="sec-body">
+              <div class="field">
+                <label for="muro-titulo">Título de la sección (opcional)</label>
+                <input type="text" id="muro-titulo" name="muro_titulo" placeholder="Ej: Déjanos tus buenos deseos">
+              </div>
+            </div>
+          </div>
+
+          <!-- Frases adicionales -->
+          <div class="sec-toggle" id="sec-frases">
+            <div class="sec-head" onclick="toggle('frases')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggle('frases')">
+              <div class="sec-cb"><svg width="11" height="8" fill="none"><path d="M1 4l3 3 6-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="sec-label">
+                <div class="sec-name">Frases adicionales</div>
+                <div class="sec-hint">Citas o versículos extra dentro de la invitación</div>
+              </div>
+            </div>
+            <div class="sec-body">
+              <div class="field">
+                <label for="frases-texto">Frases que quieres incluir</label>
+                <textarea id="frases-texto" name="frases_adicionales" rows="4" placeholder="Escribe una frase por línea..."></textarea>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <!-- Notas -->
+      <div class="fsec">
+        <h2 class="fsec-title">Notas adicionales</h2>
+        <p class="fsec-desc">Cualquier detalle especial, paleta de colores, referencias de diseño o algo que debamos saber.</p>
+        <div class="field">
+          <label for="f-notas">Notas</label>
+          <textarea id="f-notas" name="notas" rows="4" placeholder="Cuéntanos quiénes son, referencias de estilo, paleta de colores, etc."></textarea>
+        </div>
+      </div>
+
+      <!-- Secciones seleccionadas (hidden) -->
+      <input type="hidden" name="secciones" id="secciones-hidden">
+
+      <div class="submit-wrap">
+        <button type="submit" class="submit-btn" id="submitBtn">Enviar solicitud</button>
+        <p class="submit-note">Te escribimos en menos de 24 horas</p>
+      </div>
+    </form>
+
+    <div class="success-state" id="success">
+      <span class="success-icon">&#10003;</span>
+      <h2 class="success-title">¡Solicitud enviada!</h2>
+      <p class="success-body">Recibimos tu pedido. Te escribimos pronto para empezar a crear tu invitación.</p>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script is:inline define:vars={{ SB_URL: import.meta.env.VITE_SUPABASE_URL, SB_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY }}>
+    // SB_URL y SB_KEY inyectados en build time desde variables de entorno
+
+    function toggle(id) {
+      document.getElementById('sec-' + id)?.classList.toggle('on');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    document.getElementById('form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true; btn.textContent = 'Enviando...';
+
+      const fd = new FormData(e.target);
+      const get = k => (fd.get(k) || '').trim();
+
+      const secciones = Array.from(document.querySelectorAll('.sec-toggle.on'))
+        .map(el => el.querySelector('.sec-name')?.textContent.trim())
+        .filter(Boolean);
+
+      const nombre1 = get('nombre1');
+      const nombre2 = get('nombre2');
+
+      const pedido = {
+        id: 'boda-' + Date.now(),
+        template_id: 'boda-personalizada',
+        nombre_evento: nombre1 && nombre2 ? nombre1 + ' & ' + nombre2 : (nombre1 || nombre2 || 'Boda personalizada'),
+        fecha_evento: get('fecha') || null,
+        pagado: false,
+        aprobado: false,
+        datos: {
+          eventoId: 'boda-' + Date.now(),
+          templateId: 'boda-personalizada',
+          pagado: false,
+          tituloEvento: nombre1 && nombre2 ? nombre1 + ' & ' + nombre2 : 'Boda personalizada',
+          nombresPrincipales: [nombre1, nombre2].filter(Boolean),
+          fecha: get('fecha'),
+          hora: get('hora'),
+          lugar: { nombre: get('lugar'), direccion: '', mapUrl: '' },
+          whatsappNumero: get('telefono'),
+          vestimenta: get('vestimenta_tipo') + (get('vestimenta_nota') ? ' — ' + get('vestimenta_nota') : ''),
+          mensajePersonalizado: get('notas'),
+          features: {
+            muroDeseos: secciones.includes('Muro de mensajes'),
+            rsvp: secciones.includes('Botón de confirmación (RSVP)'),
+            countdown: false,
+            mapa: false,
+            musica: secciones.includes('Reproductor de música'),
+          },
+          asistido: true,
+          extra: {
+            secciones,
+            portada_foto: get('portada_foto'),
+            portada_estilo: get('portada_estilo'),
+            frase_inicial: get('frase_inicial'),
+            imagenes_link: get('imagenes_link'),
+            imagenes_cantidad: get('imagenes_cantidad'),
+            video_url: get('video_url'),
+            musica_titulo: get('musica_titulo'),
+            musica_link: get('musica_link'),
+            itinerario: get('itinerario'),
+            rsvp_limite: get('rsvp_limite'),
+            rsvp_nota: get('rsvp_nota'),
+            muro_titulo: get('muro_titulo'),
+            frases_adicionales: get('frases_adicionales'),
+          }
+        }
+      };
+
+      try {
+        const res = await fetch(SB_URL + '/rest/v1/eventos', {
+          method: 'POST',
+          headers: {
+            apikey: SB_KEY,
+            Authorization: 'Bearer ' + SB_KEY,
+            'Content-Type': 'application/json',
+            Prefer: 'return=minimal',
+          },
+          body: JSON.stringify(pedido),
+        });
+        if (!res.ok) throw new Error('status ' + res.status);
+        document.getElementById('form').style.display = 'none';
+        document.getElementById('success').classList.add('show');
+      } catch(err) {
+        console.error(err);
+        btn.disabled = false; btn.textContent = 'Enviar solicitud';
+        showToast('Error al enviar. Intenta de nuevo.');
+      }
+    });
+  </script>
+</body>
+</html>

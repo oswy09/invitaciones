@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #0A0A0A;
+  font-family: 'Montserrat', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Cinema design tokens ────────────────────────────────────────── */
+:root {
+  --cin-bg:          #0A0A0A;
+  --cin-surface:     #0D0D0D;
+  --cin-gold:        #C9A84C;
+  /* Minimum opacity levels for gold text on dark bg (WCAG AA ≥4.5:1) */
+  --cin-gold-full:   rgba(201,168,76,1);    /* 9.4:1 */
+  --cin-gold-hi:     rgba(201,168,76,0.92); /* 8.3:1 */
+  --cin-gold-mid:    rgba(201,168,76,0.85); /* 7.6:1 */
+  --cin-white-hi:    rgba(255,255,255,0.85);/* 14.6:1 */
+  --cin-white-mid:   rgba(255,255,255,0.65);/* 10.7:1 */
+  --cin-green:       #7EE07E;               /* 8.4:1 on dark green */
+}
+
+/* ── Global focus indicator (cinema gold ring) ───────────────────── */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #C9A84C;
+  outline-offset: 0;
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.25);
+}
+
+button:focus-visible {
+  outline: 2px solid #C9A84C;
+  outline-offset: 3px;
+}
+
+@keyframes marquee-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes film-roll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes spotlight {
+  0%, 100% { opacity: 0.6; transform: rotate(-3deg); }
+  50% { opacity: 1; transform: rotate(3deg); }
+}
+
+@keyframes curtain-open {
+  0% { transform: scaleX(1); }
+  100% { transform: scaleX(0); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer-gold {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.marquee-light {
+  animation: marquee-blink 1.2s ease-in-out infinite;
+}
+.marquee-light:nth-child(2) { animation-delay: 0.15s; }
+.marquee-light:nth-child(3) { animation-delay: 0.3s; }
+.marquee-light:nth-child(4) { animation-delay: 0.45s; }
+.marquee-light:nth-child(5) { animation-delay: 0.6s; }
+.marquee-light:nth-child(6) { animation-delay: 0.75s; }
+.marquee-light:nth-child(7) { animation-delay: 0.9s; }
+.marquee-light:nth-child(8) { animation-delay: 1.05s; }
+
+.fade-in-up { animation: fade-in-up 0.7s ease-out both; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.25s; }
+.delay-3 { animation-delay: 0.45s; }
+.delay-4 { animation-delay: 0.65s; }
+.delay-5 { animation-delay: 0.85s; }
+
+/* ── Cinema transition ──────────────────────────────────── */
+@keyframes curtain-left {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+@keyframes curtain-right {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(100%); }
+}
+@keyframes countdown-pop {
+  0%   { transform: scale(1.8); opacity: 0; }
+  15%  { transform: scale(0.95); opacity: 1; }
+  22%  { transform: scale(1.02); opacity: 1; }
+  30%  { transform: scale(1);    opacity: 1; }
+  78%  { transform: scale(1);    opacity: 1; }
+  100% { transform: scale(0.5);  opacity: 0; }
+}
+@keyframes film-flicker {
+  0%,100% { opacity: 1; }
+  30%      { opacity: 0.97; }
+  60%      { opacity: 0.95; }
+  80%      { opacity: 0.98; }
+}
+@keyframes scan-line {
+  0%   { top: -4px; }
+  100% { top: 100%; }
+}
+@keyframes neon-on {
+  0%   { opacity: 0; text-shadow: none; }
+  40%  { opacity: 0.9; text-shadow: 0 0 6px #fff, 0 0 14px #FFC977, 0 0 30px #E89020, 0 0 60px #E89020; }
+  55%  { opacity: 0.6; text-shadow: 0 0 3px #fff, 0 0 8px #FFC977; }
+  70%  { opacity: 1;   text-shadow: 0 0 6px #fff, 0 0 14px #FFC977, 0 0 30px #E89020, 0 0 60px #E89020; }
+  85%  { opacity: 0.8; text-shadow: 0 0 4px #fff, 0 0 10px #FFC977; }
+  100% { opacity: 1;   text-shadow: 0 0 6px #fff, 0 0 16px #FFC977, 0 0 32px #E89020, 0 0 70px #D07010; }
+}
+@keyframes neon-glow {
+  0%, 100% { text-shadow: 0 0 5px rgba(255,220,140,0.6), 0 0 12px rgba(255,185,60,0.35); }
+  50%       { text-shadow: 0 0 8px rgba(255,220,140,0.9), 0 0 20px rgba(255,185,60,0.55), 0 0 35px rgba(220,150,30,0.3); }
+}
+@keyframes neon-ray {
+  0%   { transform: scaleX(0); opacity: 0; }
+  60%  { opacity: 0.5; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+@keyframes spark {
+  0%   { transform: translate(0,0) scale(0); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+@keyframes lb-flicker {
+  0%,100% { background-color: #92866A; }
+  33%      { background-color: #8E8268; }
+  66%      { background-color: #948A6C; }
+}
+@keyframes film-slide-up {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+@keyframes noise {
+  0%,100% { transform: translate(0,0); }
+  10%     { transform: translate(-2%,-1%); }
+  20%     { transform: translate(1%,2%); }
+  30%     { transform: translate(-1%,1%); }
+  40%     { transform: translate(2%,-2%); }
+  50%     { transform: translate(-2%,2%); }
+  60%     { transform: translate(1%,-1%); }
+  70%     { transform: translate(-1%,2%); }
+  80%     { transform: translate(2%,1%); }
+  90%     { transform: translate(-1%,-2%); }
+}
+.curtain-left  { animation: curtain-left  3.2s cubic-bezier(0.6,0,0.2,1) forwards; }
+.curtain-right { animation: curtain-right 3.2s cubic-bezier(0.6,0,0.2,1) forwards; }
+.countdown-num { animation: countdown-pop 0.9s ease-in-out both; }
+.film-flicker  { animation: film-flicker 1.8s ease-in-out infinite; }
+
+@keyframes popcorn-bounce {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%       { transform: translateY(-6px) rotate(2deg); }
+}
+@keyframes kernel-pop {
+  0%   { transform: translate(0,0) scale(0); opacity:0; }
+  40%  { opacity:1; }
+  100% { transform: translate(var(--kx),var(--ky)) scale(0.6); opacity:0; }
+}
+.popcorn-bounce { animation: popcorn-bounce 1.8s ease-in-out infinite; }

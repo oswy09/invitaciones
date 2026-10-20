@@ -1,0 +1,26 @@
+{
+  "name": "boda-playa",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3110",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.116.0",
+    "@types/mapbox-gl": "^3.4.1",
+    "gsap": "^3.15.0",
+    "mapbox-gl": "^3.32.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "~5.6.2",
+    "vite": "^5.4.10"
+  }
+}

@@ -209,23 +209,26 @@ function Modal({ t, precioLabel, onClose, onPersonalizar, onVerDemo }: {
 
             {/* Botones */}
             <div className="hp-modal-actions" style={{ padding: "12px 20px 14px", borderTop: "1px solid #f0eaf5", display: "flex", flexDirection: "column", gap: 8, flexShrink: 0 }}>
-              <button onClick={onPersonalizar} style={{ width: "100%", padding: "13px 0", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#5A1B5E,#7A2E8A)", color: "#fff", fontWeight: 800, fontSize: 15, cursor: "pointer", boxShadow: "0 4px 16px rgba(90,27,94,0.3)" }}>
+              {/* Personalizar inhabilitado temporalmente — autogestión no disponible aún */}
+              {/* <button onClick={onPersonalizar} style={{ width: "100%", padding: "13px 0", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#5A1B5E,#7A2E8A)", color: "#fff", fontWeight: 800, fontSize: 15, cursor: "pointer", boxShadow: "0 4px 16px rgba(90,27,94,0.3)" }}>
                 Personalizar esta invitación →
-              </button>
+              </button> */}
               <a
                 href={`https://wa.me/573057502790?text=${encodeURIComponent(`¡Hola! Me gustaría solicitar la plantilla *${t.nombreDisplay}*. ¿Pueden armarla por mí?`)}`}
                 target="_blank" rel="noopener noreferrer"
-                style={{ width: "100%", padding: "12px 0", borderRadius: 12, border: "1.5px solid #5A1B5E", background: "transparent", color: "#5A1B5E", fontWeight: 700, fontSize: 14, textAlign: "center", textDecoration: "none", display: "block" }}
+                style={{ width: "100%", padding: "13px 0", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#5A1B5E,#7A2E8A)", color: "#fff", fontWeight: 800, fontSize: 15, textAlign: "center", textDecoration: "none", display: "block", boxShadow: "0 4px 16px rgba(90,27,94,0.3)" }}
               >
                 Solicitar este diseño 💬
               </a>
-              <a
-                href={`/demo?id=${t.id}`}
-                style={{ display: "block", textAlign: "center", fontSize: 13, color: "#9b8aa8", textDecoration: "underline", padding: "4px 0", cursor: "pointer" }}
-                onClick={(e) => { e.preventDefault(); onClose(); onVerDemo?.(); }}
-              >
-                Ver demo completo ↗
-              </a>
+              {t.slug && (
+                <a
+                  href={`/plantillas/${t.slug}`}
+                  target="_blank" rel="noopener noreferrer"
+                  style={{ display: "block", textAlign: "center", width: "100%", padding: "12px 0", borderRadius: 12, border: "1.5px solid #5A1B5E", background: "transparent", color: "#5A1B5E", fontWeight: 700, fontSize: 14, textDecoration: "none", cursor: "pointer", boxSizing: "border-box" }}
+                >
+                  Ver demo completo ↗
+                </a>
+              )}
             </div>
           </div>
         </div>

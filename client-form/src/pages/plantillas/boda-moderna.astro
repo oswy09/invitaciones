@@ -1,0 +1,72 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const slug = 'boda-moderna';
+const nombre = 'Boda Moderna';
+const descripcion = 'Invitación digital de boda elegante: sobre animado interactivo, música de fondo, cuenta regresiva, confirmación de asistencia, mapa de ceremonia y recepción, y muro de deseos. Lista para compartir por WhatsApp.';
+const canonical = `https://celebrarte.com.co/plantillas/${slug}`;
+const ogImage = 'https://res.cloudinary.com/ddqbnr9vo/image/upload/v1783378436/logo-celebrarte_bxkmva.png';
+---
+
+<Base
+  title={`Invitación de Boda Elegante | Plantilla Boda Moderna - Celebrarte`}
+  description={descripcion}
+  canonical={canonical}
+  ogImage={ogImage}
+>
+  <slot name="head" slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebPage",
+          "@id": `${canonical}#page`,
+          "name": `Invitación de Boda Elegante | Celebrarte`,
+          "description": descripcion,
+          "url": canonical,
+          "inLanguage": "es-CO",
+          "publisher": { "@id": "https://celebrarte.com.co#org" },
+        },
+        {
+          "@type": "Product",
+          "name": `Plantilla ${nombre}`,
+          "description": descripcion,
+          "image": ogImage,
+          "brand": { "@type": "Brand", "name": "Celebrarte" },
+          "offers": {
+            "@type": "Offer",
+            "price": "80000",
+            "priceCurrency": "COP",
+            "availability": "https://schema.org/InStock",
+            "seller": { "@type": "Organization", "name": "Celebrarte" }
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://celebrarte.com.co" },
+            { "@type": "ListItem", "position": 2, "name": "Plantillas", "item": "https://celebrarte.com.co/plantillas" },
+            { "@type": "ListItem", "position": 3, "name": nombre, "item": canonical }
+          ]
+        }
+      ]
+    })} />
+  </slot>
+
+  <div style="background:#3A1140;padding:16px;text-align:center;border-bottom:1px solid #f0d9a033;">
+    <a
+      href="https://wa.me/573057502790?text=Hola!%20Quiero%20solicitar%20la%20plantilla%20*Boda%20Moderna*"
+      target="_blank"
+      style="display:inline-block;background:linear-gradient(135deg,#5A1B5E,#7A2E8A);color:#fff;font-weight:700;padding:11px 28px;border-radius:999px;text-decoration:none;font-size:14px;"
+    >
+      Solicitar este diseño 💬
+    </a>
+  </div>
+
+  <iframe
+    src="/demos/boda-moderna/index.html"
+    title={`Demo ${nombre}`}
+    style="width:100%;height:100dvh;border:none;display:block;"
+    loading="lazy"
+  ></iframe>
+</Base>

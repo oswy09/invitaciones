@@ -11,6 +11,7 @@ function previewSrc(t: TemplateInfo): string {
     }
     return base;
   }
+  if (t.demoPath) return t.demoPath;
   return t.baseUrl;
 }
 
@@ -19,6 +20,7 @@ function previewSrcForModal(t: TemplateInfo): string {
   if (import.meta.env.DEV && DEV_PORT_POR_TEMPLATE[t.id]) {
     return `http://localhost:${DEV_PORT_POR_TEMPLATE[t.id]}?preview=1`;
   }
+  if (t.demoPath) return t.demoPath;
   if (t.esFree) return `${t.baseUrl}?preview=1`;
   return `${t.baseUrl}/demo?preview=1`;
 }
@@ -424,26 +426,29 @@ function ModalPlantilla({
 
           {/* Botones */}
           <div className="modal-actions-mobile" style={{ padding: "12px 20px 14px", borderTop: "1px solid #f0eaf5", display: "flex", flexDirection: "column", gap: 8, flexShrink: 0 }}>
-            <button
+            {/* Personalizar inhabilitado temporalmente — autogestión no disponible aún */}
+            {/* <button
               onClick={onPersonalizar}
               style={{ width: "100%", padding: "13px 0", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#5A1B5E,#7A2E8A)", color: "#fff", fontWeight: 800, fontSize: 15, cursor: "pointer", boxShadow: "0 4px 16px rgba(90,27,94,0.3)" }}
             >
               Personalizar esta invitación →
-            </button>
+            </button> */}
             <a
               href={`https://wa.me/573057502790?text=${encodeURIComponent(`¡Hola! Me gustaría solicitar la plantilla *${t.nombreDisplay}*. ¿Pueden armarla por mí?`)}`}
               target="_blank" rel="noopener noreferrer"
-              style={{ width: "100%", padding: "12px 0", borderRadius: 12, border: "1.5px solid #5A1B5E", background: "transparent", color: "#5A1B5E", fontWeight: 700, fontSize: 14, textAlign: "center", textDecoration: "none", display: "block" }}
+              style={{ width: "100%", padding: "13px 0", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#5A1B5E,#7A2E8A)", color: "#fff", fontWeight: 800, fontSize: 15, textAlign: "center", textDecoration: "none", display: "block", boxShadow: "0 4px 16px rgba(90,27,94,0.3)" }}
             >
               Solicitar este diseño 💬
             </a>
-            <a
-              href={`/demo?id=${t.id}`}
-              style={{ display: "block", textAlign: "center", fontSize: 13, color: "#9b8aa8", textDecoration: "underline", padding: "4px 0", cursor: "pointer" }}
-              onClick={onVerDemo ? (e) => { e.preventDefault(); onClose(); onVerDemo(); } : undefined}
-            >
-              Ver demo completo ↗
-            </a>
+            {t.slug && (
+              <a
+                href={`/plantillas/${t.slug}`}
+                target="_blank" rel="noopener noreferrer"
+                style={{ display: "block", textAlign: "center", width: "100%", padding: "12px 0", borderRadius: 12, border: "1.5px solid #5A1B5E", background: "transparent", color: "#5A1B5E", fontWeight: 700, fontSize: 14, textDecoration: "none", cursor: "pointer", boxSizing: "border-box" }}
+              >
+                Ver demo completo ↗
+              </a>
+            )}
           </div>
           </div>
         </div>
@@ -525,21 +530,29 @@ function TemplateCard({
       </div>
 
       <div style={{ padding: "0 1rem 1rem" }}>
-        <div style={{
-          width: "100%",
-          fontWeight: 700,
-          fontSize: "0.875rem",
-          padding: "0.7rem 0",
-          borderRadius: "0.875rem",
-          textAlign: "center",
-          backgroundColor: !t.baseUrl ? "#E5E7EB" : (hovered ? "#3A1140" : "#5A1B5E"),
-          color: !t.baseUrl ? "#9CA3AF" : "#F8F5F0",
-          transition: "background-color 0.22s ease",
-          letterSpacing: "0.01em",
-          cursor: t.baseUrl ? "pointer" : "default"
-        }}>
-          {t.baseUrl ? "Ver plantilla →" : "Próximamente"}
-        </div>
+        {t.slug ? (
+          <a
+            href={`/plantillas/${t.slug}`}
+            target="_blank" rel="noopener noreferrer"
+            style={{
+              display: "block", width: "100%", fontWeight: 700, fontSize: "0.875rem",
+              padding: "0.7rem 0", borderRadius: "0.875rem", textAlign: "center",
+              backgroundColor: hovered ? "#3A1140" : "#5A1B5E", color: "#F8F5F0",
+              textDecoration: "none", transition: "background-color 0.22s ease",
+              letterSpacing: "0.01em",
+            }}
+          >
+            Ver plantilla →
+          </a>
+        ) : (
+          <div style={{
+            width: "100%", fontWeight: 700, fontSize: "0.875rem", padding: "0.7rem 0",
+            borderRadius: "0.875rem", textAlign: "center", backgroundColor: "#E5E7EB",
+            color: "#9CA3AF", letterSpacing: "0.01em",
+          }}>
+            Próximamente
+          </div>
+        )}
       </div>
     </article>
   );

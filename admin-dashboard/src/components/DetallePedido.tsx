@@ -370,6 +370,41 @@ export default function DetallePedido({ pedido, onUpdated, onDeleted }: DetalleP
         </div>
       </div>
 
+      {/* Secciones Boda Personalizada */}
+      {pedido.template_id === 'boda-personalizada' && datos.extra && (
+        <div className="bg-white border border-stone-100 rounded-2xl p-6 space-y-5">
+          <h3 className="text-[13px] font-bold text-stone-700 font-inter">Detalles del pedido personalizado</h3>
+
+          {/* Secciones seleccionadas */}
+          {Array.isArray(datos.extra.secciones) && datos.extra.secciones.length > 0 && (
+            <div className="space-y-1.5">
+              <p className="text-[10px] font-bold text-stone-400 uppercase tracking-wider font-inter">Secciones solicitadas</p>
+              <div className="flex flex-wrap gap-2">
+                {(datos.extra.secciones as string[]).map((s) => (
+                  <span key={s} className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-100">{s}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <ExtraCard label="Foto de portada" valor={datos.extra.portada_foto as string} isLink />
+            <ExtraCard label="Estilo visual" valor={datos.extra.portada_estilo as string} />
+            <ExtraCard label="Frase inicial" valor={datos.extra.frase_inicial as string} wide />
+            <ExtraCard label="Fotos — carpeta" valor={datos.extra.imagenes_link as string} isLink />
+            <ExtraCard label="Fotos — cantidad" valor={datos.extra.imagenes_cantidad as string} />
+            <ExtraCard label="Video" valor={datos.extra.video_url as string} isLink />
+            <ExtraCard label="Canción" valor={datos.extra.musica_titulo as string} />
+            <ExtraCard label="Link canción" valor={datos.extra.musica_link as string} isLink />
+            <ExtraCard label="Itinerario" valor={datos.extra.itinerario as string} wide />
+            <ExtraCard label="RSVP — límite" valor={datos.extra.rsvp_limite as string} />
+            <ExtraCard label="RSVP — instrucciones" valor={datos.extra.rsvp_nota as string} wide />
+            <ExtraCard label="Título muro de mensajes" valor={datos.extra.muro_titulo as string} />
+            <ExtraCard label="Frases adicionales" valor={datos.extra.frases_adicionales as string} wide />
+          </div>
+        </div>
+      )}
+
       {/* Confirmaciones RSVP */}
       <div className="bg-white border border-stone-100 rounded-2xl p-6 space-y-5">
         <div className="flex items-center justify-between">
@@ -461,6 +496,22 @@ export default function DetallePedido({ pedido, onUpdated, onDeleted }: DetalleP
           onClose={() => setIsEditing(false)}
           onSaved={onUpdated}
         />
+      )}
+    </div>
+  );
+}
+
+// Subcomponente ExtraCard para campos de boda personalizada
+interface ExtraCardProps { label: string; valor?: string; isLink?: boolean; wide?: boolean; }
+function ExtraCard({ label, valor, isLink, wide }: ExtraCardProps) {
+  if (!valor) return null;
+  return (
+    <div className={`p-4 bg-violet-50/40 border border-violet-100 rounded-xl space-y-1 ${wide ? 'md:col-span-2' : ''}`}>
+      <p className="text-[10px] font-bold text-violet-400 uppercase tracking-wider font-inter">{label}</p>
+      {isLink ? (
+        <a href={valor} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-violet-700 hover:underline break-all font-inter">{valor}</a>
+      ) : (
+        <p className="text-sm font-semibold text-stone-800 whitespace-pre-wrap font-inter">{valor}</p>
       )}
     </div>
   );

@@ -50,6 +50,10 @@ export interface TemplateInfo {
   categoria: "Baby Shower" | "Boda" | "Cumpleaños" | "Quinceaños";
   /** URL real publicada en Netlify. Vacío = todavía no está publicada. */
   baseUrl: string;
+  /** Slug para la URL SEO: celebrarte.com.co/plantillas/{slug} */
+  slug?: string;
+  /** URL exacta del demo cuando no sigue el patrón baseUrl/demo (p.ej. demos locales). */
+  demoPath?: string;
   /** Imagen estática de preview para el card (reemplaza el iframe). */
   previewImg?: string;
   gradiente: string;
@@ -81,6 +85,7 @@ export const CATALOGO: TemplateInfo[] = [
     emoji: "🦖",
     categoria: "Baby Shower",
     baseUrl: "https://dino.celebrarte.com.co",
+    slug: "dino",
     previewImg: "https://res.cloudinary.com/ddqbnr9vo/image/upload/v1780436162/Share_Redes_a2ow9q.png",
     gradiente: "linear-gradient(to bottom, #3a6b2a, #1a3a10)",
     textColor: "#c8f0a0",
@@ -95,6 +100,7 @@ export const CATALOGO: TemplateInfo[] = [
     emoji: "🦢",
     categoria: "Baby Shower",
     baseUrl: "https://stork.celebrarte.com.co",
+    slug: "stork",
     gradiente: "linear-gradient(to bottom, #7ec8e3, #b8dff0)",
     textColor: "#1a4a6b",
     features: FEATURES_BABY_SHOWER,
@@ -108,6 +114,7 @@ export const CATALOGO: TemplateInfo[] = [
     emoji: "🚀",
     categoria: "Baby Shower",
     baseUrl: "https://space.celebrarte.com.co",
+    slug: "space",
     gradiente: "linear-gradient(to bottom, #0d1b3e, #000000)",
     textColor: "#e0e8ff",
     esEspacio: true,
@@ -122,8 +129,75 @@ export const CATALOGO: TemplateInfo[] = [
     emoji: "💍",
     categoria: "Boda",
     baseUrl: "https://boda-moderna.celebrarte.com.co",
+    slug: "boda-moderna",
     gradiente: "linear-gradient(to bottom, #3A1140, #5A1B5E)",
     textColor: "#f0d9a0",
+    features: [
+      { emoji: "✉️", label: "Sobre animado interactivo" },
+      { emoji: "🎵", label: "Música de fondo personalizada" },
+      { emoji: "✅", label: "Confirmación de asistencia (RSVP)" },
+      { emoji: "⏱️", label: "Cuenta regresiva a la boda" },
+      { emoji: "🗺️", label: "Mapa de ceremonia y recepción" },
+      { emoji: "💬", label: "Muro de deseos / libro de firmas" },
+    ],
+    precioDefault: { cop: 80000, usd: 22 },
+  },
+  {
+    id: "06-boda-loving",
+    nombre: "Boda Loving",
+    nombreDisplay: "Boda Loving",
+    descripcion: "Invitación de boda editorial elegante con eucalipto, acuarela y fotos rasgadas",
+    emoji: "🌿",
+    categoria: "Boda",
+    baseUrl: "https://boda-loving.celebrarte.com.co",
+    slug: "boda-loving",
+    demoPath: "/demos/boda-loving/index.html",
+    gradiente: "linear-gradient(to bottom, #2C3A2A, #4A5E3A)",
+    textColor: "#e8f0d8",
+    features: [
+      { emoji: "✉️", label: "Sobre animado interactivo" },
+      { emoji: "🎵", label: "Música de fondo personalizada" },
+      { emoji: "✅", label: "Confirmación de asistencia (RSVP)" },
+      { emoji: "⏱️", label: "Cuenta regresiva a la boda" },
+      { emoji: "🗺️", label: "Mapa de ceremonia y recepción" },
+      { emoji: "💬", label: "Muro de deseos / libro de firmas" },
+    ],
+    precioDefault: { cop: 80000, usd: 22 },
+  },
+  {
+    id: "07-boda-cine",
+    nombre: "Boda Cine",
+    nombreDisplay: "Boda Cine",
+    descripcion: "Invitación de boda estilo cartelera de cine, póster cinematográfico y animaciones exclusivas",
+    emoji: "🎬",
+    categoria: "Boda",
+    baseUrl: "https://boda-cine.celebrarte.com.co",
+    slug: "boda-cine",
+    demoPath: "/demos/boda-cine/index.html",
+    gradiente: "linear-gradient(to bottom, #1a0a00, #3a1a00)",
+    textColor: "#f5d080",
+    features: [
+      { emoji: "🎥", label: "Intro estilo cartelera de cine" },
+      { emoji: "🎵", label: "Música de fondo personalizada" },
+      { emoji: "✅", label: "Confirmación de asistencia (RSVP)" },
+      { emoji: "⏱️", label: "Cuenta regresiva a la boda" },
+      { emoji: "🗺️", label: "Mapa de ceremonia y recepción" },
+      { emoji: "💬", label: "Muro de deseos / libro de firmas" },
+    ],
+    precioDefault: { cop: 80000, usd: 22 },
+  },
+  {
+    id: "08-boda-campestre",
+    nombre: "Boda Campestre",
+    nombreDisplay: "Boda Campestre",
+    descripcion: "Invitación de boda campestre con tipografía elegante y naturaleza",
+    emoji: "🌾",
+    categoria: "Boda",
+    baseUrl: "",
+    demoPath: "/demos/boda-campestre/index.html",
+    slug: "boda-campestre",
+    gradiente: "linear-gradient(to bottom, #2A3A1A, #4A5E2A)",
+    textColor: "#e8f0c8",
     features: [
       { emoji: "✉️", label: "Sobre animado interactivo" },
       { emoji: "🎵", label: "Música de fondo personalizada" },
@@ -160,6 +234,7 @@ export const CATALOGO: TemplateInfo[] = [
     emoji: "⚽",
     categoria: "Cumpleaños",
     baseUrl: "",  // WIP — no publicada aún
+    slug: "futbol",
     previewImg: "https://res.cloudinary.com/ddqbnr9vo/image/upload/v1785889536/edit-this-cartoon-soccer-player-image-add-a-colorf_cdbven.webp",
     gradiente: "linear-gradient(to bottom, #0d2e0d, #1a4a1a)",
     textColor: "#c8f5a0",
@@ -181,6 +256,9 @@ export const DEV_PORT_POR_TEMPLATE: Record<string, number> = {
   "04-Moderna":     3104,
   "free-01-cumple":      3105,
   "05-futbol-cumple":    3106,
+  "06-boda-loving":      3107,
+  "07-boda-cine":        3108,
+  "08-boda-campestre":   3109,
 };
 
 const DIAS_SEMANA = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];

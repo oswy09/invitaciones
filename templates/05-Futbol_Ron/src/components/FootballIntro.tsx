@@ -137,7 +137,7 @@ export default function FootballIntro() {
 
         .fb-root {
           position: fixed; inset: 0;
-          background: #889C80;
+          background: #f3f4f6;
           display: flex; align-items: center; justify-content: center;
         }
         .fb-phone {
@@ -152,8 +152,8 @@ export default function FootballIntro() {
             height: min(780px, 90vh);
             border-radius: 36px;
             box-shadow:
-              0 0 0 4px #1e5a10,
-              0 32px 80px rgba(0,0,0,0.5),
+              0 0 0 4px #d1d5db,
+              0 32px 80px rgba(0,0,0,0.3),
               inset 0 0 0 1px rgba(255,255,255,0.08);
           }
         }
@@ -323,7 +323,7 @@ export default function FootballIntro() {
               style={{
                 position: 'absolute', inset: 0,
                 width: '100%', height: '100%', objectFit: 'cover',
-                objectPosition: 'center',
+                objectPosition: 'top center',
                 animation: 'detailsIn 0.6s ease both',
               }}
             />

@@ -87,13 +87,13 @@ const schemaLD = {
     <p style="color:rgba(255,255,255,0.7); font-size:14px; max-width:480px; margin:0 auto 40px;">Tu invitación lista antes de que termines de leer esto.</p>
     <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:20px; max-width:720px; margin:0 auto;">
       {[
-        { icon:"🎈", title:"100% gratis", desc:"Sin costo, sin tarjeta, sin tramites." },
-        { icon:"⚡", title:"Lista al instante", desc:"Segundos para tener tu link listo." },
-        { icon:"📅", title:"Totalmente personalizable", desc:"Nombre, fecha, hora y lugar." },
-        { icon:"📱", title:"Comparte por WhatsApp", desc:"Un link que cada invitado abre en su celular." },
+        { svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`, title:"100% gratis", desc:"Sin costo, sin tarjeta, sin trámites." },
+        { svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`, title:"Lista al instante", desc:"Segundos para tener tu link listo." },
+        { svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`, title:"Totalmente personalizable", desc:"Nombre, fecha, hora y lugar." },
+        { svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg>`, title:"Comparte por WhatsApp", desc:"Un link que cada invitado abre en su celular." },
       ].map(b => (
         <div style="background:rgba(255,255,255,0.07); border-radius:16px; padding:20px; text-align:center;">
-          <div style="font-size:28px; margin-bottom:8px;">{b.icon}</div>
+          <div style="display:flex; justify-content:center; margin-bottom:10px;" set:html={b.svg} />
           <h3 style="font-size:14px; font-weight:800; color:#fff; margin:0 0 4px;">{b.title}</h3>
           <p style="font-size:12px; color:rgba(255,255,255,0.6); margin:0; line-height:1.4;">{b.desc}</p>
         </div>
