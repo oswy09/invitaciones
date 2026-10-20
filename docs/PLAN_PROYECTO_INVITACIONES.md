@@ -140,103 +140,80 @@ el catálogo llegue a 8-10 plantillas y los patrones sean obvios.
 
 ---
 
-## 2.3 Hosting y despliegue: Netlify (cuenta Legacy existente)
+## 2.3 Hosting y despliegue: Cloudflare Pages (migración desde Netlify — oct. 2026)
 
-Se usará **Netlify** para publicar cada invitación generada, conectado a GitHub
-para despliegue automático en cada push (sin subida manual de `dist/`).
+### Estado actual
 
-### Detalle importante de la cuenta a usar
+El hosting migró de Netlify a **Cloudflare Pages** en octubre de 2026 porque
+la cuenta Legacy de Netlify fue pausada al superar los límites del plan.
+La migración se está haciendo plantilla por plantilla; el estado a la fecha:
 
-La cuenta de Netlify ya existente del operador es de tipo **Free Legacy**
-(creada antes del 4 de septiembre de 2025), lo cual es relevante porque usa un
-modelo de límites distinto al de las cuentas nuevas:
+| Sitio | Hosting actual | Proyecto CF Pages |
+|---|---|---|
+| `boda-maria-juanca.celebrarte.com.co` (plantilla 08) | ✅ Cloudflare Pages | `boda-campestre` |
+| `celebrarte.com.co` (client-form / landing) | Netlify (pendiente migrar) | — |
+| admin-dashboard | Netlify (pendiente migrar) | — |
+| Plantillas dino, space, stork, moderna, free-01 | Netlify (pendiente migrar) | — |
 
-- **Legacy** (la actual): límites separados de **100 GB de bandwidth/mes** y
-  **300 minutos de build/mes**, sin concepto de "créditos".
-- **Credit-based** (cuentas nuevas desde sept. 2025): un pool de 300 créditos/mes
-  compartido entre bandwidth, builds y compute, que se agota mucho más rápido
-  con el volumen esperado (15+ invitaciones/mes).
+El DNS de `celebrarte.com.co` sigue registrado en Netlify. El subdominio
+`boda-maria-juanca` ya apunta a Cloudflare vía CNAME `boda-campestre.pages.dev`.
 
-Uso real verificado al momento de planear este proyecto: ~38-78 MB de bandwidth
-mensual, 0 minutos de build usados, 32 de 500 proyectos — margen amplio para
-absorber el volumen de invitaciones sin acercarse a los límites de Legacy.
+### Cómo deployar una plantilla en Cloudflare Pages (subida directa)
 
-**Regla a seguir: NO usar el botón "Change team plan" hacia los planes nuevos
-(Free/Personal/Pro de créditos) en esta cuenta.** Ese cambio es irreversible
-(no se puede volver a Legacy después). Si en el futuro se necesita más
-capacidad que la del plan Free Legacy, la ruta es subir a **Legacy Pro**
-(sigue dentro del modelo antiguo, sin créditos), no migrar al modelo nuevo.
+Las plantillas cliente (08, 09…) se despliegan con **subida directa del `dist/`**
+(Direct Upload), sin conectar a GitHub. Esto permite deploys inmediatos desde
+la CLI sin esperar builds en la nube:
 
-### Cómo monitorear el consumo
+```bash
+# 1. Build local
+cd "templates/08 - Boda-campestre"
+npm run build
 
-Panel: Netlify → **Usage & billing → Account usage insights**, secciones
-Bandwidth y Builds. Revisar periódicamente al ir agregando clientes para
-detectar con datos reales (no estimaciones) cuándo se acerca a los límites
-de Legacy y si hace falta subir a Legacy Pro.
+# 2. Deploy directo a Cloudflare Pages
+npx wrangler pages deploy dist --project-name=boda-campestre
+# o con la CLI de Cloudflare (si está instalada):
+# cloudflare pages deploy dist --project-name=boda-campestre
+```
 
-### Estrategia de sitios — DECISIÓN FINAL: una plantilla publicada = N clientes por ruta
+Para la **primera vez** que se crea un proyecto nuevo en Cloudflare Pages:
+```bash
+npx wrangler pages project create nombre-proyecto
+```
 
-Se descarta la idea de crear un "site" de Netlify nuevo por cada cliente. En su
-lugar, **cada plantilla se publica una sola vez** en Netlify (ej.
-`dino.tudominio.com`), y cada cliente nuevo es simplemente **una fila nueva en
-la tabla `eventos` de Supabase**, identificada por su `eventoId`. La plantilla,
-ya desplegada, lee el `eventoId` desde la ruta de la URL (ej.
-`dino.tudominio.com/boda-juan-maria-2026`) y consulta Supabase para renderizar
-los datos correspondientes a ese cliente — el mismo patrón que **ya implementa
-Dino actualmente**, solo que el `eventoId` debe pasar a leerse de la URL en
-lugar de un valor fijo en `types.ts`.
+### SPA redirects en Cloudflare Pages
 
-**Implicaciones de esta decisión (importante, afecta varias fases):**
+Cloudflare Pages usa un archivo `_redirects` en la carpeta `public/` (igual
+que Netlify), **o** un archivo `_headers`. La regla para SPAs es idéntica:
 
-- **No se requiere integración con la API/CLI de Netlify para crear sitios
-  programáticamente.** Publicar un cliente nuevo = escribir un registro en
-  Supabase, no hacer un deploy. Esto elimina ese requisito de la Fase 5.
-- **El consumo de build minutes de Netlify queda desacoplado del número de
-  clientes.** Solo se gastan minutos de build cuando se publica o actualiza
-  una *plantilla*, no cuando se crea un cliente nuevo — refuerza aún más el
-  margen calculado en la sección 2.3.
-- **Cada plantilla debe implementar lectura del `eventoId` desde la URL**
-  (ej. con un router o leyendo `window.location.pathname`), reemplazando el
-  uso de un valor fijo (`DEFAULT_SHOWER_DETAILS` en Dino) — este es un
-  requisito técnico nuevo a agregar en la Fase 3 (migración de plantillas).
-- El dominio final de cada plantilla puede vivir bajo un dominio propio del
-  operador (ej. `dino.tudominio.com`) apuntado por DNS a Netlify, o bajo el
-  subdominio gratuito de Netlify (`dino-template.netlify.app`) mientras no se
-  tenga dominio propio configurado.
-
-### Configuración técnica requerida: SPA redirects en Netlify
-
-Para que el enrutamiento por `eventoId` (sección anterior) funcione, cada
-plantilla publicada en Netlify necesita un archivo de configuración que le
-indique a Netlify que sirva siempre `index.html` sin importar la ruta
-solicitada — de lo contrario, visitar directamente
-`dino.tudominio.com/boda-juan-maria-2026` devolvería un error 404, ya que
-Netlify buscaría un archivo físico con ese nombre y no lo encontraría (es una
-Single Page Application: el enrutamiento real lo resuelve React en el
-navegador, no Netlify).
-
-Esto se configura **una sola vez por plantilla**, al momento de publicarla, y
-a partir de ahí cualquier `eventoId`/cliente nuevo de esa plantilla funciona
-sin tocar Netlify de nuevo. Dos formas equivalentes de configurarlo:
-
-**Opción 1 — archivo `_redirects`** (en la carpeta `public/` del proyecto, se
-copia automáticamente al `dist/` en el build):
 ```
 /*    /index.html   200
 ```
 
-**Opción 2 — archivo `netlify.toml`** (en la raíz del proyecto):
-```toml
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-```
+Agregar este `_redirects` en `public/` de cada plantilla. **No hace falta
+`netlify.toml`** en los proyectos migrados a Cloudflare — ese archivo es
+ignorado.
 
-Se debe agregar este archivo a cada una de las 3 plantillas existentes
-durante la Fase 3 (migración), y a cualquier plantilla nueva que se cree en
-el futuro — agregar este punto al skill de diseño (Fase 4) como un paso
-obligatorio de toda plantilla nueva.
+### Variables de entorno en Cloudflare Pages
+
+Las variables `VITE_*` que antes se ponían en Netlify (o en `.env` local) se
+configuran en el panel de Cloudflare Pages → Settings → Environment variables.
+Para Direct Upload no hay build en la nube, así que las variables del `.env`
+local se usan en el build local y quedan embebidas en el bundle — no hace falta
+configurarlas en Cloudflare para sitios de subida directa.
+
+### Estrategia de sitios (sin cambios respecto al diseño original)
+
+Sigue aplicando la misma decisión: **cada plantilla se publica una sola vez**
+y cada cliente nuevo es una fila en Supabase o una ruta en la URL, no un deploy
+nuevo. Publicar un cliente nuevo nunca consume minutos de build.
+
+### Historial: Netlify Legacy (antes de oct. 2026)
+
+La cuenta Netlify era de tipo **Free Legacy** (creada antes de sept. 2025),
+con límites de 100 GB bandwidth/mes y 300 min build/mes, sin créditos.
+Al superar esos límites se actualizó al plan de $9/mes. Si en algún momento
+se reactiva el uso de Netlify, la regla sigue siendo no migrar al modelo
+credit-based nuevo (irreversible).
 
 ---
 
