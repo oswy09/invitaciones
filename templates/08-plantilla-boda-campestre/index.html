@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>María & Juan Carlos · Club Campestre · 16.12.2026</title>
+
+    <!-- Google Fonts: Playfair Display (display) + Great Vibes (script) + Montserrat (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&family=Bodoni+Moda:ital,opsz,wght@0,6..96,200;1,6..96,200&family=Cormorant+SC:wght@300&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      @font-face {
+        font-family: 'Keep Dancing';
+        src: url('/Keep Dancing.ttf?v=2026') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: 'Moonlight';
+        src: url('./Moonlight.ttf') format('truetype'),
+             url('./Moonlight.otf') format('opentype');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: 'BrittanySignature';
+        src: url('./BrittanySignature.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      /* ── Normalize ─────────────────────────────────────────── */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+      img { display: block; max-width: 100%; }
+      button { cursor: pointer; font: inherit; border: none; background: none; }
+      a { color: inherit; text-decoration: none; }
+
+      /* ── Design Tokens ─────────────────────────────────────── */
+      :root {
+        /* --- Paleta ---
+         * Todos verificados WCAG AA (≥ 4.5:1) sobre --c-bg
+         * --c-gold     #6B5225  →  6.1:1  ✅
+         * --c-text     #2C2416  → 12.6:1  ✅
+         * --c-muted    #5A4A30  →  7.1:1  ✅
+         * --c-sage     #4A6644  →  5.3:1  ✅
+         */
+        --c-bg:           #FAF7F0;   /* cotton cream muy claro */
+        --c-surface:      #F2EDE2;   /* cards ligeramente más cálidas */
+        --c-gold:         #6B5225;   /* dorado campestre — AA ✅ */
+        --c-gold-light:   #9B7D48;   /* solo para ornamentos grandes */
+        --c-text:         #2C2416;   /* texto principal — AA ✅ */
+        --c-muted:        #5A4A30;   /* texto secundario — AA ✅ */
+        --c-sage:         #4A6644;   /* verde botánico — AA ✅ */
+        --c-sage-light:   #8FA882;   /* ornamentos decorativos (no texto) */
+        --c-border:       #C8BFA8;   /* líneas divisoras decorativas */
+        --c-cream-dark:   #D9D2C0;   /* bordes de tarjeta */
+
+        /* --- Fuentes --- */
+        --f-display: 'Playfair Display', 'Georgia', serif;
+        --f-script:  'Keep Dancing', 'Moonlight', 'BrittanySignature', cursive;
+        --f-body:    'Montserrat', 'system-ui', sans-serif;
+
+        /* --- Escala tipográfica (base 16px) ---
+         * Diferenciación real y legible en móviles
+         */
+        --fs-hero:    clamp(42px, 12vw, 60px);  /* portada nombres */
+        --fs-h1:      clamp(32px, 8.5vw, 44px); /* títulos sección display */
+        --fs-script:  clamp(34px, 9.5vw, 48px); /* headings script */
+        --fs-h2:      clamp(22px, 6vw, 28px);
+        --fs-h3:      20px;
+        --fs-body:    16px;
+        --fs-small:   14px;
+        --fs-caption: 12px;
+
+        --fw-regular: 400;
+        --fw-medium:  500;
+        --fw-semi:    600;
+        --fw-bold:    700;
+
+        --lh-tight:   1.1;
+        --lh-heading: 1.25;
+        --lh-body:    1.72;
+
+        /* --- Espaciado 8px rhythm --- */
+        --sp-1:  4px;
+        --sp-2:  8px;
+        --sp-3:  12px;
+        --sp-4:  16px;
+        --sp-5:  24px;
+        --sp-6:  32px;
+        --sp-7:  40px;
+        --sp-8:  48px;
+        --sp-9:  64px;
+        --sp-10: 80px;
+        --sp-11: 96px;
+
+        /* --- Radios --- */
+        --r-sm:  6px;
+        --r-md:  12px;
+        --r-pill: 999px;
+
+        /* --- Sombras --- */
+        --shadow-card: 0 2px 16px rgba(44,36,22,0.08);
+      }
+
+      /* ── Fondo papel cotton almendra ──────────────────────── */
+
+      /* ── Base ──────────────────────────────────────────────── */
+      body {
+        font-family: var(--f-body);
+        font-size: var(--fs-body);
+        font-weight: var(--fw-regular);
+        line-height: var(--lh-body);
+        color: var(--c-text);
+        background-color: var(--c-bg);
+        -webkit-font-smoothing: antialiased;
+        position: relative;
+      }
+
+      /* Textura de papel — grano fino */
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85 0.6' numOctaves='4' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.6  0 0 0 0 0.5  0 0 0 0 0.35  0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23grain)'/%3E%3C/svg%3E");
+        background-size: 300px 300px;
+        background-repeat: repeat;
+        pointer-events: none;
+        z-index: 9999;
+        mix-blend-mode: multiply;
+      }
+
+      /* Textura de fibra horizontal — simula hilado de algodón */
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Cfilter id='fiber'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.55' numOctaves='2' seed='12' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.55  0 0 0 0 0.45  0 0 0 0 0.3  0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='500' height='500' filter='url(%23fiber)'/%3E%3C/svg%3E");
+        background-size: 500px 500px;
+        background-repeat: repeat;
+        pointer-events: none;
+        z-index: 9998;
+        mix-blend-mode: multiply;
+      }
+
+      /* ── Animaciones ───────────────────────────────────────── */
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes hintPulse {
+        0%, 100% { opacity: 0.45; transform: translateY(0); }
+        50%       { opacity: 0.9;  transform: translateY(-3px); }
+      }
+      @keyframes bubbleIn {
+        0%   { opacity: 0; transform: translateY(-12px) scale(0.85); }
+        100% { opacity: 1; transform: translateY(0)     scale(1); }
+      }
+      @keyframes envelopeFloat {
+        0%, 100% { transform: translateY(0px) rotate(-0.5deg); }
+        50%       { transform: translateY(-7px) rotate(0.5deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

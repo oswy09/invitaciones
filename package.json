@@ -2,11 +2,11 @@
   "name": "invitaciones-dev",
   "private": true,
   "version": "0.0.0",
-  "description": "Script raiz solo para levantar todos los dev servers juntos en desarrollo local. No es un workspace ni se publica.",
+  "type": "module",
+  "description": "Script raíz para levantar todos los dev servers juntos en desarrollo local.",
   "scripts": {
-    "dev:wedding": "pnpm --dir wedding-invitation dev",
-    "dev:loving": "npm run dev --prefix templates/06-Boda-loving -- --port 3107",
-    "dev:all": "concurrently -n dino,stork,space,moderna,futbol,loving,form,admin,admin-api -c blue,cyan,magenta,yellow,red,green,white,gray,black \"npm run dev --prefix templates/01-dino -- --port 3101\" \"npm run dev --prefix templates/02-stork -- --port 3102\" \"npm run dev --prefix templates/03-space -- --port 3103\" \"npm run dev --prefix templates/04-Moderna -- --port 3104\" \"npm run dev --prefix templates/05-Futbol_Ron\" \"npm run dev --prefix templates/06-Boda-loving -- --port 3107\" \"npm run dev --prefix client-form\" \"npm run dev --prefix admin-dashboard\" \"npm run server --prefix admin-dashboard\""
+    "dev:all": "concurrently -n dino,stork,space,moderna,futbol,loving,cine,form,admin,admin-api -c blue,cyan,magenta,yellow,red,green,white,white,gray,black \"npm run dev --prefix templates/01-dino -- --port 3101\" \"npm run dev --prefix templates/02-stork -- --port 3102\" \"npm run dev --prefix templates/03-space -- --port 3103\" \"npm run dev --prefix templates/04-moderna -- --port 3104\" \"npm run dev --prefix templates/05-futbol -- --port 3105\" \"npm run dev --prefix templates/06-boda-loving -- --port 3107\" \"npm run dev --prefix templates/07-boda-cine -- --port 3108\" \"npm run dev --prefix apps/client-form\" \"npm run dev --prefix apps/admin-dashboard\" \"npm run server --prefix apps/admin-dashboard\"",
+    "nuevo-cliente": "node scripts/nuevo-cliente.js"
   },
   "devDependencies": {
     "concurrently": "^9.0.1"
