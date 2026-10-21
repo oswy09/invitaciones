@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { LocationModal, type LocationData } from './LocationModal';
+import { PenguinsGracias } from './PenguinsGracias';
 import portadaImg from '../images/fondo-letras novios.jpg';
 import palmera from '../images/palmera-relieve.jpg';
 import fondoPalmera from '../images/fondo-planta-palmera.jpg';
@@ -8,6 +9,7 @@ import hojaIzq from '../images/hoja-palmera.png';
 import hojaDer from '../images/hoja-palmera-media.png';
 import hojaRelieve from '../images/hoja-palmera-relieve.png';
 import bckPaisaje from '../images/bck-paisaje-costa.jpg';
+import vestidosBoda from '../images/vestidos-boda.png';
 
 const TYPEWRITER_TEXT = 'Tienes una invitación';
 
@@ -202,7 +204,7 @@ function Invitacion({ onLocation }: { onLocation: (loc: LocationData) => void })
               <p key={t} style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontSize: 30, lineHeight: 1.15, color: '#1A2B38', margin: 0 }}>{t}</p>
             ))}
             <div style={{ width: 40, height: 1, background: '#8B6E4E', opacity: 0.5, margin: '28px 0' }} />
-            <p style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 13, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#0D1E2C', margin: '0 0 6px' }}>Sábado · 30 de Mayo 2027</p>
+            <p style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: 13, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#0D1E2C', margin: '0 0 6px', fontVariantNumeric: 'tabular-nums' }}>Sábado · 30 de Mayo 2027</p>
             <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 14, letterSpacing: '0.25em', textTransform: 'uppercase', color: '#2A3D4E', margin: 0, fontWeight: 600 }}>Santa Marta</p>
             <svg width="100" height="12" viewBox="0 0 100 12" style={{ marginTop: 28 }}>
               <line x1="0" y1="6" x2="42" y2="6" stroke="#8B6E4E" strokeWidth="0.8" opacity="0.6"/>
@@ -467,7 +469,7 @@ function Invitacion({ onLocation }: { onLocation: (loc: LocationData) => void })
                     padding: '7px 14px', flexShrink: 0,
                     fontFamily: "'Montserrat',sans-serif", fontSize: 9, letterSpacing: '0.1em',
                     textTransform: 'uppercase', color: '#F4EFE5', fontWeight: 600,
-                  }}>Mapa</button>
+                  }}>Ver mapa</button>
                 </div>
               ))}
             </div>
@@ -494,11 +496,12 @@ function Invitacion({ onLocation }: { onLocation: (loc: LocationData) => void })
             {/* RSVP */}
             <div style={{ width: '100%', textAlign: 'center' }}>
               <p style={{
-                fontFamily: "'Playfair Display',Georgia,serif",
-                fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase',
-                color: '#7A5C38', margin: '0 0 12px', fontWeight: 600,
+                fontFamily: "'Montserrat', sans-serif",
+                fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase',
+                color: '#2A1A0E', margin: '0 0 12px', fontWeight: 700,
+                fontVariantNumeric: 'tabular-nums',
               }}>Confirma tu asistencia antes del 30 de marzo de 2027</p>
-              <a href="#" style={{
+              <a href="https://wa.me/573000000000?text=Hola%2C%20confirmo%20mi%20asistencia%20a%20la%20boda%20de%20Isabella%20%26%20Andr%C3%A9s%20%F0%9F%90%A7" target="_blank" rel="noopener noreferrer" style={{
                 display: 'inline-block', width: '100%',
                 fontFamily: "'Cormorant Garamond',Georgia,serif",
                 fontSize: 14, letterSpacing: '0.25em', textTransform: 'uppercase',
@@ -521,9 +524,8 @@ function Invitacion({ onLocation }: { onLocation: (loc: LocationData) => void })
         }}>
           <div style={{ position: 'absolute', inset: 0, background: '#F3F2ED' }} />
           <img src={fondoPalmeraPNG} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.45, pointerEvents: 'none' }} />
-          {/* Hoja inferior izquierda */}
-          <img src={hojaIzq} alt="" style={{ position: 'absolute', bottom: -20, left: -10, width: 160, opacity: 0.5, pointerEvents: 'none', transform: 'scaleX(-1)' }} />
-          <img src={hojaDer} alt="" style={{ position: 'absolute', bottom: -10, right: -10, width: 140, opacity: 0.45, pointerEvents: 'none' }} />
+          {/* Hoja inferior derecha */}
+          <img src={hojaDer} alt="" style={{ position: 'absolute', bottom: -180, right: -20, width: 220, opacity: 0.55, pointerEvents: 'none' }} />
 
           <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 32px' }}>
             {/* Palmera icono */}
@@ -540,39 +542,18 @@ function Invitacion({ onLocation }: { onLocation: (loc: LocationData) => void })
             <p style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 26, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#1A2B1A', margin: '0 0 10px' }}>Dress Code</p>
             <div style={{ width: 40, height: 1, background: '#8B7355', opacity: 0.6, margin: '0 0 28px' }} />
 
-            {/* Ilustraciones */}
-            <div style={{ display: 'flex', gap: 32, alignItems: 'flex-end', marginBottom: 28 }}>
-              {/* Mujer - vestido largo verde */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-                <svg width="72" height="130" viewBox="0 0 72 130">
-                  <ellipse cx="36" cy="14" rx="10" ry="13" fill="#D4C4A8"/>
-                  <path d="M26,26 Q20,32 18,40 Q22,38 28,36 L26,26Z" fill="#D4C4A8"/>
-                  <path d="M46,26 Q52,32 54,40 Q50,38 44,36 L46,26Z" fill="#D4C4A8"/>
-                  <path d="M28,36 Q24,50 20,70 Q28,65 36,63 Q44,65 52,70 Q48,50 44,36 Q40,34 36,34 Q32,34 28,36Z" fill="#6B7F3A"/>
-                  <path d="M20,70 Q14,90 10,115 Q22,108 36,106 Q50,108 62,115 Q58,90 52,70 Q44,65 36,63 Q28,65 20,70Z" fill="#7A9040"/>
-                  <path d="M10,115 Q18,122 36,124 Q54,122 62,115 Q54,118 36,119 Q18,118 10,115Z" fill="#6B7F3A" opacity="0.7"/>
-                </svg>
-                <p style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#1A2B1A', margin: 0 }}>Mujeres</p>
-                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: 'italic', fontSize: 13, color: '#5C4A2A', margin: 0 }}>Vestido largo</p>
-              </div>
+            {/* Ilustración vestidos */}
+            <img src={vestidosBoda} alt="Dress code" style={{ width: 220, maxWidth: '80vw', marginBottom: 18, objectFit: 'contain' }} />
 
-              {/* Hombre - traje beige */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-                <svg width="72" height="130" viewBox="0 0 72 130">
-                  <ellipse cx="36" cy="13" rx="10" ry="12" fill="#D4C4A8"/>
-                  <rect x="26" y="24" width="20" height="28" rx="2" fill="#C8B98A"/>
-                  <path d="M26,24 L20,52 L28,52 L36,30 L44,52 L52,52 L46,24Z" fill="#C8B98A"/>
-                  <path d="M36,26 L33,38 L36,42 L39,38Z" fill="#E8DCC0" opacity="0.8"/>
-                  <rect x="34" y="24" width="4" height="20" rx="1" fill="#B8A870" opacity="0.5"/>
-                  <rect x="20" y="52" width="14" height="42" rx="2" fill="#C8B98A"/>
-                  <rect x="38" y="52" width="14" height="42" rx="2" fill="#C8B98A"/>
-                  <rect x="20" y="90" width="14" height="34" rx="2" fill="#B8A870"/>
-                  <rect x="38" y="90" width="14" height="34" rx="2" fill="#B8A870"/>
-                  <rect x="14" y="52" width="8" height="30" rx="3" fill="#D4C4A8"/>
-                  <rect x="50" y="52" width="8" height="30" rx="3" fill="#D4C4A8"/>
-                </svg>
-                <p style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#1A2B1A', margin: 0 }}>Hombres</p>
-                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: 'italic', fontSize: 13, color: '#5C4A2A', margin: 0 }}>Traje sin corbata</p>
+            {/* Labels Mujeres / Hombres */}
+            <div style={{ display: 'flex', gap: 40, marginBottom: 20 }}>
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 700, fontSize: 15, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#3A4A2A', margin: '0 0 3px' }}>Mujeres</p>
+                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, fontStyle: 'italic', fontSize: 17, color: '#5C4A2A', margin: 0 }}>Vestido largo</p>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 700, fontSize: 15, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#3A4A2A', margin: '0 0 3px' }}>Hombres</p>
+                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, fontStyle: 'italic', fontSize: 17, color: '#5C4A2A', margin: 0 }}>Traje sin corbata</p>
               </div>
             </div>
 
@@ -580,6 +561,9 @@ function Invitacion({ onLocation }: { onLocation: (loc: LocationData) => void })
             <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontSize: 13, letterSpacing: '0.25em', textTransform: 'uppercase', color: '#3A4A2A', margin: 0 }}>Elegancia Tropical</p>
           </div>
         </section>
+
+        {/* ── Pantalla Pingüinos / Gracias ── */}
+        <PenguinsGracias />
 
         </div>
     </div>
@@ -716,7 +700,7 @@ function FixedMusicPlayer({ playing, onToggle }: { playing: boolean; onToggle: (
 
 /* ── App principal ── */
 export default function App() {
-  const [envelopeDone] = useState(true);
+  // const [envelopeDone] = useState(true);
   const [abierta, setAbierta] = useState(false);
   const [locationModal, setLocationModal] = useState<LocationData | null>(null);
   const [musicPlaying, setMusicPlaying] = useState(false);
@@ -799,7 +783,7 @@ export default function App() {
       )}
       {abierta && <Invitacion onLocation={setLocationModal} />}
       <LocationModal location={locationModal} onClose={() => setLocationModal(null)} />
-      {envelopeDone && <FixedMusicPlayer playing={musicPlaying} onToggle={() => toggleAudioPlayback(musicPlaying)} />}
+      {abierta && <FixedMusicPlayer playing={musicPlaying} onToggle={() => toggleAudioPlayback(musicPlaying)} />}
     </>
   );
 }
