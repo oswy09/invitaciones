@@ -2,14 +2,16 @@ import { useState, useEffect } from 'react';
 import { LocationModal, type LocationData } from './LocationModal';
 import { PenguinsGracias } from './PenguinsGracias';
 import portadaImg from '../images/fondo-letras novios.jpg';
-import palmera from '../images/palmera-relieve.jpg';
+// import palmera from '../images/palmera-relieve.jpg';
+import bckCostIntro from '../images/bck-cost-intro.jpg';
+import palmerasAtardecer from '../images/palmeras-atardecer.png';
 import fondoPalmera from '../images/fondo-planta-palmera.jpg';
 import fondoPalmeraPNG from '../images/Fondo-palmera.png';
 import hojaIzq from '../images/hoja-palmera.png';
 import hojaDer from '../images/hoja-palmera-media.png';
 import hojaRelieve from '../images/hoja-palmera-relieve.png';
 import bckPaisaje from '../images/bck-paisaje-costa.jpg';
-import vestidosBoda from '../images/vestidos-boda.png';
+import vestidosBoda from '../images/vestidos-boda-novios.png';
 
 const TYPEWRITER_TEXT = 'Tienes una invitación';
 
@@ -122,10 +124,10 @@ const LOCATIONS: Record<string, LocationData> = {
   ceremonia: {
     title: 'Ceremonia',
     placeName: 'Capilla Privada Los Alcatraces',
-    address: 'Los Alcatraces, vía Palomino',
+    address: 'KM 17 #VIA, Ciénaga',
     city: 'Santa Marta, Magdalena',
-    lat: 11.2408,
-    lng: -74.2110,
+    lat: 11.0860413,
+    lng: -74.2172351,
     emoji: '⛪',
   },
   recepcion: {
@@ -160,19 +162,19 @@ function Invitacion({ onLocation }: { onLocation: (loc: LocationData) => void })
           display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center', flexShrink: 0,
         }}>
-          {/* Fondo crema base */}
-          <div style={{ position: 'absolute', inset: 0, background: '#F3F2ED' }} />
-          {/* Palmera relieve muy sutil */}
-          <img src={palmera} alt="" style={{
+          {/* Fondo bck-cost-intro */}
+          <img src={bckCostIntro} alt="" style={{
             position: 'absolute', inset: 0, width: '100%', height: '100%',
-            objectFit: 'cover', opacity: 0.12, mixBlendMode: 'multiply',
+            objectFit: 'cover', objectPosition: 'center center',
           }} />
-          {/* Hoja relieve esquina inferior izquierda */}
-          <img src={hojaRelieve} alt="" style={{
-            position: 'absolute', bottom: -20, left: -20, width: 220,
-            opacity: 0.55, pointerEvents: 'none',
-            transformOrigin: 'bottom left',
-            animation: 'windLeft 7s ease-in-out infinite',
+          {/* Overlay mínimo solo para legibilidad */}
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(243,242,237,0.15)' }} />
+          {/* Palmeras atardecer — solo izquierda */}
+          <img src={palmerasAtardecer} alt="" style={{
+            position: 'absolute', top: -10, left: -20, width: 210,
+            opacity: 0.95, pointerEvents: 'none',
+            transformOrigin: 'top left',
+            animation: 'windLeft 6s ease-in-out infinite',
           }} />
 
           {/* Arrow scroll hint */}
@@ -200,7 +202,7 @@ function Invitacion({ onLocation }: { onLocation: (loc: LocationData) => void })
               <p key={t} style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontSize: 30, lineHeight: 1.15, color: '#1A2B38', margin: 0 }}>{t}</p>
             ))}
             <p style={{ fontFamily: "'Great Vibes', cursive", fontSize: 52, color: '#8B6E4E', lineHeight: 1, margin: '10px 0' }}>&</p>
-            {['Andrés Cañon', 'Arango'].map(t => (
+            {['Andrés Felipe Cañon', 'Arango'].map(t => (
               <p key={t} style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontSize: 30, lineHeight: 1.15, color: '#1A2B38', margin: 0 }}>{t}</p>
             ))}
             <div style={{ width: 40, height: 1, background: '#8B6E4E', opacity: 0.5, margin: '28px 0' }} />
@@ -500,8 +502,8 @@ function Invitacion({ onLocation }: { onLocation: (loc: LocationData) => void })
                 fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase',
                 color: '#2A1A0E', margin: '0 0 12px', fontWeight: 700,
                 fontVariantNumeric: 'tabular-nums',
-              }}>Confirma tu asistencia antes del 30 de marzo de 2027</p>
-              <a href="https://wa.me/573000000000?text=Hola%2C%20confirmo%20mi%20asistencia%20a%20la%20boda%20de%20Isabella%20%26%20Andr%C3%A9s%20%F0%9F%90%A7" target="_blank" rel="noopener noreferrer" style={{
+              }}>Confirma tu asistencia antes del 12 de diciembre de 2026</p>
+              <a href="https://wa.me/573006994495?text=Hola%2C%20confirmo%20mi%20asistencia%20a%20la%20boda%20de%20Isabella%20%26%20Andr%C3%A9s%20%F0%9F%90%A7" target="_blank" rel="noopener noreferrer" style={{
                 display: 'inline-block', width: '100%',
                 fontFamily: "'Cormorant Garamond',Georgia,serif",
                 fontSize: 14, letterSpacing: '0.25em', textTransform: 'uppercase',
@@ -525,7 +527,7 @@ function Invitacion({ onLocation }: { onLocation: (loc: LocationData) => void })
           <div style={{ position: 'absolute', inset: 0, background: '#F3F2ED' }} />
           <img src={fondoPalmeraPNG} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.45, pointerEvents: 'none' }} />
           {/* Hoja inferior derecha */}
-          <img src={hojaDer} alt="" style={{ position: 'absolute', bottom: -180, right: -20, width: 220, opacity: 0.55, pointerEvents: 'none' }} />
+          <img src={hojaDer} alt="" style={{ position: 'absolute', top: -10, right: -20, width: 220, opacity: 0.55, pointerEvents: 'none' }} />
 
           <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 32px' }}>
             {/* Palmera icono */}
@@ -548,12 +550,12 @@ function Invitacion({ onLocation }: { onLocation: (loc: LocationData) => void })
             {/* Labels Mujeres / Hombres */}
             <div style={{ display: 'flex', gap: 40, marginBottom: 20 }}>
               <div style={{ textAlign: 'center' }}>
-                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 700, fontSize: 15, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#3A4A2A', margin: '0 0 3px' }}>Mujeres</p>
-                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, fontStyle: 'italic', fontSize: 17, color: '#5C4A2A', margin: 0 }}>Vestido largo</p>
+                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 700, fontSize: 18, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#3A4A2A', margin: '0 0 3px' }}>Mujeres</p>
+                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, fontStyle: 'italic', fontSize: 20, color: '#5C4A2A', margin: 0 }}>Vestido largo</p>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 700, fontSize: 15, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#3A4A2A', margin: '0 0 3px' }}>Hombres</p>
-                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, fontStyle: 'italic', fontSize: 17, color: '#5C4A2A', margin: 0 }}>Traje sin corbata</p>
+                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 700, fontSize: 18, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#3A4A2A', margin: '0 0 3px' }}>Hombres</p>
+                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, fontStyle: 'italic', fontSize: 20, color: '#5C4A2A', margin: 0 }}>Traje azul sin corbata</p>
               </div>
             </div>
 
@@ -571,8 +573,8 @@ function Invitacion({ onLocation }: { onLocation: (loc: LocationData) => void })
 }
 
 /* ── Audio ── */
-const MUSIC_SRC = '/amber_glow.mp3';
-const MUSIC_LABEL = 'Amber Glow';
+const MUSIC_SRC = 'https://res.cloudinary.com/ddqbnr9vo/video/upload/v1793132888/Elvis_Presley_Can_t_Help_Falling_In_Love_pigcq2.mp3';
+const MUSIC_LABEL = "Can't Help Falling In Love";
 const MUSIC_START_SECOND = 0;
 
 let globalAudio: HTMLAudioElement | null = null;
