@@ -38,7 +38,7 @@ export function LocationModal({ location, onClose }: Props) {
 
     const map = new mapboxgl.Map({
       container: mapRef.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
+      style: 'mapbox://styles/mapbox/navigation-day-v1',
       center: [location.lng, location.lat],
       zoom: 16,
       pitch: 0,
