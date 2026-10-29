@@ -564,6 +564,86 @@ function Invitacion({ onLocation }: { onLocation: (loc: LocationData) => void })
           </div>
         </section>
 
+        {/* ── Pantalla Lluvia de Sobres ── */}
+        <section style={{
+          position: 'relative', width: '100%', height: '100dvh',
+          scrollSnapAlign: 'start', overflow: 'hidden',
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          background: '#F7F4EF',
+        }}>
+          <style>{`
+            @keyframes floatEnvelope {
+              0%   { transform: translateY(0px) rotate(-4deg); }
+              50%  { transform: translateY(-14px) rotate(4deg); }
+              100% { transform: translateY(0px) rotate(-4deg); }
+            }
+            @keyframes sparkle {
+              0%, 100% { opacity: 0; transform: scale(0.5); }
+              50%       { opacity: 1; transform: scale(1.1); }
+            }
+          `}</style>
+
+          {/* Fondo textura suave */}
+          <img src={fondoPalmeraPNG} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.15, pointerEvents: 'none' }} />
+
+          <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 36px', gap: 0 }}>
+
+            {/* Sobre animado */}
+            <div style={{ position: 'relative', marginBottom: 32, animation: 'floatEnvelope 4s ease-in-out infinite' }}>
+              {/* Destellos */}
+              {[[-28, -18], [30, -10], [-20, 26], [28, 22]].map(([x, y], i) => (
+                <div key={i} style={{
+                  position: 'absolute', top: '50%', left: '50%',
+                  width: 6, height: 6, borderRadius: '50%',
+                  background: '#C8956C',
+                  transform: `translate(${x}px, ${y}px)`,
+                  animation: `sparkle ${1.4 + i * 0.3}s ease-in-out infinite`,
+                  animationDelay: `${i * 0.35}s`,
+                }} />
+              ))}
+              <svg width="110" height="82" viewBox="0 0 110 82" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Cuerpo sobre */}
+                <rect x="2" y="2" width="106" height="78" rx="7" fill="#F4EFE5" stroke="#C8A87A" strokeWidth="2"/>
+                {/* Solapa abierta */}
+                <path d="M2 2 L55 46 L108 2" stroke="#C8A87A" strokeWidth="2" fill="none"/>
+                <path d="M2 2 Q55 50 108 2 L108 9 Q55 54 2 9 Z" fill="#EAE0CC" stroke="#C8A87A" strokeWidth="1.5"/>
+                {/* Triángulo inferior */}
+                <path d="M2 80 L55 44 L108 80" fill="#EDE5D6" stroke="#C8A87A" strokeWidth="1.5"/>
+                {/* Detalle corazón */}
+                <path d="M55 36 C55 36 48 29 48 24.5 C48 21.4 50.7 19 54 20.5 C54.7 20.8 55.3 20.8 56 20.5 C59.3 19 62 21.4 62 24.5 C62 29 55 36 55 36Z" fill="#C8956C" opacity="0.85"/>
+              </svg>
+            </div>
+
+            {/* Texto */}
+            <p style={{
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontStyle: 'italic', fontSize: 17, color: '#7A5C38',
+              lineHeight: 1.7, margin: '0 0 18px', maxWidth: 310,
+            }}>
+              Tu compañía es el mejor regalo.
+            </p>
+
+            <p style={{
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontSize: 15, color: '#5C4030',
+              lineHeight: 1.65, margin: '0 0 24px', maxWidth: 300,
+            }}>
+              Para quienes deseen tener un detalle con nosotros, hemos dispuesto una
+            </p>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 8 }}>
+              <div style={{ width: 40, height: 1, background: '#C8A87A', opacity: 0.7 }} />
+              <p style={{
+                fontFamily: "'Playfair Display', Georgia, serif",
+                fontWeight: 700, fontSize: 22, letterSpacing: '0.18em',
+                textTransform: 'uppercase', color: '#2A1A0E', margin: 0,
+              }}>Lluvia de Sobres</p>
+              <div style={{ width: 40, height: 1, background: '#C8A87A', opacity: 0.7 }} />
+            </div>
+          </div>
+        </section>
+
         {/* ── Pantalla Pingüinos / Gracias ── */}
         <PenguinsGracias />
 
