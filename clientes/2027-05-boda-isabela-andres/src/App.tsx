@@ -617,30 +617,28 @@ function Invitacion({ onLocation }: { onLocation: (loc: LocationData) => void })
 
             {/* Texto */}
             <p style={{
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontWeight: 700, fontSize: 26, letterSpacing: '0.22em',
+              textTransform: 'uppercase', color: '#2A1A0E', margin: '0 0 10px',
+            }}>Lluvia de Sobres</p>
+
+            <div style={{ width: 40, height: 1, background: '#8B7355', opacity: 0.6, margin: '0 0 22px' }} />
+
+            <p style={{
               fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontStyle: 'italic', fontSize: 17, color: '#7A5C38',
-              lineHeight: 1.7, margin: '0 0 18px', maxWidth: 310,
+              fontStyle: 'italic', fontSize: 19, color: '#7A5C38',
+              lineHeight: 1.65, margin: '0 0 14px', maxWidth: 300,
             }}>
               Tu compañía es el mejor regalo.
             </p>
 
             <p style={{
               fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontSize: 15, color: '#5C4030',
-              lineHeight: 1.65, margin: '0 0 24px', maxWidth: 300,
+              fontSize: 17, color: '#5C4030',
+              lineHeight: 1.65, margin: 0, maxWidth: 290,
             }}>
-              Para quienes deseen tener un detalle con nosotros, hemos dispuesto una
+              Para quienes deseen tener un detalle con nosotros, hemos dispuesto una lluvia de sobres.
             </p>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 8 }}>
-              <div style={{ width: 40, height: 1, background: '#C8A87A', opacity: 0.7 }} />
-              <p style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                fontWeight: 700, fontSize: 22, letterSpacing: '0.18em',
-                textTransform: 'uppercase', color: '#2A1A0E', margin: 0,
-              }}>Lluvia de Sobres</p>
-              <div style={{ width: 40, height: 1, background: '#C8A87A', opacity: 0.7 }} />
-            </div>
           </div>
         </section>
 
