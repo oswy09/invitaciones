@@ -879,7 +879,7 @@ function RsvpSection() {
           letterSpacing: '0.16em', color: 'var(--c-muted)',
           marginBottom: 28, textTransform: 'uppercase',
         }}>
-          Fecha límite: <span style={{ color: 'var(--c-gold)' }}>{pathSlug === 'alejo-y-anita' ? '10 de noviembre' : '15.10.26'}</span>
+          Fecha límite: <span style={{ color: 'var(--c-gold)' }}>{['alejo-y-anita', 'margara-y-jose'].includes(pathSlug) ? '10 de noviembre' : '15.10.26'}</span>
         </p>
 
         <button
