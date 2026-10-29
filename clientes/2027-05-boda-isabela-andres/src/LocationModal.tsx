@@ -40,9 +40,9 @@ export function LocationModal({ location, onClose }: Props) {
       container: mapRef.current,
       style: 'mapbox://styles/mapbox/streets-v12',
       center: [location.lng, location.lat],
-      zoom: 14.5,
-      pitch: 45,
-      bearing: -10,
+      zoom: 16,
+      pitch: 0,
+      bearing: 0,
       antialias: true,
     });
 
