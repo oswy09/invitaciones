@@ -88,7 +88,7 @@ function PortadaScreen({ onOpen, hideControls }: { onOpen: () => void; hideContr
           </p>
 
           <a
-            onClick={e => { e.preventDefault(); onOpen(); }}
+            onClick={e => { e.preventDefault(); startAudioPlayback(); onOpen(); }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             href="#"
