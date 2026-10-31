@@ -206,7 +206,7 @@ function Invitacion({ onLocation }: { onLocation: (loc: LocationData) => void })
               <p key={t} style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontSize: 30, lineHeight: 1.15, color: '#1A2B38', margin: 0 }}>{t}</p>
             ))}
             <div style={{ width: 40, height: 1, background: '#8B6E4E', opacity: 0.5, margin: '28px 0' }} />
-            <p style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: 13, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#0D1E2C', margin: '0 0 6px', fontVariantNumeric: 'tabular-nums' }}>Sábado · 30 de Mayo 2027</p>
+            <p style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: 13, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#0D1E2C', margin: '0 0 6px', fontVariantNumeric: 'tabular-nums' }}>Domingo · 30 de Mayo 2027</p>
             <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 14, letterSpacing: '0.25em', textTransform: 'uppercase', color: '#2A3D4E', margin: 0, fontWeight: 600 }}>Santa Marta</p>
             <svg width="100" height="12" viewBox="0 0 100 12" style={{ marginTop: 28 }}>
               <line x1="0" y1="6" x2="42" y2="6" stroke="#8B6E4E" strokeWidth="0.8" opacity="0.6"/>
