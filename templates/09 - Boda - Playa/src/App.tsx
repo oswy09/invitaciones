@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { LocationModal, type LocationData } from './LocationModal';
-import { EnvelopeIntro } from './EnvelopeIntro';
 import portadaImg from '../images/fondo-letras novios.jpg';
 import palmera from '../images/palmera-relieve.jpg';
 import fondoPalmera from '../images/fondo-planta-palmera.jpg';
@@ -9,7 +8,6 @@ import hojaIzq from '../images/hoja-palmera.png';
 import hojaDer from '../images/hoja-palmera-media.png';
 import hojaRelieve from '../images/hoja-palmera-relieve.png';
 import bckPaisaje from '../images/bck-paisaje-costa.jpg';
-import fondoLetras2 from '../images/fondo-letras novios2.jpg';
 
 const TYPEWRITER_TEXT = 'Tienes una invitación';
 
