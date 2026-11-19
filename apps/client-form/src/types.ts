@@ -130,6 +130,7 @@ export const CATALOGO: TemplateInfo[] = [
     categoria: "Boda",
     baseUrl: "https://boda-moderna.celebrarte.com.co",
     slug: "boda-moderna",
+    demoPath: "https://lambent-crostata-94de2d.netlify.app/",
     gradiente: "linear-gradient(to bottom, #3A1140, #5A1B5E)",
     textColor: "#f0d9a0",
     features: [
@@ -151,7 +152,7 @@ export const CATALOGO: TemplateInfo[] = [
     categoria: "Boda",
     baseUrl: "https://boda-loving.celebrarte.com.co",
     slug: "boda-loving",
-    demoPath: "/demos/boda-loving/index.html",
+    demoPath: "https://loving-boda.netlify.app/",
     gradiente: "linear-gradient(to bottom, #2C3A2A, #4A5E3A)",
     textColor: "#e8f0d8",
     features: [
@@ -173,7 +174,7 @@ export const CATALOGO: TemplateInfo[] = [
     categoria: "Boda",
     baseUrl: "https://boda-cine.celebrarte.com.co",
     slug: "boda-cine",
-    demoPath: "/demos/boda-cine/index.html",
+    demoPath: "https://boda-cinema.netlify.app/",
     gradiente: "linear-gradient(to bottom, #1a0a00, #3a1a00)",
     textColor: "#f5d080",
     features: [
@@ -194,10 +195,32 @@ export const CATALOGO: TemplateInfo[] = [
     emoji: "🌾",
     categoria: "Boda",
     baseUrl: "",
-    demoPath: "/demos/boda-campestre/index.html",
+    demoPath: "https://plantilla-08-boda-campestre.netlify.app/",
     slug: "boda-campestre",
     gradiente: "linear-gradient(to bottom, #2A3A1A, #4A5E2A)",
     textColor: "#e8f0c8",
+    features: [
+      { emoji: "✉️", label: "Sobre animado interactivo" },
+      { emoji: "🎵", label: "Música de fondo personalizada" },
+      { emoji: "✅", label: "Confirmación de asistencia (RSVP)" },
+      { emoji: "⏱️", label: "Cuenta regresiva a la boda" },
+      { emoji: "🗺️", label: "Mapa de ceremonia y recepción" },
+      { emoji: "💬", label: "Muro de deseos / libro de firmas" },
+    ],
+    precioDefault: { cop: 80000, usd: 22 },
+  },
+  {
+    id: "09-boda-playa",
+    nombre: "Boda Playa",
+    nombreDisplay: "Boda en la Playa",
+    descripcion: "Invitación de boda costera con palmeras, brisa marina y animaciones tropicales",
+    emoji: "🌴",
+    categoria: "Boda",
+    baseUrl: "",
+    demoPath: "https://demo-boda-playa.netlify.app/",
+    slug: "boda-playa",
+    gradiente: "linear-gradient(to bottom, #1B5E8A, #0d3a5c)",
+    textColor: "#E8F0F5",
     features: [
       { emoji: "✉️", label: "Sobre animado interactivo" },
       { emoji: "🎵", label: "Música de fondo personalizada" },
@@ -259,6 +282,7 @@ export const DEV_PORT_POR_TEMPLATE: Record<string, number> = {
   "06-boda-loving":      3107,
   "07-boda-cine":        3108,
   "08-boda-campestre":   3109,
+  "09-boda-playa":       3110,
 };
 
 const DIAS_SEMANA = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
