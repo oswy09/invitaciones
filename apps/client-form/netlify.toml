@@ -2,37 +2,6 @@
   command = "npm run build:all"
   publish = "dist"
 
-# Demos — proxy a sus sitios Netlify propios (assets en raíz correcta)
-[[redirects]]
-  from = "/demos/boda-campestre/*"
-  to = "https://plantilla-08-boda-campestre.netlify.app/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/demos/boda-playa/*"
-  to = "https://demo-boda-playa.netlify.app/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/demos/boda-loving/*"
-  to = "https://loving-boda.netlify.app/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/demos/boda-cine/*"
-  to = "https://boda-cinema.netlify.app/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/demos/boda-moderna/*"
-  to = "https://lambent-crostata-94de2d.netlify.app/:splat"
-  status = 200
-  force = true
-
 [[redirects]]
   from = "/*"
   to = "/index.html"
